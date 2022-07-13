@@ -1,27 +1,22 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+
+  <PrayBox v-for="rec in data"  :key="rec.date + rec.owner" v-bind="rec"/>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
+<script setup lang="ts">
+import PrayBox from "./components/PrayBox.vue"
+import { useStore } from "@/store/index";
+import { computed } from "@vue/runtime-core";
+import { Pray } from "./@types/database";
 
-export default defineComponent({
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-});
+
+const store = useStore();
+const data = computed<Pray[]>(() => store.data);
+
+store.getListOfPray();
 </script>
-
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+#app{
+  margin: 1.5rem;
 }
 </style>
