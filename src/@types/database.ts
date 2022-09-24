@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 
 export interface Prayer {
   date: string;
@@ -5,7 +6,8 @@ export interface Prayer {
 }
 
 export interface Pray {
-  date: string;
+  id: string,
+  date: Timestamp;
   description: string;
   owner: string;
   prayers: Prayer[];

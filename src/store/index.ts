@@ -1,6 +1,15 @@
 import { Pray } from "./../@types/database";
 import { defineStore } from "pinia";
+import app from "@/@firebase";
+import {
+  collection,
+  CollectionReference,
+  getDocs,
+  getFirestore,
+} from "firebase/firestore";
 import axios from "axios";
+
+const db = getFirestore(app);
 
 const url =
   "https://prayer-app-dzialdowo-default-rtdb.europe-west1.firebasedatabase.app";
@@ -13,8 +22,17 @@ export const useStore = defineStore("database", {
   }),
   actions: {
     async getListOfPray() {
-      const resp = await axios.get(`${url}/data.json`);
-      this.data = resp.data;
+      const prayList: Pray[] = [];
+
+      const querySnapshot = await getDocs(
+        collection(db, "prayers") as CollectionReference<Pray>
+      );
+
+      querySnapshot.forEach((doc) => {
+        prayList.push({...doc.data(), id: doc.id });
+      });
+
+      this.data = prayList;
     },
   },
 });
