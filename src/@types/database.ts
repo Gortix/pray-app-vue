@@ -1,4 +1,4 @@
-import { Timestamp } from "firebase/firestore";
+import { DocumentReference, Timestamp } from "firebase/firestore";
 
 export interface Prayer {
   date: string;
@@ -9,7 +9,7 @@ export interface Pray {
   id: string,
   date: Timestamp;
   description: string;
-  owner: string;
+  owner: User;
   prayers: Prayer[];
   showOwner: boolean;
   archived: boolean;
