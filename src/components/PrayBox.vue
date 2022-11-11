@@ -1,18 +1,20 @@
 <template>
-  <q-card class="relative-position">
-    <q-card-actions class="absolute-top-left">
-      {{ owner }}
-    </q-card-actions>
+  <q-card class="column">
+    <q-card-section class="row justify-between q-pb-sm text-blue-grey-5">
+      <span>
+        {{ owner }}
+      </span>
+      <span>
+        {{ convertedDate }}
+      </span>
+    </q-card-section>
 
     <q-card-section>
       {{ description }}
     </q-card-section>
 
-    <q-card-actions class="absolute-bottom-left">
-      {{ convertedDate }}
-    </q-card-actions>
-    <q-card-actions align="right">
-      <q-btn flat round color="light-blue" icon="fa-solid fa-hands-praying" />
+    <q-card-actions class="row justify-end">
+        <q-btn flat round color="light-blue" icon="fa-solid fa-hands-praying" />
     </q-card-actions>
   </q-card>
 </template>
@@ -24,7 +26,7 @@ const props = defineProps({
   date: Timestamp,
   description: String,
   owner: String,
-  prayers: [],
+  prayers: Array,
   showOwner: Boolean,
   archived: Boolean,
 });

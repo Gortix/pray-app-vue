@@ -1,21 +1,19 @@
-import { Pray } from "./../@types/database";
+import { Pray, User } from "./../@types/database";
 import { defineStore } from "pinia";
 import app from "@/@firebase";
 import {
   collection,
-  CollectionReference,
   getDocs,
   getFirestore,
   doc as firebaseDoc,
   getDoc,
+  Timestamp,
 } from "firebase/firestore";
-import axios from "axios";
-import { async } from "@firebase/util";
 
 const db = getFirestore(app);
 
-const url =
-  "https://prayer-app-dzialdowo-default-rtdb.europe-west1.firebasedatabase.app";
+// const url =
+//   "https://prayer-app-dzialdowo-default-rtdb.europe-west1.firebasedatabase.app";
 
 export const getRelatedDoc = async (path: string) => {
   const doc = await getDoc(firebaseDoc(db, path));
@@ -25,23 +23,68 @@ export const getRelatedDoc = async (path: string) => {
 // useStore could be anything like useUser, useCart
 // the first argument is a unique id of the store across your application
 export const useStore = defineStore("database", {
-  state: () => ({
-    data: [{}] as Pray[],
-  }),
+  state: () => {
+    return {
+      data: [] as Pray[],
+      int: 12,
+    };
+  },
+  getters: {
+    getData(state) {
+      /* eslint-disable */
+      /* @ts-ignore */
+
+      return state.data;
+    },
+  },
   actions: {
     async getListOfPray() {
-      const prayList: Pray[] = [];
+      try {
+        const prayList: Pray[] = [];
 
-      const querySnapshot = await getDocs(collection(db, "prayers"));
+        const querySnapshot = await getDocs(collection(db, "prayers"));
 
-      querySnapshot.forEach(async (doc) => {
-        const data = doc.data();
-        const owner = await getRelatedDoc(data.owner.path);
+        const dt = this.data;
+        let it = this.int;
 
-        prayList.push({ ...data, id: doc.id, owner } as Pray);
-      });
+        for (let rec of querySnapshot.docs) {
+          const docData = rec.data();
+          const owner = await getRelatedDoc(docData.owner.path) as User;
 
-      this.data = prayList;
+          console.log(docData);
+          
+
+          prayList.push({
+            archived: docData.archived,
+            date: docData.date,
+            description: docData.description,
+            prayers: [],
+            id: rec.id,
+            owner,
+          });
+          console.log(prayList);
+          
+        }
+        this.data = prayList;
+        this.int++;
+
+        // this.data = prayList;
+        // console.log(prayList, "Tu");
+      } catch (err) {
+        console.log("Error");
+      }
+    },
+    testData() {
+      this.data = [
+        {
+          archived: false,
+          date: new Timestamp(1000, 200),
+          description: "kloc",
+          id: "21312ff",
+          prayers: [],
+          owner: { id: "32d32", name: "Pa blo" },
+        },
+      ];
     },
   },
 });

@@ -11,7 +11,6 @@ export interface Pray {
   description: string;
   owner: User;
   prayers: Prayer[];
-  showOwner: boolean;
   archived: boolean;
 }
 
