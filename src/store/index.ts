@@ -8,12 +8,11 @@ import {
   doc as firebaseDoc,
   getDoc,
   Timestamp,
+  setDoc,
+  addDoc,
 } from "firebase/firestore";
 
 const db = getFirestore(app);
-
-// const url =
-//   "https://prayer-app-dzialdowo-default-rtdb.europe-west1.firebasedatabase.app";
 
 export const getRelatedDoc = async (path: string) => {
   const doc = await getDoc(firebaseDoc(db, path));
@@ -26,33 +25,19 @@ export const useStore = defineStore("database", {
   state: () => {
     return {
       data: [] as Pray[],
-      int: 12,
+      users: [] as User[],
     };
-  },
-  getters: {
-    getData(state) {
-      /* eslint-disable */
-      /* @ts-ignore */
-
-      return state.data;
-    },
   },
   actions: {
     async getListOfPray() {
-      try {
-        const prayList: Pray[] = [];
+      const prayList: Pray[] = [];
 
+      try {
         const querySnapshot = await getDocs(collection(db, "prayers"));
 
-        const dt = this.data;
-        let it = this.int;
-
-        for (let rec of querySnapshot.docs) {
+        for (const rec of querySnapshot.docs) {
           const docData = rec.data();
-          const owner = await getRelatedDoc(docData.owner.path) as User;
-
-          console.log(docData);
-          
+          const owner = (await getRelatedDoc(docData.owner.path)) as User;
 
           prayList.push({
             archived: docData.archived,
@@ -62,29 +47,35 @@ export const useStore = defineStore("database", {
             id: rec.id,
             owner,
           });
-          console.log(prayList);
-          
         }
         this.data = prayList;
-        this.int++;
-
-        // this.data = prayList;
-        // console.log(prayList, "Tu");
       } catch (err) {
-        console.log("Error");
+        console.error(err);
       }
     },
-    testData() {
-      this.data = [
-        {
-          archived: false,
-          date: new Timestamp(1000, 200),
-          description: "kloc",
-          id: "21312ff",
-          prayers: [],
-          owner: { id: "32d32", name: "Pa blo" },
-        },
-      ];
+    async getListOfUsers() {
+      const listOfUser: User[] = [];
+      try {
+        const querySnapshot = await getDocs(collection(db, "users"));
+
+        for (const rec of querySnapshot.docs) {
+          const databaseUser = rec.data();
+
+          listOfUser.push({ id: rec.id, name: databaseUser.name });
+        }
+        this.users = listOfUser;
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    async addPray(owner: string, description: string) {
+      const querySnapshot = await addDoc(collection(db, "users"), {
+        archived: false,
+        date: Timestamp.now(),
+        description: description,
+        prayers: [],
+        owner,
+      });
     },
   },
 });

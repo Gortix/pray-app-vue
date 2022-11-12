@@ -1,60 +1,57 @@
 <template>
-  <q-dialog
-    :model-value="modelValue"
-    @show="$emit('update:modelValue', true)"
-    @hide="$emit('update:modelValue', false)"
-  >
-    <q-card>
-      <q-toolbar>
-        <q-avatar>
-          <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg" />
-        </q-avatar>
-
-        <q-toolbar-title
-          ><span class="text-weight-bold">Quasar</span>
-          Framework</q-toolbar-title
-        >
-
-        <q-btn flat round dense v-close-popup>&#x2715;</q-btn>
-      </q-toolbar>
-
-      <q-card-section>
-        <form @submit.prevent="simulateSubmit" class="q-pa-md">
-          <q-input
-            v-model="description"
-            clearable
-            type="textarea"
-            color="teal"  
-            label="Jakiej modlitwy potrzebujesz?"
-          />
-          <q-btn
-            type="submit"
-            :loading="submitting"
-            label="Proszę o modlitwę"
-            class="q-mt-md full-width"
-            color="teal"
-          >
-            <template v-slot:loading>
-              <q-spinner-facebook />
-            </template>
-          </q-btn>
-        </form>
-      </q-card-section>
-    </q-card>
-  </q-dialog>
+  <form @submit.prevent="simulateSubmit" class="custom-flex">
+    <q-select v-model="user" :options="options" label="Standard" />
+    <!-- <q-input v-model="user" type="text" color="teal" label="Imię i nazwisko:" /> -->
+    <q-input
+      v-model="description"
+      type="textarea"
+      color="teal"
+      label="Treść modlitwy:"
+    />
+    <q-btn
+      type="submit"
+      :loading="submitting"
+      label="Proszę o modlitwę"
+      class="q-mt-md full-width"
+      color="teal"
+    >
+      <template v-slot:loading>
+        <q-spinner-facebook />
+      </template>
+    </q-btn>
+  </form>
 </template>
-<script setup lang="ts">
-import { defineProps, defineEmits, ref } from "vue";
+<script lang="ts" setup>
+import { useStore } from "@/store/index";
+import { computed } from "@vue/reactivity";
+import { ref } from "vue";
+
+const store = useStore();
+store.getListOfUsers();
+
+const options = computed(() => {
+  type Options = { label: string; value: string };
+  const listOfUsers: Options[] = [];
+  for (const user of store.users) {
+    listOfUsers.push({ label: user.name, value: user.id });
+  }
+  return listOfUsers;
+});
 
 const description = ref("");
+const user = ref("");
 const submitting = ref(false);
 
-const props = defineProps({ modelValue: Boolean });
-const emits = defineEmits(["update:modelValue"]);
+const simulateSubmit = () => {
+  submitting.value = true;
 
-const simulateSubmit= ()=>{
-    submitting.value = true;
-
-    submitting.value= false;
-}
+  submitting.value = false;
+};
 </script>
+<style lang="scss">
+.custom-flex {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+</style>
