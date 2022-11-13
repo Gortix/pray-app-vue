@@ -4,8 +4,13 @@
       <PageHeader />
     </q-header>
 
-    <q-page-container v-if="data[0]">
+    <q-page-container
+      class="row wrap justify-evenly"
+      style="gap: 1rem"
+      v-if="data[0]"
+    >
       <PrayBox
+        class="col-xs-12 col-md-5 col-lg-3"
         v-for="rec in store.data"
         :key="rec.id"
         v-bind="rec"

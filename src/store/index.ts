@@ -8,8 +8,8 @@ import {
   doc as firebaseDoc,
   getDoc,
   Timestamp,
-  setDoc,
   addDoc,
+  doc,
 } from "firebase/firestore";
 
 const db = getFirestore(app);
@@ -69,13 +69,24 @@ export const useStore = defineStore("database", {
       }
     },
     async addPray(owner: string, description: string) {
-      const querySnapshot = await addDoc(collection(db, "users"), {
-        archived: false,
-        date: Timestamp.now(),
-        description: description,
-        prayers: [],
-        owner,
-      });
+      try {
+        await addDoc(collection(db, "prayers"), {
+          archived: false,
+          date: Timestamp.now(),
+          description: description,
+          prayers: [],
+          owner: doc(db, "users/" + owner),
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    async addUser(userName: string) {
+      try {
+        await addDoc(collection(db, "users"), { name: userName });
+      } catch (err) {
+        console.error(err);
+      }
     },
   },
 });

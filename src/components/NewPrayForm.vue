@@ -1,7 +1,12 @@
 <template>
   <form @submit.prevent="simulateSubmit" class="custom-flex">
-    <q-select v-model="user" :options="options" label="Standard" />
-    <!-- <q-input v-model="user" type="text" color="teal" label="Imię i nazwisko:" /> -->
+    <q-select
+      v-model="user"
+      :options="options"
+      emit-value
+      map-options
+      label="Standard"
+    />
     <q-input
       v-model="description"
       type="textarea"
@@ -24,10 +29,11 @@
 <script lang="ts" setup>
 import { useStore } from "@/store/index";
 import { computed } from "@vue/reactivity";
-import { ref } from "vue";
+import { ref, defineEmits } from "vue";
 
 const store = useStore();
 store.getListOfUsers();
+const emit = defineEmits(["submit"]);
 
 const options = computed(() => {
   type Options = { label: string; value: string };
@@ -42,9 +48,13 @@ const description = ref("");
 const user = ref("");
 const submitting = ref(false);
 
-const simulateSubmit = () => {
+const simulateSubmit = async () => {
   submitting.value = true;
 
+  await store.addPray(user.value, description.value);
+  description.value = "";
+  user.value = "";
+  emit("submit");
   submitting.value = false;
 };
 </script>

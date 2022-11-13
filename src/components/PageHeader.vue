@@ -2,7 +2,7 @@
   <Teleport to="body">
     <BasicPopup v-model="toolbar" title="Ddaja modlitwę">
       <template #default>
-        <NewPrayForm />
+        <NewPrayForm @submit="() => (toolbar = false)" />
       </template>
     </BasicPopup>
   </Teleport>
