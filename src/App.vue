@@ -4,17 +4,13 @@
       <PageHeader />
     </q-header>
 
-    <q-page-container
-      class="row wrap justify-evenly"
-      style="gap: 1rem"
-      v-if="data[0]"
-    >
+    <q-page-container class="row wrap q-mt-sm q-pa-xs" v-if="data[0]">
       <PrayBox
-        class="col-xs-12 col-md-5 col-lg-3"
         v-for="rec in store.data"
         :key="rec.id"
         v-bind="rec"
         :owner="rec.owner?.name || ''"
+        @remove-doc="() => store.removePray(rec.id)"
       />
     </q-page-container>
   </q-layout>
@@ -33,6 +29,12 @@ const data = computed(() => store.data);
 </script>
 <style lang="scss">
 #app {
-  margin: 1.5rem;
+  box-sizing: border-box;
+}
+.row {
+  gap: 0.6rem;
+  @media (width > $tablet) {
+    gap: 1rem;
+  }
 }
 </style>

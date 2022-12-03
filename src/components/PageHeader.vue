@@ -15,7 +15,7 @@
       Kościół w Działdowie
     </q-toolbar-title>
 
-    <q-btn round color="info" @click="toolbar = true">
+    <q-btn round color="info" @click="()=> {te(); toolbar = true}">
       <span style="font-size: 1.3rem">&plus;</span></q-btn
     >
   </q-toolbar>
@@ -24,6 +24,8 @@
 import { ref } from "vue";
 import BasicPopup from "./BasicPopup.vue";
 import NewPrayForm from "./NewPrayForm.vue";
-
+const te = ()=>{
+  navigator.clipboard.writeText('Text to get copied')
+}
 const toolbar = ref(false);
 </script>

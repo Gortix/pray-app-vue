@@ -10,6 +10,7 @@ import {
   Timestamp,
   addDoc,
   doc,
+  deleteDoc,
 } from "firebase/firestore";
 
 const db = getFirestore(app);
@@ -87,6 +88,10 @@ export const useStore = defineStore("database", {
       } catch (err) {
         console.error(err);
       }
+    },
+    async removePray(prayID: string) {
+      const resp = await deleteDoc(doc(db, `prayers/${prayID}`));
+      console.log(resp);
     },
   },
 });
