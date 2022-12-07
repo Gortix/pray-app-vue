@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "pray-app-dzialodowo",
+    "site": "pray-app-dzialodow",
     "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
   }

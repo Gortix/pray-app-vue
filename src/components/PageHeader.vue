@@ -24,8 +24,12 @@
 import { ref } from "vue";
 import BasicPopup from "./BasicPopup.vue";
 import NewPrayForm from "./NewPrayForm.vue";
+import {useAuth} from "../store/auth"
+
+const auth = useAuth();
 const te = ()=>{
-  navigator.clipboard.writeText('Text to get copied')
+  auth.authorize();
+  // navigator.clipboard.writeText('Text to get copied')
 }
 const toolbar = ref(false);
 </script>
