@@ -1,6 +1,11 @@
 import app from "@/@firebase";
 
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {
+  getAuth,
+  signInWithPopup,
+  signOut,
+  GoogleAuthProvider,
+} from "firebase/auth";
 import { defineStore } from "pinia";
 
 const provider = new GoogleAuthProvider();
@@ -10,6 +15,7 @@ export const useAuth = defineStore("auth", {
     return {
       user: {},
       token: "",
+      loggedIn: false,
     };
   },
   actions: {
@@ -20,9 +26,11 @@ export const useAuth = defineStore("auth", {
         const result = await signInWithPopup(auth, provider);
         const credential = GoogleAuthProvider.credentialFromResult(result);
         this.token = credential?.accessToken || "";
+        if(credential?.accessToken){
+          this.loggedIn = true;
+        }
         // The signed-in user info.
         // this.user = await result;
-        console.log(this.token);
       } catch (error: any) {
         // Handle Errors here.
         const errorCode = error.code;
@@ -33,6 +41,10 @@ export const useAuth = defineStore("auth", {
         const credential = GoogleAuthProvider.credentialFromError(error);
         // ...
       }
+    },
+    async singOut() {
+      const auth = getAuth();
+      await signOut(auth);
     },
   },
 });
