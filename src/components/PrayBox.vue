@@ -14,7 +14,8 @@
     </q-card-section>
 
     <q-card-actions class="row justify-end">
-      <q-btn flat round color="light-blue" icon="fa-solid fa-hands-praying" />
+      <q-btn flat disable />
+      <!-- <q-btn flat round color="light-blue" icon="fa-solid fa-hands-praying" /> -->
     </q-card-actions>
     <q-menu touch-position context-menu>
       <q-list style="min-width: 100px">
@@ -28,7 +29,6 @@
 <script setup lang="ts">
 import { Timestamp } from "@firebase/firestore";
 import { computed } from "@vue/reactivity";
-import { useStore } from "@/store/index";
 import { defineProps, defineEmits } from "vue";
 
 const emits = defineEmits(["removeDoc"]);
