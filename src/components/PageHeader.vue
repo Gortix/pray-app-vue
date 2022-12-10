@@ -7,15 +7,13 @@
       Kościół w Działdowie
     </q-toolbar-title>
 
-    <q-btn round  flat @click="auth.singOut" >
-     <q-icon size="2.5rem" color="blue-grey-1"  name="o_account_circle"/></q-btn
-    >
+    <q-btn round flat @click="auth.singOut">
+      <q-icon size="2.5rem" color="blue-grey-1" name="o_account_circle" />
+    </q-btn>
   </q-toolbar>
-  
-
 </template>
 <script lang="ts" setup>
-import { useAuth } from '@/store/auth';
+import { useAuth } from "@/store/auth";
 
-const auth = useAuth()
+const auth = useAuth();
 </script>

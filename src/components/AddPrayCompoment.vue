@@ -7,8 +7,8 @@
     </BasicPopup>
   </Teleport>
   <q-btn class="btn-fixed" round color="info" @click="() => (toolbar = true)">
-    <span style="font-size: 1.3rem">&plus;</span></q-btn
-  >
+    <span style="font-size: 1.3rem">&plus;</span>
+  </q-btn>
 </template>
 <script setup lang="ts">
 import { ref } from "vue";
