@@ -1,12 +1,5 @@
 <template>
-  <q-btn
-    class="fixed-center"
-    size="lg"
-    v-if="!auth.loggedIn"
-    @click="authAndRefresh"
-    color="primary"
-    label="Zaloguj się do aplikacji modlitewnej"
-  />
+  <LoginPage v-if="!auth.loggedIn" @login="authAndRefresh" />
   <template v-else>
     <q-layout view="hHh lpR fFf">
       <q-header elevated class="bg-primary text-white" height-hint="98">
@@ -22,18 +15,25 @@
           @remove-doc="() => store.removePray(rec.id)"
         />
       </q-page-container>
+      <AddPrayCompoment />
     </q-layout>
   </template>
 </template>
 
 <script setup lang="ts">
 import PrayBox from "./components/PrayBox.vue";
+import AddPrayCompoment from "./components/AddPrayCompoment.vue";
 import { useStore } from "@/store/index";
-import { computed } from "@vue/runtime-core";
+import { computed, watch } from "vue";
 import PageHeader from "./components/PageHeader.vue";
 import { useAuth } from "./store/auth";
+import LoginPage from "./components/LoginPage.vue";
+import { auth as mainAuthObject } from "./@firebase/index";
 
 const auth = useAuth();
+const store = useStore();
+
+const data = computed(() => store.data);
 
 const authAndRefresh = async () => {
   await auth.authorize();
@@ -42,15 +42,24 @@ const authAndRefresh = async () => {
   // navigator.clipboard.writeText('Text to get copied')
 };
 
-const store = useStore();
-store.getListOfPray();
+mainAuthObject.onAuthStateChanged((user) => {
+  auth.loggedIn = user != null;
+});
 
-const data = computed(() => store.data);
+watch(
+  () => auth.loggedIn,
+  (val) => {
+    if (val) {
+      store.getListOfPray();
+    }
+  }
+);
 </script>
 <style lang="scss">
 #app {
   box-sizing: border-box;
 }
+
 .row {
   gap: 0.6rem;
   @media (width > $tablet) {

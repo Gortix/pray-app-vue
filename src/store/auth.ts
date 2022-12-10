@@ -1,32 +1,30 @@
-import app from "@/@firebase";
+import { auth } from "@/@firebase";
 
 import {
-  getAuth,
   signInWithPopup,
   signOut,
   GoogleAuthProvider,
+  setPersistence,
+  browserLocalPersistence,
 } from "firebase/auth";
 import { defineStore } from "pinia";
 
 const provider = new GoogleAuthProvider();
 
+setPersistence(auth, browserLocalPersistence);
+
 export const useAuth = defineStore("auth", {
   state: () => {
     return {
-      user: {},
-      token: "",
       loggedIn: false,
     };
   },
   actions: {
     async authorize() {
-      const auth = getAuth(app);
-      auth.languageCode = "pl";
       try {
         const result = await signInWithPopup(auth, provider);
         const credential = GoogleAuthProvider.credentialFromResult(result);
-        this.token = credential?.accessToken || "";
-        if(credential?.accessToken){
+        if (credential?.accessToken) {
           this.loggedIn = true;
         }
         // The signed-in user info.
@@ -43,7 +41,6 @@ export const useAuth = defineStore("auth", {
       }
     },
     async singOut() {
-      const auth = getAuth();
       await signOut(auth);
     },
   },

@@ -1,12 +1,4 @@
 <template>
-  <Teleport to="body">
-    <BasicPopup v-model="toolbar" title="Ddaja modlitwę">
-      <template #default>
-        <NewPrayForm @submit="() => (toolbar = false)" />
-      </template>
-    </BasicPopup>
-  </Teleport>
-
   <q-toolbar>
     <q-toolbar-title>
       <q-avatar>
@@ -15,15 +7,15 @@
       Kościół w Działdowie
     </q-toolbar-title>
 
-    <q-btn round color="info" @click="()=> toolbar = true">
-      <span style="font-size: 1.3rem">&plus;</span></q-btn
+    <q-btn round  flat @click="auth.singOut" >
+     <q-icon size="2.5rem" color="blue-grey-1"  name="o_account_circle"/></q-btn
     >
   </q-toolbar>
+  
+
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import BasicPopup from "./BasicPopup.vue";
-import NewPrayForm from "./NewPrayForm.vue";
+import { useAuth } from '@/store/auth';
 
-const toolbar = ref(false);
+const auth = useAuth()
 </script>
