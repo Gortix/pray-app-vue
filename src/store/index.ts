@@ -1,12 +1,13 @@
 import { Pray, User } from "./../@types/database";
 import { defineStore } from "pinia";
-import app from "@/@firebase";
+import app, { auth } from "@/@firebase";
 import {
   collection,
   getDocs,
   getFirestore,
   doc as firebaseDoc,
   getDoc,
+  updateDoc,
   Timestamp,
   addDoc,
   doc,
@@ -103,6 +104,22 @@ export const useStore = defineStore("database", {
 
       const rmIndex = this.data.findIndex((rec) => rec.id == prayID);
       this.data.splice(rmIndex, 1);
+    },
+    async getUserProfile() {
+      const resp = await getDoc(
+        firebaseDoc(db, `profiles/${auth.currentUser?.uid}`)
+      );
+      return resp.data()?.name;
+    },
+    async updateUserProfile(name:string) {
+      try{
+      const docRef = firebaseDoc(db, `profiles/${auth.currentUser?.uid}`);
+      const resp = updateDoc(docRef, { name });
+      console.log(resp);
+      }catch(err){
+        console.log(err);
+        
+      }
     },
   },
 });

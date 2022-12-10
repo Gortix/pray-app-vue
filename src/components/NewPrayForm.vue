@@ -10,7 +10,6 @@
     <q-input
       v-model="description"
       type="textarea"
-      color="teal"
       label="Treść modlitwy:"
     />
     <q-btn
