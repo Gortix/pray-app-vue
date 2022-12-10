@@ -1,5 +1,5 @@
 <template>
-  <LoginPage v-if="!auth.loggedIn" @login="authAndRefresh" />
+  <LoginPage v-if="!auth.loggedIn" @login="auth.authorize" />
   <template v-else>
     <q-layout view="hHh lpR fFf">
       <q-header elevated class="bg-primary text-white" height-hint="98">
@@ -35,13 +35,7 @@ const store = useStore();
 
 const data = computed(() => store.data);
 
-const authAndRefresh = async () => {
-  await auth.authorize();
-  store.getListOfPray();
-
   // navigator.clipboard.writeText('Text to get copied')
-};
-
 mainAuthObject.onAuthStateChanged((user) => {
   auth.loggedIn = user != null;
 });
