@@ -11,6 +11,8 @@ import {
   addDoc,
   doc,
   deleteDoc,
+  DocumentData,
+  DocumentSnapshot,
 } from "firebase/firestore";
 
 const db = getFirestore(app);
@@ -18,6 +20,20 @@ const db = getFirestore(app);
 export const getRelatedDoc = async (path: string) => {
   const doc = await getDoc(firebaseDoc(db, path));
   return { ...doc.data(), id: doc.id };
+};
+
+const createPrayObject = async (document: DocumentSnapshot<DocumentData>) => {
+  const docData = document.data();
+  const owner = (await getRelatedDoc(docData?.owner.path)) as User;
+
+  return {
+    archived: docData?.archived,
+    date: docData?.date,
+    description: docData?.description,
+    prayers: [],
+    id: document.id,
+    owner,
+  };
 };
 
 // useStore could be anything like useUser, useCart
@@ -37,17 +53,7 @@ export const useStore = defineStore("database", {
         const querySnapshot = await getDocs(collection(db, "prayers"));
 
         for (const rec of querySnapshot.docs) {
-          const docData = rec.data();
-          const owner = (await getRelatedDoc(docData.owner.path)) as User;
-
-          prayList.push({
-            archived: docData.archived,
-            date: docData.date,
-            description: docData.description,
-            prayers: [],
-            id: rec.id,
-            owner,
-          });
+          prayList.push(await createPrayObject(rec));
         }
         this.data = prayList;
       } catch (err) {
@@ -57,7 +63,7 @@ export const useStore = defineStore("database", {
     async getListOfUsers() {
       const listOfUser: User[] = [];
       try {
-        const querySnapshot = await getDocs(collection(db, "users"));
+        const querySnapshot = await getDocs(collection(db, "profiles"));
 
         for (const rec of querySnapshot.docs) {
           const databaseUser = rec.data();
@@ -71,27 +77,32 @@ export const useStore = defineStore("database", {
     },
     async addPray(owner: string, description: string) {
       try {
-        await addDoc(collection(db, "prayers"), {
+        const resp = await addDoc(collection(db, "prayers"), {
           archived: false,
           date: Timestamp.now(),
           description: description,
           prayers: [],
-          owner: doc(db, "users/" + owner),
+          owner: doc(db, "profiles/" + owner),
         });
+
+        const newPray = await getDoc(resp);
+        this.data.push(await createPrayObject(newPray));
       } catch (err) {
         console.error(err);
       }
     },
     async addUser(userName: string) {
       try {
-        await addDoc(collection(db, "users"), { name: userName });
+        await addDoc(collection(db, "profiles"), { name: userName });
       } catch (err) {
         console.error(err);
       }
     },
     async removePray(prayID: string) {
-      const resp = await deleteDoc(doc(db, `prayers/${prayID}`));
-      console.log(resp);
+      await deleteDoc(doc(db, `prayers/${prayID}`));
+
+      const rmIndex = this.data.findIndex((rec) => rec.id == prayID);
+      this.data.splice(rmIndex, 1);
     },
   },
 });
