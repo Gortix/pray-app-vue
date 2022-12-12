@@ -18,10 +18,10 @@
 </template>
 <script setup lang="ts">
 import { onMounted, defineProps, defineEmits, computed, ref } from "vue";
-import { useStore } from "@/store/index";
-import BasicPopup from "./BasicPopup.vue";
+import BasicPopup from "../BasicPopup.vue";
+import { useAuth } from "@/store/auth";
 
-const store = useStore();
+const auth = useAuth();
 
 const props = defineProps({ modelValue: Boolean, title: String });
 const emit = defineEmits<{
@@ -41,12 +41,15 @@ const editProfile = computed({
 });
 
 onMounted(async () => {
-  userName.value = await store.getUserProfile();
+  userName.value = auth.profile.name;
 });
 
 const submit = async () => {
   submitting.value = true;
-  store.updateUserProfile(userName.value);
+  if (userName.value != auth.profile.name) {
+    await auth.updateUserProfile(userName.value);
+    editProfile.value =false;
+  }
   submitting.value = false;
 };
 </script>

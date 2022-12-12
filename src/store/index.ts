@@ -1,36 +1,44 @@
-import { Pray, User } from "./../@types/database";
+import { errorLog } from '@/functions/helpers';
+import { Pray, Profile } from "./../@types/database";
 import { defineStore } from "pinia";
 import app, { auth } from "@/@firebase";
 import {
   collection,
   getDocs,
   getFirestore,
-  doc as firebaseDoc,
   getDoc,
   updateDoc,
   Timestamp,
   addDoc,
   doc,
   deleteDoc,
-  DocumentData,
   DocumentSnapshot,
+  CollectionReference,
+  DocumentReference,
 } from "firebase/firestore";
 
-const db = getFirestore(app);
+interface profilesMap {
+  [key: string]: Profile;
+}
+
+export const db = getFirestore(app);
 
 export const getRelatedDoc = async (path: string) => {
-  const doc = await getDoc(firebaseDoc(db, path));
-  return { ...doc.data(), id: doc.id };
+  const getDocResponse = await getDoc(doc(db, path));
+  return { ...getDocResponse.data(), id: getDocResponse.id };
 };
 
-const createPrayObject = async (document: DocumentSnapshot<DocumentData>) => {
-  const docData = document.data();
-  const owner = (await getRelatedDoc(docData?.owner.path)) as User;
+const createPrayObject = async (
+  document: DocumentSnapshot<Pray>,
+  users: profilesMap
+) => {
+  const docData = document.data() as Pray;
+  const owner = users[docData.owner.id];
 
   return {
-    archived: docData?.archived,
-    date: docData?.date,
-    description: docData?.description,
+    archived: docData?.archived || true,
+    date: docData?.date || Timestamp.now(),
+    description: docData?.description || "",
     prayers: [],
     id: document.id,
     owner,
@@ -43,7 +51,7 @@ export const useStore = defineStore("database", {
   state: () => {
     return {
       data: [] as Pray[],
-      users: [] as User[],
+      users: {} as profilesMap,
     };
   },
   actions: {
@@ -51,10 +59,12 @@ export const useStore = defineStore("database", {
       const prayList: Pray[] = [];
 
       try {
-        const querySnapshot = await getDocs(collection(db, "prayers"));
+        const querySnapshot = await getDocs(
+          collection(db, "prayers") as CollectionReference<Pray>
+        );
 
         for (const rec of querySnapshot.docs) {
-          prayList.push(await createPrayObject(rec));
+          prayList.push(await createPrayObject(rec, this.users));
         }
         this.data = prayList;
       } catch (err) {
@@ -62,32 +72,41 @@ export const useStore = defineStore("database", {
       }
     },
     async getListOfUsers() {
-      const listOfUser: User[] = [];
       try {
-        const querySnapshot = await getDocs(collection(db, "profiles"));
+        const querySnapshot = await getDocs<Profile>(
+          collection(db, "profiles") as CollectionReference<Profile>
+        );
 
         for (const rec of querySnapshot.docs) {
           const databaseUser = rec.data();
-
-          listOfUser.push({ id: rec.id, name: databaseUser.name });
+          this.users[rec.id] = {
+            id: rec.id,
+            name: databaseUser.name,
+          } as Profile;
         }
-        this.users = listOfUser;
       } catch (err) {
         console.error(err);
       }
     },
     async addPray(owner: string, description: string) {
-      try {
-        const resp = await addDoc(collection(db, "prayers"), {
-          archived: false,
-          date: Timestamp.now(),
-          description: description,
-          prayers: [],
-          owner: doc(db, "profiles/" + owner),
-        });
+      const prayObj: Pray = {
+        archived: false,
+        date: Timestamp.now(),
+        description: description,
+        prayers: [],
+        // eslint-disable-next-line
+        //@ts-ignore
+        owner: doc(db, "profiles/" + owner) as DocumentReference<Profile>,
+      };
 
-        const newPray = await getDoc(resp);
-        this.data.push(await createPrayObject(newPray));
+      try {
+        const resp = await addDoc(
+          collection(db, "prayers") as CollectionReference<Pray>,
+          prayObj
+        );
+
+        const newPray = await getDoc<Pray>(resp);
+        this.data.push(await createPrayObject(newPray, this.users));
       } catch (err) {
         console.error(err);
       }
@@ -106,19 +125,15 @@ export const useStore = defineStore("database", {
       this.data.splice(rmIndex, 1);
     },
     async getUserProfile() {
-      const resp = await getDoc(
-        firebaseDoc(db, `profiles/${auth.currentUser?.uid}`)
-      );
+      const resp = await getDoc(doc(db, `profiles/${auth.currentUser?.uid}`));
       return resp.data()?.name;
     },
-    async updateUserProfile(name:string) {
-      try{
-      const docRef = firebaseDoc(db, `profiles/${auth.currentUser?.uid}`);
-      const resp = updateDoc(docRef, { name });
-      console.log(resp);
-      }catch(err){
-        console.log(err);
-        
+    async updateUserProfile(name: string) {
+      try {
+        const docRef = doc(db, `profiles/${auth.currentUser?.uid}`);
+        const resp = updateDoc(docRef, { name });
+      } catch (err) {
+        errorLog(err);
       }
     },
   },
