@@ -57,13 +57,14 @@ export const useAuth = defineStore("auth", {
           `users/${auth.currentUser?.uid}`
         ) as DocumentReference<User>;
         const getUserResponse = await getDoc(userRef);
+        
         return getUserResponse.data()?.profile.id;
       } catch (err) {
         errorLog(err);
       }
     },
     async updateUserProfile(name: string) {
-      try {        
+      try {
         const docRef = doc(db, `profiles/${this.profile.id}`);
         try {
           await updateDoc(docRef, { name });
