@@ -1,6 +1,6 @@
 <template>
   <LoginPage v-if="!auth.loggedIn" @login="auth.authorize" />
-  <template v-else>
+  <Suspense v-else>
     <q-layout view="hHh lpR fFf">
       <q-header elevated class="bg-primary text-white" height-hint="98">
         <PageHeader />
@@ -11,20 +11,20 @@
           v-for="rec in store.data"
           :key="rec.id"
           v-bind="rec"
-          :owner="rec.owner?.name || ''"
-          @remove-doc="() => store.removePray(rec.id)"
+          :owner="rec.owner.name"
+          @remove-doc="() => store.removePray(rec.id as string)"
         />
       </q-page-container>
       <AddPrayCompoment />
     </q-layout>
-  </template>
+  </Suspense>
 </template>
 
 <script setup lang="ts">
 import PrayBox from "./components/PrayBox.vue";
 import AddPrayCompoment from "./components/AddPrayCompoment.vue";
 import { useStore } from "@/store/index";
-import { computed, watch } from "vue";
+import { computed } from "vue";
 import PageHeader from "./components/PageHeader.vue";
 import { useAuth } from "./store/auth";
 import LoginPage from "./components/LoginPage.vue";
@@ -35,19 +35,18 @@ const store = useStore();
 
 const data = computed(() => store.data);
 
-  // navigator.clipboard.writeText('Text to get copied')
-mainAuthObject.onAuthStateChanged((user) => {
+// navigator.clipboard.writeText('Text to get copied')
+mainAuthObject.onAuthStateChanged(async (user) => {
   auth.loggedIn = user != null;
-});
+  await store.getListOfUsers();
+  await store.getListOfPray();
 
-watch(
-  () => auth.loggedIn,
-  (val) => {
-    if (val) {
-      store.getListOfPray();
-    }
+  const profileId = (await auth.getUserProfileID()) as string;
+  const userProfile = store.users[profileId];
+  if (userProfile) {
+    auth.profile = userProfile;
   }
-);
+});
 </script>
 <style lang="scss">
 #app {
