@@ -54,6 +54,11 @@ export const useStore = defineStore("database", {
       users: {} as profilesMap,
     };
   },
+  getters:{
+    getSortedData(state){
+      return state.data.sort((current, previous)=>  previous.date.seconds - current.date.seconds)
+    }
+  },
   actions: {
     async getListOfPray() {
       const prayList: Pray[] = [];

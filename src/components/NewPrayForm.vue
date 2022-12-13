@@ -7,11 +7,7 @@
       map-options
       label="Standard"
     />
-    <q-input
-      v-model="description"
-      type="textarea"
-      label="Treść modlitwy:"
-    />
+    <q-input v-model="description" type="textarea" label="Treść modlitwy:" />
     <q-btn
       type="submit"
       :loading="submitting"
@@ -37,9 +33,12 @@ const emit = defineEmits(["submit"]);
 const options = computed(() => {
   type Options = { label: string; value: string };
   const listOfUsers: Options[] = [];
-  for (const user of store.users) {
-    listOfUsers.push({ label: user.name, value: user.id });
+  const users = store.users;
+
+  for (const k of Object.keys(users)) {
+    listOfUsers.push({ label: users[k].name, value: users[k].id });
   }
+  
   return listOfUsers;
 });
 

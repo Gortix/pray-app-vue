@@ -1,7 +1,7 @@
 <template>
   <q-card class="card-column">
     <q-card-section class="row justify-between q-pb-sm text-blue-grey-5">
-      <span>
+      <span :class="{ 'my-pray': myPray }">
         {{ owner }}
       </span>
       <span>
@@ -13,17 +13,18 @@
       {{ description }}
     </q-card-section>
 
-    <q-card-actions class="row justify-end">
-      <q-btn flat disable />
+    <q-card-actions class="q-pb-md q-pt-xs">
+      <q-badge v-if="isLast7Days" outline color="green-13" label="Nowa" />
+      <q-badge v-else  outline color="white" label="&nbsp;" />
       <!-- <q-btn flat round color="light-blue" icon="fa-solid fa-hands-praying" /> -->
     </q-card-actions>
-    <q-menu touch-position context-menu>
+    <!-- <q-menu touch-position context-menu>
       <q-list style="min-width: 100px">
         <q-item clickable v-close-popup @click="removePrayHandler">
           <q-item-section>Usuń</q-item-section>
         </q-item>
       </q-list>
-    </q-menu>
+    </q-menu> -->
   </q-card>
 </template>
 <script setup lang="ts">
@@ -40,14 +41,25 @@ const props = defineProps({
   prayers: Array,
   showOwner: Boolean,
   archived: Boolean,
+  myPray: Boolean,
 });
 
 const convertedDate = computed(() => props.date?.toDate().toLocaleDateString());
+const isLast7Days = computed(() => {
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const createdDate = props.date?.toDate() || Date.now();
+
+  return weekAgo <= createdDate;
+});
+
 const removePrayHandler = () => {
   emits("removeDoc");
 };
 </script>
 <style lang="scss" scoped>
+.my-pray {
+  color: $light-blue-13;
+}
 .card-column {
   flex-grow: 1;
   flex-basis: 100%;

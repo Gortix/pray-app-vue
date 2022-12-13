@@ -13,6 +13,7 @@
           v-bind="rec"
           :owner="rec.owner.name"
           @remove-doc="() => store.removePray(rec.id as string)"
+          :my-pray="rec.owner.id == auth.profile.id"
         />
       </q-page-container>
       <AddPrayCompoment />
@@ -33,7 +34,7 @@ import { auth as mainAuthObject } from "./@firebase/index";
 const auth = useAuth();
 const store = useStore();
 
-const data = computed(() => store.data);
+const data = computed(() => store.getSortedData);
 
 // navigator.clipboard.writeText('Text to get copied')
 mainAuthObject.onAuthStateChanged(async (user) => {
@@ -49,7 +50,7 @@ mainAuthObject.onAuthStateChanged(async (user) => {
 });
 </script>
 <style lang="scss">
-#app {
+*{
   box-sizing: border-box;
 }
 
