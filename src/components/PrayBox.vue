@@ -13,25 +13,18 @@
       {{ description }}
     </q-card-section>
 
-    <q-card-actions class="row">
-      <q-icon
-        v-if="isLast7Days"
-        class="se"
-        size="1.5rem"
-        color="green-13"
-        name="o_new_releases"
-      />
-      <q-btn flat disable style="cursor:none" />
-
+    <q-card-actions class="q-pb-md q-pt-xs">
+      <q-badge v-if="isLast7Days" outline color="green-13" label="Nowa" />
+      <q-badge v-else  outline color="white" label="&nbsp;" />
       <!-- <q-btn flat round color="light-blue" icon="fa-solid fa-hands-praying" /> -->
     </q-card-actions>
-    <q-menu touch-position context-menu>
+    <!-- <q-menu touch-position context-menu>
       <q-list style="min-width: 100px">
         <q-item clickable v-close-popup @click="removePrayHandler">
           <q-item-section>Usuń</q-item-section>
         </q-item>
       </q-list>
-    </q-menu>
+    </q-menu> -->
   </q-card>
 </template>
 <script setup lang="ts">

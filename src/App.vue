@@ -50,7 +50,7 @@ mainAuthObject.onAuthStateChanged(async (user) => {
 });
 </script>
 <style lang="scss">
-#app {
+*{
   box-sizing: border-box;
 }
 
