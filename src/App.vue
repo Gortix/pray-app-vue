@@ -26,11 +26,14 @@
 import PrayBox from "./components/PrayBox.vue";
 import AddPrayCompoment from "./components/AddPrayCompoment.vue";
 import { useStore } from "@/store/index";
+import { Details } from "@/@types/quasar";
 import { computed, ref } from "vue";
 import PageHeader from "./components/PageHeader.vue";
 import { useAuth } from "./store/auth";
 import LoginPage from "./components/LoginPage.vue";
 import { auth as mainAuthObject } from "./@firebase/index";
+
+
 
 const auth = useAuth();
 const store = useStore();
@@ -43,31 +46,17 @@ const isSelected = (recID: string) => {
   return selectedList.value.findIndex((el) => el == recID) >= 0;
 };
 
-interface Details {
-  evt: Event;
-  touch: boolean;
-  mouse: boolean;
-  position: { top: number; left: number };
-  duration: number;
-}
 const touchHoldHandler = (details: Details, recID: string) => {
-  console.log(details.evt);
-  const indexOfSelectedPray = selectedList.value.findIndex(
-    (element) => {
-      console.log(element);
-      
-      return element == recID}
-  );
-  console.log(indexOfSelectedPray);
+  details
+  const indexOfSelectedPray = selectedList.value.findIndex((element) => {
+    return element == recID;
+  });
 
   if (indexOfSelectedPray >= 0) {
     selectedList.value.splice(indexOfSelectedPray, 1);
     return;
   }
   selectedList.value.push(recID);
-  console.log(selectedList.value);
-
-  // checkedPrays.value[recID] = !checkedPrays.value[recID];
 };
 
 // navigator.clipboard.writeText('Text to get copied')

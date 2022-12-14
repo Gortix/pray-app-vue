@@ -1,5 +1,5 @@
 <template>
-  <q-card class="card-column" :class="{ 'selected': selected }">
+  <q-card class="card-column" :class="{ selected: selected }">
     <q-card-section class="row justify-between q-pb-sm text-blue-grey-5">
       <span :class="{ 'my-pray': myPray }">
         {{ owner }}
@@ -63,11 +63,14 @@ const removePrayHandler = () => {
 }
 
 .selected {
-  border: 2px solid $teal-14;
+  border: 2px solid $teal-14 !important;
 }
 .card-column {
   flex-grow: 1;
   flex-basis: 100%;
+  border: 2px solid white;
+  transition: all 0.3s;
+
   @media (width > $tablet) {
     flex-basis: 45%;
   }
@@ -79,9 +82,7 @@ const removePrayHandler = () => {
   &:hover {
     background-color: hsl(180, 80%, 98%);
     transform: scale(1.01) translate(-1px, -1px);
+    box-shadow: $shadow-3;
   }
-
-  backface-visibility: hidden;
-  transition: all 0.1s;
 }
 </style>
