@@ -2,10 +2,20 @@
   <LoginPage v-if="!auth.loggedIn" @login="auth.authorize" />
   <Suspense v-else>
     <q-layout view="hHh lpR fFf">
-      <q-header elevated class="bg-primary text-white" height-hint="98">
-        <PageHeader />
+      <q-header class="bg-white text-white" height-hint="98">
+        <PageHeader class="bg-primary text-white" style="z-index: 100" />
+        <Transition>
+          <ControlPanel
+            class="absolute absolute-top full-height"
+            v-if="renderPanel"
+            style="z-index: 100000"
+          />
+        </Transition>
       </q-header>
-      <q-page-container class="row wrap q-mt-sm q-pa-xs" v-if="data[0]">
+      <q-page-container
+        class="row wrap q-mt-sm q-pa-xs custom-gap"
+        v-if="data[0]"
+      >
         <PrayBox
           v-touch-hold.mouse="(details: Details)=>touchHoldHandler(details, rec.id as string)"
           v-for="rec in store.data"
@@ -32,11 +42,14 @@ import PageHeader from "./components/PageHeader.vue";
 import { useAuth } from "./store/auth";
 import LoginPage from "./components/LoginPage.vue";
 import { auth as mainAuthObject } from "./@firebase/index";
+import ControlPanel from "./components/ControlPanel.vue";
 
 
 
 const auth = useAuth();
 const store = useStore();
+
+const renderPanel = ref(true);
 
 const data = computed(() => store.getSortedData);
 
@@ -77,10 +90,22 @@ mainAuthObject.onAuthStateChanged(async (user) => {
   box-sizing: border-box;
 }
 
-.row {
+.custom-gap {
   gap: 0.6rem;
   @media (width > $tablet) {
     gap: 1rem;
   }
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.5s linear;
+}
+
+.v-enter-from,
+.v-leave-to {
+  transform: scaleX(0) translateX(-50%);
+  transform-origin: left top;
+  // perspective: 1000;
 }
 </style>
