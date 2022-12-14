@@ -26,7 +26,6 @@
           :my-pray="rec.owner.id == auth.profile.id"
         />
       </q-page-container>
-      <button @click="() => (renderPanel = !renderPanel)">hide</button>
       <AddPrayCompoment />
     </q-layout>
   </Suspense>
