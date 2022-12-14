@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import BasicPopup from "./BasicPopup.vue";
-import NewPrayForm from "./NewPrayForm.vue";
+import NewPrayForm from "./PrayForm.vue";
 
 const toolbar = ref(false);
 </script>

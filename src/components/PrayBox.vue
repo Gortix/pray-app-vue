@@ -1,5 +1,5 @@
 <template>
-  <q-card class="card-column">
+  <q-card class="card-column" :class="{ selected: selected }">
     <q-card-section class="row justify-between q-pb-sm text-blue-grey-5">
       <span :class="{ 'my-pray': myPray }">
         {{ owner }}
@@ -15,7 +15,7 @@
 
     <q-card-actions class="q-pb-md q-pt-xs">
       <q-badge v-if="isLast7Days" outline color="green-13" label="Nowa" />
-      <q-badge v-else  outline color="white" label="&nbsp;" />
+      <q-badge v-else outline color="white" label="&nbsp;" />
       <!-- <q-btn flat round color="light-blue" icon="fa-solid fa-hands-praying" /> -->
     </q-card-actions>
     <!-- <q-menu touch-position context-menu>
@@ -42,6 +42,7 @@ const props = defineProps({
   showOwner: Boolean,
   archived: Boolean,
   myPray: Boolean,
+  selected: { type: Boolean, default: false },
 });
 
 const convertedDate = computed(() => props.date?.toDate().toLocaleDateString());
@@ -60,9 +61,16 @@ const removePrayHandler = () => {
 .my-pray {
   color: $light-blue-13;
 }
+
+.selected {
+  border: 2px solid $teal-14 !important;
+}
 .card-column {
   flex-grow: 1;
   flex-basis: 100%;
+  border: 2px solid white;
+  transition: all 0.3s;
+
   @media (width > $tablet) {
     flex-basis: 45%;
   }
@@ -73,10 +81,8 @@ const removePrayHandler = () => {
 
   &:hover {
     background-color: hsl(180, 80%, 98%);
-    transform: scale(1.01);
+    transform: scale(1.01) translate(-1px, -1px);
+    box-shadow: $shadow-3;
   }
-
-  backface-visibility: hidden;
-  transition: all 0.1s;
 }
 </style>
