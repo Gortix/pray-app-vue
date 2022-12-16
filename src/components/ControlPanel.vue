@@ -20,7 +20,7 @@ const selectAll = computed({
   get() {
     return props.selectAll;
   },
-  set(val) {
+  set(val) {   
     emit("update:select-all", val);
   },
 });

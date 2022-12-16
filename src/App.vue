@@ -10,7 +10,8 @@
             v-if="renderPanel"
             style="z-index: 100000"
             @copy="copySelectedPrays"
-            v-model:select-all="selectAll"
+            :select-all="selectAll"
+            @update:select-all="updateSelectAll"
           />
         </Transition>
       </q-header>
@@ -40,12 +41,14 @@ import PrayBox from "./components/PrayBox.vue";
 import AddPrayCompoment from "./components/AddPrayCompoment.vue";
 import { useStore } from "@/store/index";
 import { Details } from "@/@types/quasar";
+import { Pray } from "./@types/database";
 import { computed, ref, watch } from "vue";
 import PageHeader from "./components/PageHeader.vue";
 import { useAuth } from "./store/auth";
 import LoginPage from "./components/LoginPage.vue";
 import { auth as mainAuthObject } from "./@firebase/index";
 import ControlPanel from "./components/ControlPanel.vue";
+import { getOrCreateList } from "@/functions/helpers";
 
 const auth = useAuth();
 const store = useStore();
@@ -59,6 +62,14 @@ const selectedList = ref<string[]>([]);
 
 const isSelected = (recID: string) => {
   return selectedList.value.findIndex((el) => el == recID) >= 0;
+};
+
+const updateSelectAll = (val: boolean) => {
+  selectAll.value = val;
+
+  if (!val) {
+    selectedList.value = [];
+  }
 };
 
 const touchHoldHandler = (details: Details | null, recID: string) => {
@@ -75,16 +86,25 @@ const touchHoldHandler = (details: Details | null, recID: string) => {
 };
 
 const copySelectedPrays = () => {
-  let prayToCopy = [];
+  let prayToCopy = {} as { [key: string]: Pray[] };
   // eslint-disable-next-line
   //@ts-ignore
   const praysMap = data.value.map((el, i, obj) => (obj[el["id"]] = el), {});
+
   for (let recID in selectedList.value) {
     const currentPray = praysMap[recID];
-    prayToCopy.push(`${currentPray.owner.name}: ${currentPray.description}`);
+    const listOfPray = getOrCreateList(currentPray.owner.id, prayToCopy);
+    listOfPray.push(currentPray);
+  }
+  let txt = "";
+
+  for (let k of Object.keys(prayToCopy)) {
+    txt += `${prayToCopy[k][0].owner.name}: \n- ${prayToCopy[k]
+      .map((el) => el.description)
+      .join("\n- ")} \n`;
   }
 
-  navigator.clipboard.writeText(prayToCopy.join("\n"));
+  navigator.clipboard.writeText(txt);
 };
 
 watch(
@@ -102,9 +122,7 @@ watch(selectAll, (val) => {
         selectedList.value.push(id as string);
       }
     }
-  }else{
-    selectedList.value= [];
-  }
+  } 
 });
 
 // navigator.clipboard.writeText('Text to get copied')
