@@ -3,7 +3,11 @@
   <Suspense v-else>
     <q-layout view="hHh lpR fFf">
       <q-header class="bg-white text-white" height-hint="98">
-        <PageHeader class="bg-primary text-white" style="z-index: 100" />
+        <PageHeader
+          class="bg-primary text-white"
+          style="z-index: 100"
+          @filter-menu-action="showFilterMenu = !showFilterMenu"
+        />
         <Transition>
           <ControlPanel
             class="absolute absolute-top full-height"
@@ -12,13 +16,16 @@
           />
         </Transition>
       </q-header>
+      <q-drawer show-if-above v-model="showFilterMenu" side="right" bordered>
+        <FiltersMenu @selected="(func) => (userFilter = func)" />
+      </q-drawer>
       <q-page-container
         class="row wrap q-mt-sm q-pa-xs custom-gap"
         v-if="data[0]"
       >
         <PrayBox
           v-touch-hold.mouse="(details: Details)=>touchHoldHandler(details, rec.id as string)"
-          v-for="rec in store.data"
+          v-for="rec in data"
           :key="rec.id"
           v-bind="rec"
           :owner="rec.owner.name"
@@ -35,6 +42,7 @@
 <script setup lang="ts">
 import PrayBox from "./components/PrayBox.vue";
 import AddPrayCompoment from "./components/AddPrayCompoment.vue";
+import FiltersMenu from "./components/FiltersMenu.vue";
 import { useStore } from "@/store/index";
 import { Details } from "@/@types/quasar";
 import { computed, ref } from "vue";
@@ -43,15 +51,20 @@ import { useAuth } from "./store/auth";
 import LoginPage from "./components/LoginPage.vue";
 import { auth as mainAuthObject } from "./@firebase/index";
 import ControlPanel from "./components/ControlPanel.vue";
-
-
+import { Pray } from "./@types/database";
 
 const auth = useAuth();
 const store = useStore();
 
-const renderPanel = ref(true);
+const renderPanel = ref(false);
+const showFilterMenu = ref(false);
+// eslint-disable-next-line
+//@ts-ignore
+const userFilter = ref<(el: Pray) => any>((el) => el);
 
-const data = computed(() => store.getSortedData);
+// eslint-disable-next-line
+//@ts-ignore
+const data = computed(() => store.getSortedData.filter(userFilter.value));
 
 const selectedList = ref<string[]>([]);
 
@@ -60,7 +73,7 @@ const isSelected = (recID: string) => {
 };
 
 const touchHoldHandler = (details: Details, recID: string) => {
-  details
+  details;
   const indexOfSelectedPray = selectedList.value.findIndex((element) => {
     return element == recID;
   });
