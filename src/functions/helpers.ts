@@ -5,6 +5,7 @@ export const errorLog = (err: any) => {
 
 export const getDataSubDays = (days: number) => {
   return new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+}
 
 export const getOrCreateList = (id: string, object: { [key: string]: any[] }) => {
   let myList = object[id];
@@ -15,4 +16,4 @@ export const getOrCreateList = (id: string, object: { [key: string]: any[] }) =>
   }
 
   return myList;
-};
+}
