@@ -2,6 +2,7 @@ import { errorLog } from '@/functions/helpers';
 import { Pray, Profile } from "./../@types/database";
 import { defineStore } from "pinia";
 import app, { auth } from "@/@firebase";
+import {filters as declaredFilters} from "./filters";
 import {
   collection,
   getDocs,
@@ -52,11 +53,20 @@ export const useStore = defineStore("database", {
     return {
       data: [] as Pray[],
       users: {} as profilesMap,
+      filter: "all" as string
     };
   },
   getters:{
     getSortedData(state){
       return state.data.sort((current, previous)=>  previous.date.seconds - current.date.seconds)
+    },
+    getFilteredData(state){
+      // eslint-disable-next-line
+      //@ts-ignore
+      return state.getSortedData.filter(declaredFilters[state.filter]['filter']);
+    },
+    getFilters(){
+      return declaredFilters;
     }
   },
   actions: {
@@ -136,7 +146,7 @@ export const useStore = defineStore("database", {
     async updateUserProfile(name: string) {
       try {
         const docRef = doc(db, `profiles/${auth.currentUser?.uid}`);
-        const resp = updateDoc(docRef, { name });
+        updateDoc(docRef, { name });
       } catch (err) {
         errorLog(err);
       }

@@ -3,7 +3,11 @@
   <Suspense v-else>
     <q-layout view="hHh lpR fFf">
       <q-header class="bg-white text-white" height-hint="98">
-        <PageHeader class="bg-primary text-white" style="z-index: 100" />
+        <PageHeader
+          class="bg-primary text-white"
+          style="z-index: 100"
+          @filter-menu-action="showFilterMenu = !showFilterMenu"
+        />
         <Transition>
           <ControlPanel
             class="absolute absolute-top full-height"
@@ -15,14 +19,22 @@
           />
         </Transition>
       </q-header>
+      <q-drawer
+        :width="230"
+        v-model="showFilterMenu"
+        side="right"
+        bordered
+      >
+        <FiltersMenu />
+      </q-drawer>
       <q-page-container
         class="row wrap q-mt-sm q-pa-xs custom-gap"
         v-if="data[0]"
       >
         <PrayBox
           v-touch-hold.mouse="(details: Details)=>touchHoldHandler(details, rec.id as string)"
+          v-for="rec in data"
           @click="()=> {if(renderPanel) touchHoldHandler(null, rec.id as string)}"
-          v-for="rec in store.data"
           :key="rec.id"
           v-bind="rec"
           :owner="rec.owner.name"
@@ -39,6 +51,7 @@
 <script setup lang="ts">
 import PrayBox from "./components/PrayBox.vue";
 import AddPrayCompoment from "./components/AddPrayCompoment.vue";
+import FiltersMenu from "./components/FiltersMenu.vue";
 import { useStore } from "@/store/index";
 import { Details } from "@/@types/quasar";
 import { Pray } from "./@types/database";
@@ -54,15 +67,16 @@ const auth = useAuth();
 const store = useStore();
 
 const renderPanel = ref(false);
+const showFilterMenu = ref(false);
 const selectAll = ref(false);
-
-const data = computed(() => store.getSortedData);
-
 const selectedList = ref<string[]>([]);
+
+const data = computed(() => store.getFilteredData);
 
 const isSelected = (recID: string) => {
   return selectedList.value.findIndex((el) => el == recID) >= 0;
 };
+
 
 const updateSelectAll = (val: boolean) => {
   selectAll.value = val;
@@ -125,7 +139,6 @@ watch(selectAll, (val) => {
   } 
 });
 
-// navigator.clipboard.writeText('Text to get copied')
 mainAuthObject.onAuthStateChanged(async (user) => {
   auth.loggedIn = user != null;
   await store.getListOfUsers();
@@ -133,9 +146,13 @@ mainAuthObject.onAuthStateChanged(async (user) => {
 
   const profileId = (await auth.getUserProfileID()) as string;
   const userProfile = store.users[profileId];
+
   if (userProfile) {
     auth.profile = userProfile;
+    return;
   }
+
+  //TODO: Create profile for new user
 });
 </script>
 <style lang="scss">

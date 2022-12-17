@@ -28,6 +28,7 @@
   </q-card>
 </template>
 <script setup lang="ts">
+import { getDataSubDays } from "@/functions/helpers";
 import { Timestamp } from "@firebase/firestore";
 import { computed } from "@vue/reactivity";
 import { defineProps, defineEmits } from "vue";
@@ -47,7 +48,7 @@ const props = defineProps({
 
 const convertedDate = computed(() => props.date?.toDate().toLocaleDateString());
 const isLast7Days = computed(() => {
-  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const weekAgo = getDataSubDays(7);
   const createdDate = props.date?.toDate() || Date.now();
 
   return weekAgo <= createdDate;
