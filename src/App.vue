@@ -16,8 +16,13 @@
           />
         </Transition>
       </q-header>
-      <q-drawer show-if-above v-model="showFilterMenu" side="right" bordered>
-        <FiltersMenu @selected="(func) => (userFilter = func)" />
+      <q-drawer
+        :width="230"
+        v-model="showFilterMenu"
+        side="right"
+        bordered
+      >
+        <FiltersMenu />
       </q-drawer>
       <q-page-container
         class="row wrap q-mt-sm q-pa-xs custom-gap"
@@ -51,22 +56,15 @@ import { useAuth } from "./store/auth";
 import LoginPage from "./components/LoginPage.vue";
 import { auth as mainAuthObject } from "./@firebase/index";
 import ControlPanel from "./components/ControlPanel.vue";
-import { Pray } from "./@types/database";
 
 const auth = useAuth();
 const store = useStore();
 
 const renderPanel = ref(false);
 const showFilterMenu = ref(false);
-// eslint-disable-next-line
-//@ts-ignore
-const userFilter = ref<(el: Pray) => any>((el) => el);
-
-// eslint-disable-next-line
-//@ts-ignore
-const data = computed(() => store.getSortedData.filter(userFilter.value));
-
 const selectedList = ref<string[]>([]);
+
+const data = computed(() => store.getFilteredData);
 
 const isSelected = (recID: string) => {
   return selectedList.value.findIndex((el) => el == recID) >= 0;
@@ -85,7 +83,6 @@ const touchHoldHandler = (details: Details, recID: string) => {
   selectedList.value.push(recID);
 };
 
-// navigator.clipboard.writeText('Text to get copied')
 mainAuthObject.onAuthStateChanged(async (user) => {
   auth.loggedIn = user != null;
   await store.getListOfUsers();
@@ -93,9 +90,13 @@ mainAuthObject.onAuthStateChanged(async (user) => {
 
   const profileId = (await auth.getUserProfileID()) as string;
   const userProfile = store.users[profileId];
+
   if (userProfile) {
     auth.profile = userProfile;
+    return;
   }
+
+  //TODO: Create profile for new user
 });
 </script>
 <style lang="scss">
