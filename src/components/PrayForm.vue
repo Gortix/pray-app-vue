@@ -1,12 +1,33 @@
 <template>
   <form @submit.prevent="simulateSubmit" class="custom-flex">
-    <q-select
-      v-model="user"
-      :options="options"
-      emit-value
-      map-options
-      label="Standard"
-    />
+    <div class="row">
+      <q-select
+        class="col"
+        v-model="user"
+        :options="options"
+        emit-value
+        map-options
+        label="Standard"
+      />
+      <q-btn
+        type="button"
+        @click="showAddNew = !showAddNew"
+        flat
+        color="positive"
+        label="&#43;"
+      />
+    </div>
+    <div class="row" v-if="showAddNew">
+      <q-input class="col" v-model="newUserName" label="Imię nazwisko" />
+      <q-btn
+        type="button"
+        @click="addNewProfile"
+        flat
+        color="primary"
+        label="Dodaj"
+      />
+    </div>
+
     <q-input
       v-model="date"
       :rules="[(val) => datePattern.test(val)]"
@@ -25,6 +46,7 @@
         </q-icon>
       </template>
     </q-input>
+
     <q-input v-model="description" type="textarea" label="Treść modlitwy:" />
     <q-btn
       type="submit"
@@ -56,6 +78,9 @@ const emit = defineEmits(["submit"]);
 const description = ref("");
 const user = ref("");
 const date = ref(`${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`);
+const newUserName = ref("");
+const showAddNew = ref(false);
+const submitting = ref(false);
 const submitting = ref(false);
 
 const options = computed(() => {
@@ -70,9 +95,17 @@ const options = computed(() => {
   return listOfUsers;
 });
 
+const addNewProfile = async () => {
+  await store.addProfile(newUserName.value);
+  newUserName.value = "";
+  showAddNew.value = false;
+};
+
 const simulateSubmit = async () => {
   let errorWhileSubmit = false;
   submitting.value = true;
+  showAddNew.value = false;
+  
   const [day, month, year] = date.value.split(".");
 
   if (!date.value || !description.value || !user.value) {

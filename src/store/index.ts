@@ -131,9 +131,13 @@ export const useStore = defineStore("database", {
         console.error(err);
       }
     },
-    async addUser(userName: string) {
+    async addProfile(userName: string) {
       try {
-        await addDoc(collection(db, "profiles"), { name: userName });
+        const profileDoc = await addDoc(collection(db, "profiles"), {
+          name: userName,
+        });
+
+        this.users[profileDoc.id] = { id: profileDoc.id, name: userName };
       } catch (err) {
         console.error(err);
       }
