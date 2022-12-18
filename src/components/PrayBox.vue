@@ -28,9 +28,9 @@
   </q-card>
 </template>
 <script setup lang="ts">
-import { getDataSubDays } from "@/functions/helpers";
 import { Timestamp } from "@firebase/firestore";
 import { computed } from "@vue/reactivity";
+import { date } from "quasar";
 import { defineProps, defineEmits } from "vue";
 
 const emits = defineEmits(["removeDoc"]);
@@ -48,7 +48,7 @@ const props = defineProps({
 
 const convertedDate = computed(() => props.date?.toDate().toLocaleDateString());
 const isLast7Days = computed(() => {
-  const weekAgo = getDataSubDays(7);
+  const weekAgo = date.subtractFromDate(new Date(), { days: 7 });
   const createdDate = props.date?.toDate() || Date.now();
 
   return weekAgo <= createdDate;

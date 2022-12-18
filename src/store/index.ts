@@ -1,8 +1,8 @@
-import { errorLog } from '@/functions/helpers';
+import { errorLog } from "@/functions/helpers";
 import { Pray, Profile } from "./../@types/database";
 import { defineStore } from "pinia";
 import app, { auth } from "@/@firebase";
-import {filters as declaredFilters} from "./filters";
+import { filters as declaredFilters } from "./filters";
 import {
   collection,
   getDocs,
@@ -53,21 +53,26 @@ export const useStore = defineStore("database", {
     return {
       data: [] as Pray[],
       users: {} as profilesMap,
-      filter: "all" as string
+      filter: "all" as string,
     };
   },
-  getters:{
-    getSortedData(state){
-      return state.data.sort((current, previous)=>  previous.date.seconds - current.date.seconds)
+  getters: {
+    getSortedData(state) {
+      return state.data.sort(
+        (current, previous) => previous.date.seconds - current.date.seconds
+      );
     },
-    getFilteredData(state){
+    getFilteredData(state) {
       // eslint-disable-next-line
       //@ts-ignore
-      return state.getSortedData.filter(declaredFilters[state.filter]['filter']);
+      const currentFilterFunc = declaredFilters[state.filter]["filter"];
+      // eslint-disable-next-line
+      //@ts-ignore
+      return state.getSortedData.filter(currentFilterFunc);
     },
-    getFilters(){
+    getFilters() {
       return declaredFilters;
-    }
+    },
   },
   actions: {
     async getListOfPray() {
@@ -103,10 +108,10 @@ export const useStore = defineStore("database", {
         console.error(err);
       }
     },
-    async addPray(owner: string, description: string) {
+    async addPray(owner: string, date: Date, description: string) {
       const prayObj: Pray = {
         archived: false,
-        date: Timestamp.now(),
+        date: date ? Timestamp.fromDate(date) : Timestamp.now(),
         description: description,
         prayers: [],
         // eslint-disable-next-line
