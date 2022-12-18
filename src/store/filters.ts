@@ -2,7 +2,6 @@ import { useAuth } from "./auth";
 import { Pray } from "@/@types/database";
 import { date } from "quasar";
 
-
 const createFilter = (name: string, filter: (el: Pray) => any, color = "") => {
   return { name, filter, color };
 };
