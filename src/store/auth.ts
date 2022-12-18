@@ -9,10 +9,18 @@ import {
   setPersistence,
   browserLocalPersistence,
 } from "firebase/auth";
-import { doc, updateDoc, DocumentReference, getDoc } from "firebase/firestore";
-
+import {
+  doc,
+  addDoc,
+  updateDoc,
+  DocumentReference,
+  getDoc,
+  setDoc,
+} from "firebase/firestore";
 import { defineStore } from "pinia";
 import { User } from "@/@types/database";
+import { db as appDB } from "@/store/index";
+import { Notify } from "quasar";
 
 const provider = new GoogleAuthProvider();
 
@@ -57,8 +65,20 @@ export const useAuth = defineStore("auth", {
           `users/${auth.currentUser?.uid}`
         ) as DocumentReference<User>;
         const getUserResponse = await getDoc(userRef);
-        
-        return getUserResponse.data()?.profile.id;
+        const userData = getUserResponse.data();
+
+        if (!userData) await this.createUser();
+
+        if (!userData?.role) {
+          Notify.create({
+            message: `Twoje konto czeka na autoryzację. Napisz do Pawła lub Edyty`,
+            color: "warning",
+            textColor: "dark",
+            position: "top",
+          });
+        }
+
+        return userData?.profile.id || "";
       } catch (err) {
         errorLog(err);
       }
@@ -75,6 +95,15 @@ export const useAuth = defineStore("auth", {
       } catch (err) {
         errorLog(err);
       }
+    },
+    async createUser() {
+      // eslint-disable-next-line
+      //@ts-ignore
+      return await setDoc(doc(appDB, "users", auth.currentUser?.uid), {
+        name: auth.currentUser?.displayName,
+        role: "",
+        profile: doc(appDB, "profiles","x")
+      });
     },
   },
 });
