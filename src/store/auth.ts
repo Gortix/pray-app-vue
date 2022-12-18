@@ -11,7 +11,6 @@ import {
 } from "firebase/auth";
 import {
   doc,
-  addDoc,
   updateDoc,
   DocumentReference,
   getDoc,
