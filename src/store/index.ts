@@ -1,8 +1,8 @@
-import { errorLog } from '@/functions/helpers';
+import { errorLog } from "@/functions/helpers";
 import { Pray, Profile } from "./../@types/database";
 import { defineStore } from "pinia";
 import app, { auth } from "@/@firebase";
-import {filters as declaredFilters} from "./filters";
+import { filters as declaredFilters } from "./filters";
 import {
   collection,
   getDocs,
@@ -53,21 +53,23 @@ export const useStore = defineStore("database", {
     return {
       data: [] as Pray[],
       users: {} as profilesMap,
-      filter: "all" as string
+      filter: "all" as string,
     };
   },
-  getters:{
-    getSortedData(state){
-      return state.data.sort((current, previous)=>  previous.date.seconds - current.date.seconds)
+  getters: {
+    getSortedData(state) {
+      return state.data.sort(
+        (current, previous) => previous.date.seconds - current.date.seconds
+      );
     },
-    getFilteredData(state){
-      // eslint-disable-next-line
+    getFilteredData(state) {
+      //eslint-disable-next-line
       //@ts-ignore
-      return state.getSortedData.filter(declaredFilters[state.filter]['filter']);
+      return state.getSortedData.filter(declaredFilters[state.filter]["filter"]);
     },
-    getFilters(){
+    getFilters() {
       return declaredFilters;
-    }
+    },
   },
   actions: {
     async getListOfPray() {
@@ -126,9 +128,13 @@ export const useStore = defineStore("database", {
         console.error(err);
       }
     },
-    async addUser(userName: string) {
+    async addProfile(userName: string) {
       try {
-        await addDoc(collection(db, "profiles"), { name: userName });
+        const profileDoc = await addDoc(collection(db, "profiles"), {
+          name: userName,
+        });
+
+        this.users[profileDoc.id] = { id: profileDoc.id, name: userName };
       } catch (err) {
         console.error(err);
       }
