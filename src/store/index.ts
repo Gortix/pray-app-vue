@@ -63,9 +63,12 @@ export const useStore = defineStore("database", {
       );
     },
     getFilteredData(state) {
-      //eslint-disable-next-line
+      // eslint-disable-next-line
       //@ts-ignore
-      return state.getSortedData.filter(declaredFilters[state.filter]["filter"]);
+      const currentFilterFunc = declaredFilters[state.filter]["filter"];
+      // eslint-disable-next-line
+      //@ts-ignore
+      return state.getSortedData.filter(currentFilterFunc);
     },
     getFilters() {
       return declaredFilters;
@@ -105,10 +108,10 @@ export const useStore = defineStore("database", {
         console.error(err);
       }
     },
-    async addPray(owner: string, description: string) {
+    async addPray(owner: string, date: Date, description: string) {
       const prayObj: Pray = {
         archived: false,
-        date: Timestamp.now(),
+        date: date ? Timestamp.fromDate(date) : Timestamp.now(),
         description: description,
         prayers: [],
         // eslint-disable-next-line

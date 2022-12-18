@@ -27,6 +27,26 @@
         label="Dodaj"
       />
     </div>
+
+    <q-input
+      v-model="date"
+      :rules="[(val) => datePattern.test(val)]"
+      label="Data zgłoszenia"
+      color="primary"
+    >
+      <template v-slot:append>
+        <q-icon name="event" class="cursor-pointer">
+          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+            <q-date v-model="date" mask="DD.MM.YYYY">
+              <div class="row items-center justify-end">
+                <q-btn v-close-popup label="Close" color="primary" flat />
+              </div>
+            </q-date>
+          </q-popup-proxy>
+        </q-icon>
+      </template>
+    </q-input>
+
     <q-input v-model="description" type="textarea" label="Treść modlitwy:" />
     <q-btn
       type="submit"
@@ -44,11 +64,24 @@
 <script lang="ts" setup>
 import { useStore } from "@/store/index";
 import { computed } from "@vue/reactivity";
-import { ref, defineEmits } from "vue";
+import { ref, defineEmits, onMounted } from "vue";
+import { useAuth } from "@/store/auth";
+import { useQuasar } from "quasar";
 
+const datePattern = /^[0-3]\d.[0-1]\d.[\d]{4}$/;
+const d = new Date();
 const store = useStore();
-store.getListOfUsers();
+const auth = useAuth();
+const $q = useQuasar();
 const emit = defineEmits(["submit"]);
+
+const description = ref("");
+const user = ref("");
+const date = ref(`${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`);
+const newUserName = ref("");
+const showAddNew = ref(false);
+const submitting = ref(false);
+const submitting = ref(false);
 
 const options = computed(() => {
   type Options = { label: string; value: string };
@@ -62,12 +95,6 @@ const options = computed(() => {
   return listOfUsers;
 });
 
-const description = ref("");
-const user = ref("");
-const newUserName = ref("");
-const showAddNew = ref(false);
-const submitting = ref(false);
-
 const addNewProfile = async () => {
   await store.addProfile(newUserName.value);
   newUserName.value = "";
@@ -75,15 +102,53 @@ const addNewProfile = async () => {
 };
 
 const simulateSubmit = async () => {
+  let errorWhileSubmit = false;
   submitting.value = true;
   showAddNew.value = false;
+  
+  const [day, month, year] = date.value.split(".");
 
-  await store.addPray(user.value, description.value);
-  description.value = "";
-  user.value = "";
-  emit("submit");
+  if (!date.value || !description.value || !user.value) {
+    $q.notify({
+      message: "Uzupełnij wszystkie pola",
+      color: "negative",
+      position: "top",
+    });
+    submitting.value = false;
+
+    return;
+  }
+
+  try {
+    await store.addPray(
+      user.value,
+      new Date(+year, +month - 1, +day),
+      description.value
+    );
+  } catch (err) {
+    $q.notify({
+      message: "Błąd podczas zapisu do bazy",
+      color: "negative",
+      position: "top",
+    });
+
+    errorWhileSubmit = true;
+  }
+
+  if (!errorWhileSubmit) {
+    description.value = "";
+    user.value = "";
+    user.value = auth.profile.id;
+
+    emit("submit");
+  }
+
   submitting.value = false;
 };
+
+onMounted(() => {
+  user.value = auth.profile.id;
+});
 </script>
 <style lang="scss">
 .custom-flex {

@@ -151,8 +151,6 @@ mainAuthObject.onAuthStateChanged(async (user) => {
     auth.profile = userProfile;
     return;
   }
-
-  //TODO: Create profile for new user
 });
 </script>
 <style lang="scss">
