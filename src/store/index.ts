@@ -138,8 +138,11 @@ export const useStore = defineStore("database", {
         });
 
         this.users[profileDoc.id] = { id: profileDoc.id, name: userName };
+        
+        return profileDoc.id;
       } catch (err) {
         console.error(err);
+        return err
       }
     },
     async removePray(prayID: string) {
