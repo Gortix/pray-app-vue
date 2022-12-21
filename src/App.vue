@@ -19,29 +19,27 @@
           />
         </Transition>
       </q-header>
-      <q-drawer
-        :width="230"
-        v-model="showFilterMenu"
-        side="right"
-        bordered
-      >
+      <q-drawer :width="230" v-model="showFilterMenu" side="right" bordered>
         <FiltersMenu />
       </q-drawer>
-      <q-page-container
-        class="row wrap q-mt-sm q-pa-xs custom-gap"
-        v-if="data[0]"
-      >
-        <PrayBox
-          v-touch-hold.mouse="(details: Details)=>touchHoldHandler(details, rec.id as string)"
-          v-for="rec in data"
-          @click="()=> {if(renderPanel) touchHoldHandler(null, rec.id as string)}"
-          :key="rec.id"
-          v-bind="rec"
-          :owner="rec.owner.name"
-          @remove-doc="() => store.removePray(rec.id as string)"
-          :my-pray="rec.owner.id == auth.profile.id"
-          :selected="isSelected(rec.id as string)"
-        />
+      <q-page-container v-if="data[0]">
+        <TransitionGroup
+          name="pray-box-list"
+          class="row wrap q-mt-sm justify-center custom-gap render-list items-stretch"
+          tag="ul"
+        >
+          <PrayBox
+            v-touch-hold.mouse="(details: Details)=>touchHoldHandler(details, rec.id as string)"
+            v-for="rec in data"
+            @click="()=> {if(renderPanel) touchHoldHandler(null, rec.id as string)}"
+            :key="rec.id"
+            v-bind="rec"
+            :owner="rec.owner.name"
+            @remove-doc="() => store.removePray(rec.id as string)"
+            :my-pray="rec.owner.id == auth.profile.id"
+            :selected="isSelected(rec.id as string)"
+          />
+        </TransitionGroup>
       </q-page-container>
       <AddPrayCompoment />
     </q-layout>
@@ -76,7 +74,6 @@ const data = computed(() => store.getFilteredData);
 const isSelected = (recID: string) => {
   return selectedList.value.findIndex((el) => el == recID) >= 0;
 };
-
 
 const updateSelectAll = (val: boolean) => {
   selectAll.value = val;
@@ -136,7 +133,7 @@ watch(selectAll, (val) => {
         selectedList.value.push(id as string);
       }
     }
-  } 
+  }
 });
 
 mainAuthObject.onAuthStateChanged(async (user) => {
@@ -165,6 +162,11 @@ mainAuthObject.onAuthStateChanged(async (user) => {
   }
 }
 
+.render-list {
+  padding: 0;
+  list-style-type: none;
+}
+
 .v-enter-active,
 .v-leave-active {
   transition: all 0.5s linear;
@@ -175,5 +177,15 @@ mainAuthObject.onAuthStateChanged(async (user) => {
   transform: scaleX(0) translateX(-50%);
   transform-origin: left top;
   // perspective: 1000;
+}
+
+.pray-box-list-enter-from,
+.pray-box-list-leave-to {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.pray-box-list-leave-active {
+  position: absolute;
 }
 </style>
