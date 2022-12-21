@@ -8,7 +8,7 @@
           :options="options"
           emit-value
           map-options
-          label="Standard"
+          label="Osoba"
         />
         <q-btn
           type="button"
@@ -129,13 +129,24 @@ const addNewProfile = async () => {
   }
 
   const profileID = (await store.addProfile(newUserName.value)) as string;
-  console.log( profileID)
   user.value = profileID;
   newUserName.value = "";
   showAddNew.value = false;
 };
 
 const simulateSubmit = async () => {
+  if(showAddNew.value){
+    $q.notify({
+      message: "Jesteś w trakcie dodawania nowej osoby",
+      color: "warning",
+      textColor: "black",
+      position: "top",
+
+    });
+    submitting.value = false;
+
+    return;
+  }
   let errorWhileSubmit = false;
   submitting.value = true;
   showAddNew.value = false;
