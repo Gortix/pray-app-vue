@@ -13,8 +13,8 @@
         type="button"
         @click="showAddNew = !showAddNew"
         flat
-        color="positive"
-        label="&#43;"
+        :color="showAddNew ? 'negative' : 'positive'"
+        :label="showAddNew ? '&#10005;' : '&#43;'"
       />
     </div>
     <div class="row" v-if="showAddNew">
@@ -81,7 +81,6 @@ const date = ref(`${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`);
 const newUserName = ref("");
 const showAddNew = ref(false);
 const submitting = ref(false);
-const submitting = ref(false);
 
 const options = computed(() => {
   type Options = { label: string; value: string };
@@ -105,7 +104,7 @@ const simulateSubmit = async () => {
   let errorWhileSubmit = false;
   submitting.value = true;
   showAddNew.value = false;
-  
+
   const [day, month, year] = date.value.split(".");
 
   if (!date.value || !description.value || !user.value) {
