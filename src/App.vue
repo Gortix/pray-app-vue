@@ -28,17 +28,17 @@
           class="row wrap q-mt-sm justify-center custom-gap render-list items-stretch"
           tag="ul"
         >
-          <PrayBox
-            v-touch-hold.mouse="(details: Details)=>touchHoldHandler(details, rec.id as string)"
-            v-for="rec in data"
-            @click="()=> {if(renderPanel) touchHoldHandler(null, rec.id as string)}"
-            :key="rec.id"
-            v-bind="rec"
-            :owner="rec.owner.name"
-            @remove-doc="() => store.removePray(rec.id as string)"
-            :my-pray="rec.owner.id == auth.profile.id"
-            :selected="isSelected(rec.id as string)"
-          />
+          <li class="card-column-1" v-for="rec in data" :key="rec.id">
+            <PrayBox
+              :selected-mode="renderPanel"
+              v-bind="rec"
+              :owner="rec.owner.name"
+              @remove-doc="() => store.removePray(rec.id as string)"
+              :my-pray="rec.owner.id == auth.profile.id"
+              :selected="isSelected(rec.id as string)"
+              @update:selected="(details: Details)=>touchHoldHandler(details, rec.id as string)"
+            />
+          </li>
         </TransitionGroup>
       </q-page-container>
       <AddPrayCompoment />
@@ -179,6 +179,12 @@ mainAuthObject.onAuthStateChanged(async (user) => {
   // perspective: 1000;
 }
 
+.pray-box-list-move, /* apply transition to moving elements */
+.pray-box-list-enter-active,
+.pray-box-list-leave-active {
+  transition: all 0.5s ease;
+}
+
 .pray-box-list-enter-from,
 .pray-box-list-leave-to {
   opacity: 0;
@@ -187,5 +193,18 @@ mainAuthObject.onAuthStateChanged(async (user) => {
 
 .pray-box-list-leave-active {
   position: absolute;
+}
+
+.card-column-1 {
+  flex-basis: 100%;
+  border: 2px solid white;
+
+  @media (width > $tablet) {
+    flex-basis: 48%;
+  }
+
+  @media (width >= $desktop) {
+    flex-basis: 32%;
+  }
 }
 </style>
