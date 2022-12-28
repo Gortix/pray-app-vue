@@ -14,7 +14,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, computed, defineEmits, defineProps, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useSelectedList } from "@/store/selectedList";
 import { useStore } from "@/store/index";
 

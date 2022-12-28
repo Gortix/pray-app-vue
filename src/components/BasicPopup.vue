@@ -1,25 +1,27 @@
 <template>
-  <q-dialog
-    :model-value="props.modelValue"
-    @show="emit('update:modelValue', true)"
-    @hide="emit('update:modelValue', false)"
-  >
-    <q-card class="width">
-      <q-toolbar>
-        <q-avatar>
-          <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg" />
-        </q-avatar>
+  <Teleport to="body">
+    <q-dialog
+      :model-value="props.modelValue"
+      @show="emit('update:modelValue', true)"
+      @hide="emit('update:modelValue', false)"
+    >
+      <q-card class="width">
+        <q-toolbar>
+          <q-avatar>
+            <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg" />
+          </q-avatar>
 
-        <q-toolbar-title>{{ title }}</q-toolbar-title>
+          <q-toolbar-title>{{ title }}</q-toolbar-title>
 
-        <q-btn flat round icon="close" dense v-close-popup />
-      </q-toolbar>
+          <q-btn flat round icon="close" dense v-close-popup />
+        </q-toolbar>
 
-      <q-card-section>
-        <slot name="default"></slot>
-      </q-card-section>
-    </q-card>
-  </q-dialog>
+        <q-card-section>
+          <slot name="default"></slot>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+  </Teleport>
 </template>
 <script setup lang="ts">
 import { defineProps, defineEmits } from "vue";

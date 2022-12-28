@@ -61,7 +61,7 @@
     <q-btn
       type="submit"
       :loading="submitting"
-      label="Proszę o modlitwę"
+      :label="editMode ? 'Aktualizuj modlitwę' : 'Proszę o modlitwę'"
       class="q-mt-md full-width"
       color="teal"
     >
@@ -74,15 +74,20 @@
 <script lang="ts" setup>
 import { useStore } from "@/store/index";
 import { computed } from "@vue/reactivity";
-import { ref, defineEmits, onMounted } from "vue";
+import { ref, defineEmits, onMounted, defineProps } from "vue";
 import { useAuth } from "@/store/auth";
+import { Pray } from "@/@types/database";
 import { useQuasar } from "quasar";
+
+const props = defineProps<{ data?: Pray }>();
 
 const datePattern = /^[0-3]\d.[0-1]\d.[\d]{4}$/;
 const d = new Date();
+
 const store = useStore();
 const auth = useAuth();
 const $q = useQuasar();
+
 const emit = defineEmits(["submit"]);
 
 const description = ref("");
@@ -91,6 +96,11 @@ const date = ref(`${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`);
 const newUserName = ref("");
 const showAddNew = ref(false);
 const submitting = ref(false);
+
+const editMode = computed(() => {
+  //@ts-ignore
+  return props.data?.description.length > 0;
+});
 
 const options = computed(() => {
   type Options = { label: string; value: string };
@@ -129,7 +139,6 @@ const addNewProfile = async () => {
   }
 
   const profileID = (await store.addProfile(newUserName.value)) as string;
-  console.log( profileID)
   user.value = profileID;
   newUserName.value = "";
   showAddNew.value = false;
@@ -139,6 +148,10 @@ const simulateSubmit = async () => {
   let errorWhileSubmit = false;
   submitting.value = true;
   showAddNew.value = false;
+
+  if(editMode.value){
+    return;
+  }
 
   const [day, month, year] = date.value.split(".");
 
@@ -182,6 +195,14 @@ const simulateSubmit = async () => {
 
 onMounted(() => {
   user.value = auth.profile.id;
+  if (editMode.value) {
+    description.value = props.data?.description as string;
+    //@ts-ignore
+    user.value = props.data?.owner as string;
+    const dt= props.data?.date.toDate();
+    //@ts-ignore
+    date.value = (`${dt.getDate()}.${dt.getMonth() + 1}.${dt.getFullYear()}`);
+  }
 });
 </script>
 <style lang="scss">

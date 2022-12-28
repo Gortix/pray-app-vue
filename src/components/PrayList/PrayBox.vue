@@ -1,17 +1,9 @@
 <template>
   <q-card
-    @click="
-      () => {
-        if (props.selectedMode) {
-          emits('update:selected');
-          return;
-        }
-        fullSize = !fullSize;
-      }
-    "
-    class="row column no-wrap justify-between card-column"
-    :style="{ height: props.fullSize ? 'none' : '170px', 'min-width': '350px' }"
-    :class="{ selected: selected, cardColumn: !props.fullSize }"
+    @click="onClickHandler"
+    class="row column no-wrap justify-between"
+    :class="{ selected: selected, 'card-column': !props.fullSize }"
+    :style="{ 'min-width': '350px' }"
   >
     <q-card-section class="row justify-between q-pb-sm text-blue-grey-5">
       <span :class="{ 'my-pray': myPray }">
@@ -32,10 +24,13 @@
       <q-badge v-else outline color="white" label="&nbsp;" />
       <!-- <q-btn flat round color="light-blue" icon="fa-solid fa-hands-praying" /> -->
     </q-card-actions>
-    <q-menu v-model="showMenu" context-menu :offset="[50, 30]">
+    <q-menu v-model="showMenu" context-menu>
       <q-list style="min-width: 200px">
         <q-item clickable v-close-popup @click="emits('update:selected')">
           <q-item-section>Zaznacz</q-item-section>
+        </q-item>
+        <q-item clickable v-close-popup @click="emits('edit')">
+          <q-item-section>Edytuj</q-item-section>
         </q-item>
         <q-item clickable v-close-popup @click="removePrayHandler">
           <q-item-section>Usuń</q-item-section>
@@ -43,19 +38,14 @@
       </q-list>
     </q-menu>
   </q-card>
-  <q-dialog v-model="fullSize" auto-close>
-    <PrayBox v-bind="{ ...props, fullSize: true }" />
-  </q-dialog>
 </template>
 <script setup lang="ts">
-import { Details } from "@/@types/quasar";
 import { Timestamp } from "@firebase/firestore";
 import { computed } from "@vue/reactivity";
 import { date } from "quasar";
 import { defineProps, defineEmits, ref } from "vue";
 
-const emits = defineEmits(["removeDoc", "update:selected"]);
-const fullSize = ref<boolean>(false);
+const emits = defineEmits(["removeDoc", "update:selected", "open", "edit"]);
 const showMenu = ref<boolean>(false);
 
 const props = defineProps({
@@ -67,7 +57,6 @@ const props = defineProps({
   archived: Boolean,
   myPray: Boolean,
   selectedMode: Boolean,
-  maxSize: { type: Number, default: 120 },
   fullSize: { type: Boolean, default: false },
   selected: { type: Boolean, default: false },
 });
@@ -80,34 +69,25 @@ const isLast7Days = computed(() => {
   return weekAgo <= createdDate;
 });
 
-const touchEvent = (ev: Details) => {
-  if (ev.duration > 1000) showMenu.value = true;
+const onClickHandler = () => {
+  if (props.selectedMode) {
+    emits("update:selected");
+    return;
+  }
+
+  emits("open", props);
 };
 
 const truncateDescription = computed(() => {
+  const maxSize = 120;
   const desc = props.description as string;
 
   if (props.fullSize) {
     return desc;
   }
 
-  return desc?.length > props.maxSize
-    ? desc.slice(0, props.maxSize) + "..."
-    : desc;
+  return desc?.length > maxSize ? desc.slice(0, maxSize) + "..." : desc;
 });
-// const fullSize = () => {
-//    // eslint-disable-next-line
-//   //@ts-ignore
-//   cardEl.value.style = {};
-//   // eslint-disable-next-line
-//   //@ts-ignore
-//   cardEl.value.style.height = "100vh";
-//   // eslint-disable-next-line
-//   //@ts-ignore
-//   cardEl.value.style.width = "100vw";
-//   console.log(cardEl.value);
-
-// };
 
 const removePrayHandler = () => {
   const test = confirm("Czy na pewno usunąc rekord?");
@@ -124,18 +104,10 @@ const removePrayHandler = () => {
   border: 2px solid $teal-14 !important;
 }
 .card-column {
-  // flex-grow: 1;
-  // flex-basis: 100%;
   border: 2px solid white;
   transition: all 0.3s;
-
-  // @media (width > $tablet) {
-  //   flex-basis: 48%;
-  // }
-
-  // @media (width >= $desktop) {
-  //   flex-basis: 32%;
-  // }
+  min-width: 350px;
+  height: 170px;
 
   &:hover {
     background-color: hsl(180, 80%, 98%);

@@ -1,11 +1,9 @@
 <template>
-  <Teleport to="body">
-    <BasicPopup v-model="toolbar" title="Ddaja modlitwę">
-      <template #default>
-        <NewPrayForm @submit="() => (toolbar = false)" />
-      </template>
-    </BasicPopup>
-  </Teleport>
+  <BasicPopup v-model="toolbar" title="Ddaja modlitwę">
+    <template #default>
+      <NewPrayForm @submit="() => (toolbar = false)" />
+    </template>
+  </BasicPopup>
   <q-btn class="btn-fixed" round color="info" @click="() => (toolbar = true)">
     <span style="font-size: 1.3rem">&plus;</span>
   </q-btn>
