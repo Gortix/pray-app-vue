@@ -19,13 +19,6 @@
       <PrayBox v-bind="{ ...popupData, fullSize: true }" />
     </q-dialog>
   </Suspense>
-  <Suspense>
-    <BasicPopup v-model="editPray" title="Aktualizuj modlitwę">
-      <template #default>
-        <PrayForm :data="popupData" @submit="() => (editPray = false)" />
-      </template>
-    </BasicPopup>
-  </Suspense>
 </template>
 <script setup lang="ts">
 import { ref, computed } from "vue";
@@ -33,8 +26,6 @@ import { useStore } from "@/store/index";
 import { useAuth } from "@/store/auth";
 import { useSelectedList } from "@/store/selectedList";
 import PrayBox from "./PrayBox.vue";
-import BasicPopup from "../BasicPopup.vue";
-import PrayForm from "../PrayForm.vue";
 
 const store = useStore();
 const auth = useAuth();
