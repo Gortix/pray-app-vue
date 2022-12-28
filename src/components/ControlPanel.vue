@@ -3,26 +3,52 @@
     <q-checkbox
       class="full-height"
       size="xs"
-      v-model="selectAll"
+      :model-value="selectAll"
+      @update:model-value="updateSelectAll"
       color="teal"
       label="Wszystkie"
     />
-    <q-btn flat @click="emit('copy')"><q-icon name="o_content_copy" /></q-btn>
+    <q-btn flat @click="() => selectedListStore.copySelectedPrays">
+      <q-icon name="o_content_copy" />
+    </q-btn>
   </div>
 </template>
 <script setup lang="ts">
-import { computed, defineEmits, defineProps } from "vue";
+import { ref, computed, watch } from "vue";
+import { useSelectedList } from "@/store/selectedList";
+import { useStore } from "@/store/index";
 
-const emit = defineEmits(["copy", "update:select-all"]);
-const props = defineProps<{ selectAll: boolean }>();
+const selectedListStore = useSelectedList();
+const store = useStore();
 
-const selectAll = computed({
-  get() {
-    return props.selectAll;
-  },
-  set(val) {   
-    emit("update:select-all", val);
-  },
+const selectAll = ref(false);
+
+const selectedList = computed(() => selectedListStore.selectedList);
+const data = computed(() => store.getFilteredData);
+
+const updateSelectAll = (val: boolean) => {
+  selectAll.value = val;
+
+  if (!val) {
+    selectedListStore.selectedList = [];
+  }
+};
+
+watch(
+  () => selectedList.value.length,
+  (len) => {
+    selectAll.value = len == data.value.length;
+  }
+);
+
+watch(selectAll, (val) => {
+  if (val) {
+    for (let { id } of data.value) {
+      if (!selectedList.value.includes(id as string)) {
+        selectedList.value.push(id as string);
+      }
+    }
+  }
 });
 </script>
 <style lang="scss">

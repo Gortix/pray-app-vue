@@ -74,15 +74,17 @@
 <script lang="ts" setup>
 import { useStore } from "@/store/index";
 import { computed } from "@vue/reactivity";
-import { ref, defineEmits, onMounted } from "vue";
+import { ref, defineEmits, onMounted, defineProps } from "vue";
 import { useAuth } from "@/store/auth";
 import { useQuasar } from "quasar";
 
 const datePattern = /^[0-3]\d.[0-1]\d.[\d]{4}$/;
 const d = new Date();
+
 const store = useStore();
 const auth = useAuth();
 const $q = useQuasar();
+
 const emit = defineEmits(["submit"]);
 
 const description = ref("");
