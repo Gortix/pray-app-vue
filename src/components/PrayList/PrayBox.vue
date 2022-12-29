@@ -29,10 +29,20 @@
         <q-item clickable v-close-popup @click="emits('update:selected')">
           <q-item-section>Zaznacz</q-item-section>
         </q-item>
-        <q-item clickable v-close-popup @click="emits('edit', props)">
+        <q-item
+          v-if="myPray || adminMode"
+          clickable
+          v-close-popup
+          @click="emits('edit', props)"
+        >
           <q-item-section>Edytuj</q-item-section>
         </q-item>
-        <q-item clickable v-close-popup @click="removePrayHandler">
+        <q-item
+          v-if="adminMode"
+          clickable
+          v-close-popup
+          @click="removePrayHandler"
+        >
           <q-item-section>Usuń</q-item-section>
         </q-item>
       </q-list>
@@ -63,6 +73,7 @@ const props = withDefaults(
     selectedMode: boolean;
     fullSize?: boolean;
     selected: boolean;
+    adminMode: boolean;
   }>(),
   { archived: false, selected: false, showOwner: true, fullSize: false }
 );

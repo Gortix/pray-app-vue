@@ -6,4 +6,5 @@ export interface PrayBoxTypes extends Pray {
   selectedMode: boolean;
   fullSize: boolean;
   selected: boolean;
+  adminMode: boolean;
 }

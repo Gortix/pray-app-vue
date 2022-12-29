@@ -52,12 +52,12 @@ const isSelected = (recID: string) => {
   return selectedList.value.findIndex((el) => el == recID) >= 0;
 };
 
-const openPopup = (data: PrayBoxTypes) => {  
+const openPopup = (data: PrayBoxTypes) => {
   popupData.value = { ...data, fullSize: true };
   toolbar.value = true;
 };
 
-const openEdit = (data: PrayBoxTypes) => {  
+const openEdit = (data: PrayBoxTypes) => {
   popupData.value = data;
   editPray.value = true;
 };
@@ -68,6 +68,7 @@ const convertDataForPrayBox = (data: PrayBoxTypes) => {
     myPray: data.owner.id == auth.profile.id,
     selected: isSelected(data.id as string),
     selectedMode: slStore.selectedList.length > 0,
+    adminMode: ["admin", "superadmin"].includes(auth.role),
   };
 
   return convData;

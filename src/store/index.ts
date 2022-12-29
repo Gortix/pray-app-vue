@@ -144,7 +144,7 @@ export const useStore = defineStore("database", {
 
       try {
         const docRef = doc(db, `prayers/${id}`);
-        updateDoc(docRef, { ...prayObj });
+        const resp = await updateDoc(docRef, { ...prayObj });
         const rec = this.data.find((rec) => rec.id == id);
         //@ts-ignore
         rec.description = data.description;
