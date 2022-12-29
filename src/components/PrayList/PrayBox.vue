@@ -7,7 +7,7 @@
   >
     <q-card-section class="row justify-between q-pb-sm text-blue-grey-5">
       <span :class="{ 'my-pray': myPray }">
-        {{ owner }}
+        {{ owner.name }}
       </span>
       <span>
         {{ convertedDate }}
@@ -29,7 +29,7 @@
         <q-item clickable v-close-popup @click="emits('update:selected')">
           <q-item-section>Zaznacz</q-item-section>
         </q-item>
-        <q-item clickable v-close-popup @click="emits('edit')">
+        <q-item clickable v-close-popup @click="emits('edit', props)">
           <q-item-section>Edytuj</q-item-section>
         </q-item>
         <q-item clickable v-close-popup @click="removePrayHandler">
@@ -41,25 +41,31 @@
 </template>
 <script setup lang="ts">
 import { Timestamp } from "@firebase/firestore";
+import { Profile } from "@/@types/database";
 import { computed } from "@vue/reactivity";
 import { date } from "quasar";
-import { defineProps, defineEmits, ref } from "vue";
+import { defineProps, defineEmits, ref, withDefaults } from "vue";
+import { Prayer } from "@/@types/database";
 
 const emits = defineEmits(["removeDoc", "update:selected", "open", "edit"]);
 const showMenu = ref<boolean>(false);
 
-const props = defineProps({
-  date: Timestamp,
-  description: String,
-  owner: String,
-  prayers: Array,
-  showOwner: Boolean,
-  archived: Boolean,
-  myPray: Boolean,
-  selectedMode: Boolean,
-  fullSize: { type: Boolean, default: false },
-  selected: { type: Boolean, default: false },
-});
+const props = withDefaults(
+  defineProps<{
+    id?: string;
+    date: Timestamp;
+    description: string;
+    owner: Profile;
+    prayers?: Prayer[];
+    archived: boolean;
+    showOwner?: boolean;
+    myPray: boolean;
+    selectedMode: boolean;
+    fullSize?: boolean;
+    selected: boolean;
+  }>(),
+  { archived: false, selected: false, showOwner: true, fullSize: false }
+);
 
 const convertedDate = computed(() => props.date?.toDate().toLocaleDateString());
 const isLast7Days = computed(() => {
