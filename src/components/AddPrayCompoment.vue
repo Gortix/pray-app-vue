@@ -4,8 +4,8 @@
       <NewPrayForm @submit="() => (toolbar = false)" />
     </template>
   </BasicPopup>
-  <q-btn class="btn-fixed" round color="info" @click="() => (toolbar = true)">
-    <span style="font-size: 1.3rem">&plus;</span>
+  <q-btn size="1.1rem" class="btn-fixed" round color="info" @click="() => (toolbar = true)">
+    <span style="font-size: 1.4rem">&plus;</span>
   </q-btn>
 </template>
 <script setup lang="ts">
