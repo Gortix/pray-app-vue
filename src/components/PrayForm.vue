@@ -98,7 +98,7 @@ const showAddNew = ref(false);
 const submitting = ref(false);
 
 const editMode = computed(() => {
-  return props.data?.description.length || "".length > 0;
+  return props.data?.description.length || 0 > 0;
 });
 
 const options = computed(() => {
