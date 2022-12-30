@@ -131,6 +131,31 @@ export const useStore = defineStore("database", {
         console.error(err);
       }
     },
+    async updatePray(
+      id: string,
+      data: { date: Date; description: string; owner: string }
+    ) {
+      const prayObj: Pray = {
+        date: Timestamp.fromDate(data.date),
+        description: data.description,
+        //@ts-ignore
+        owner: doc(db, "profiles/" + data.owner) as DocumentReference<Profile>,
+      };
+
+      try {
+        const docRef = doc(db, `prayers/${id}`);
+        const resp = await updateDoc(docRef, { ...prayObj });
+        const rec = this.data.find((rec) => rec.id == id);
+        //@ts-ignore
+        rec.description = data.description;
+        //@ts-ignore
+        rec.date = Timestamp.fromDate(data.date);
+        //@ts-ignore
+        rec.owner = this.users[data.owner];
+      } catch (err) {
+        console.error(err);
+      }
+    },
     async addProfile(userName: string) {
       try {
         const profileDoc = await addDoc(collection(db, "profiles"), {
@@ -138,11 +163,11 @@ export const useStore = defineStore("database", {
         });
 
         this.users[profileDoc.id] = { id: profileDoc.id, name: userName };
-        
+
         return profileDoc.id;
       } catch (err) {
         console.error(err);
-        return err
+        return err;
       }
     },
     async removePray(prayID: string) {

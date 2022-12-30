@@ -2,7 +2,7 @@ import { DocumentReference, Timestamp } from "firebase/firestore";
 
 export interface Prayer {
   date: string;
-  person: string;
+  person: Profile;
 }
 
 export interface Pray {

@@ -30,6 +30,7 @@ export const useAuth = defineStore("auth", {
     return {
       loggedIn: false,
       profile: { name: "", id: "" },
+      role: "",
     };
   },
   actions: {
@@ -65,6 +66,7 @@ export const useAuth = defineStore("auth", {
         ) as DocumentReference<User>;
         const getUserResponse = await getDoc(userRef);
         const userData = getUserResponse.data();
+        this.role = userData?.role || "";
 
         if (!userData) await this.createUser();
 
@@ -101,7 +103,7 @@ export const useAuth = defineStore("auth", {
       return await setDoc(doc(appDB, "users", auth.currentUser?.uid), {
         name: auth.currentUser?.displayName,
         role: "",
-        profile: doc(appDB, "profiles","x")
+        profile: doc(appDB, "profiles", "x"),
       });
     },
   },

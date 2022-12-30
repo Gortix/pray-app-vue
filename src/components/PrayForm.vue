@@ -61,7 +61,7 @@
     <q-btn
       type="submit"
       :loading="submitting"
-      label="Proszę o modlitwę"
+      :label="editMode ? 'Aktualizuj modlitwę' : 'Proszę o modlitwę'"
       class="q-mt-md full-width"
       color="teal"
     >
@@ -76,7 +76,10 @@ import { useStore } from "@/store/index";
 import { computed } from "@vue/reactivity";
 import { ref, defineEmits, onMounted, defineProps } from "vue";
 import { useAuth } from "@/store/auth";
+import { Pray } from "@/@types/database";
 import { useQuasar } from "quasar";
+
+const props = defineProps<{ data?: Pray }>();
 
 const datePattern = /^[0-3]\d.[0-1]\d.[\d]{4}$/;
 const d = new Date();
@@ -93,6 +96,10 @@ const date = ref(`${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`);
 const newUserName = ref("");
 const showAddNew = ref(false);
 const submitting = ref(false);
+
+const editMode = computed(() => {
+  return props.data?.description.length || 0 > 0;
+});
 
 const options = computed(() => {
   type Options = { label: string; value: string };
@@ -137,23 +144,17 @@ const addNewProfile = async () => {
 };
 
 const simulateSubmit = async () => {
-  if(showAddNew.value){
+  if (showAddNew.value) {
     $q.notify({
       message: "Jesteś w trakcie dodawania nowej osoby",
       color: "warning",
       textColor: "black",
       position: "top",
-
     });
     submitting.value = false;
 
     return;
   }
-  let errorWhileSubmit = false;
-  submitting.value = true;
-  showAddNew.value = false;
-
-  const [day, month, year] = date.value.split(".");
 
   if (!date.value || !description.value || !user.value) {
     $q.notify({
@@ -162,6 +163,24 @@ const simulateSubmit = async () => {
       position: "top",
     });
     submitting.value = false;
+
+    return;
+  }
+
+  const [day, month, year] = date.value.split(".");
+  let errorWhileSubmit = false;
+  submitting.value = true;
+  showAddNew.value = false;
+
+  if (editMode.value) {
+    store.updatePray(props.data?.id || "", {
+      description: description.value,
+      owner: user.value,
+      date: new Date(+year, +month - 1, +day),
+    });
+
+    submitting.value = false;
+    emit("submit");
 
     return;
   }
@@ -195,6 +214,14 @@ const simulateSubmit = async () => {
 
 onMounted(() => {
   user.value = auth.profile.id;
+  if (editMode.value) {
+    description.value = props.data?.description || "";
+    //@ts-ignore
+    user.value = props.data?.owner.id as string;
+    const dt = props.data?.date.toDate();
+    //@ts-ignore
+    date.value = `${dt.getDate()}.${dt.getMonth() + 1}.${dt.getFullYear()}`;
+  }
 });
 </script>
 <style lang="scss">
