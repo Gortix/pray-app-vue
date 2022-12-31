@@ -27,19 +27,15 @@
 <script setup lang="ts">
 import AddPrayCompoment from "@/components/AddPrayCompoment.vue";
 import FiltersMenu from "@/components/FiltersMenu.vue";
-import { useStore } from "@/store/index";
-import { computed, ref, watch } from "vue";
-import PageHeader from "@/components/PageHeader.vue";
-import ControlPanel from "@/components/ControlPanel.vue";
+import { ref, watch } from "vue";
+import PageHeader from "@/components/Header/PageHeader.vue";
+import ControlPanel from "@/components/Header/ControlPanel.vue";
 import { useSelectedList } from "@/store/selectedList";
 
-const store = useStore();
 const slStore = useSelectedList();
 
 const renderPanel = ref(false);
 const showFilterMenu = ref(false);
-
-const data = computed(() => store.getFilteredData);
 
 watch(
   () => slStore.selectedList.length,

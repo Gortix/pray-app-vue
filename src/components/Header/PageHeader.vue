@@ -1,8 +1,8 @@
 <template>
   <q-toolbar>
     <q-toolbar-title>
-      <q-avatar>
-        <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
+      <q-avatar square size="2rem">
+        <img src="@/assets/logo-kch.png" />
       </q-avatar>
       Kościół w Działdowie
     </q-toolbar-title>
@@ -14,5 +14,5 @@
   </q-toolbar>
 </template>
 <script setup lang="ts">
-import ProfileMenu from "./ProfileMenu/ProfileMenu.vue";
+import ProfileMenu from "./ProfileMenu.vue";
 </script>

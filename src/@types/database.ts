@@ -6,21 +6,22 @@ export interface Prayer {
 }
 
 export interface Pray {
-  id?: string,
+  id?: string;
   date: Timestamp;
   description: string;
-  owner:  Profile ;
+  owner: Profile;
   prayers?: Prayer[];
   archived: boolean;
 }
 
-export interface Profile{
-    name: string,
-    id: string,
+export interface Profile {
+  name: string;
+  id: string;
 }
 
-export interface User{
-  profile: DocumentReference<Profile>,
-  role: 'user' | 'admin' | 'superadmin',
+export interface User {
+  id: string;
+  name: string;
+  profile: DocumentReference<Profile>;
+  role: "user" | "admin" | "superadmin";
 }
-

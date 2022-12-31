@@ -24,10 +24,10 @@ interface profilesMap {
 
 export const db = getFirestore(app);
 
-export const getRelatedDoc = async (path: string) => {
-  const getDocResponse = await getDoc(doc(db, path));
-  return { ...getDocResponse.data(), id: getDocResponse.id };
-};
+// export const getRelatedDoc = async (path: string) => {
+//   const getDocResponse = await getDoc(doc(db, path));
+//   return { ...getDocResponse.data(), id: getDocResponse.id };
+// };
 
 const createPrayObject = async (
   document: DocumentSnapshot<Pray>,
@@ -63,10 +63,8 @@ export const useStore = defineStore("database", {
       );
     },
     getFilteredData(state) {
-      // eslint-disable-next-line
       //@ts-ignore
       const currentFilterFunc = declaredFilters[state.filter]["filter"];
-      // eslint-disable-next-line
       //@ts-ignore
       return state.getSortedData.filter(currentFilterFunc);
     },
@@ -75,7 +73,10 @@ export const useStore = defineStore("database", {
     },
   },
   actions: {
-    async getListOfPray() {
+    async getListOfPray(force = false) {
+      if (this.data.length > 0 && !force) {
+        return;
+      }
       const prayList: Pray[] = [];
 
       try {
@@ -91,7 +92,10 @@ export const useStore = defineStore("database", {
         console.error(err);
       }
     },
-    async getListOfUsers() {
+    async getListOfUsers(force = false) {
+      if (Object.keys(this.users).length > 0 && !force) {
+        return;
+      }
       try {
         const querySnapshot = await getDocs<Profile>(
           collection(db, "profiles") as CollectionReference<Profile>
@@ -144,7 +148,7 @@ export const useStore = defineStore("database", {
 
       try {
         const docRef = doc(db, `prayers/${id}`);
-        const resp = await updateDoc(docRef, { ...prayObj });
+        await updateDoc(docRef, { ...prayObj });
         const rec = this.data.find((rec) => rec.id == id);
         //@ts-ignore
         rec.description = data.description;
