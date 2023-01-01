@@ -23,5 +23,5 @@ export interface User {
   id: string;
   name: string;
   profile: DocumentReference<Profile>;
-  role: "user" | "admin" | "superadmin";
+  role: "" | "user" | "admin" | "superadmin";
 }

@@ -23,7 +23,7 @@ export const useAdminStore = defineStore("adminStore", {
 
         for (const rec of querySnapshot.docs) {
           const databaseUser = rec.data();
-          this.users.push({ ...databaseUser });
+          this.users.push({ ...databaseUser, id: rec.id });
         }
       } catch (err) {
         errorLog(err);
