@@ -16,10 +16,9 @@ firebaseAuthObject.onAuthStateChanged(async (user) => {
   auth.loggedIn = user != null;
   if (auth.loggedIn) {
     //@ts-ignore
-    router.push({ name: route.query?.redirect || 'prayers' });
-  }
-  else{
-    router.push({ name: 'login' });
+    router.push({ name: route.query?.redirect || "prayers" });
+  } else {
+    router.push({ name: "login" });
   }
   await store.getListOfUsers();
   await store.getListOfPray();
