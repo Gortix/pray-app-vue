@@ -52,13 +52,13 @@ export const useAuth = defineStore("auth", {
     },
     async getUserProfileID() {
       try {
-        const userRef = await get(ref(db, `users/${auth.currentUser?.uid}`));
+        const userRef = await get(ref(db, `users/${auth.currentUser?.uid}`));             
         const userData = userRef.val();
         this.role = userData?.role || "";
 
         if (!userData) await this.createUser();
-
-        if (!userData?.role) {
+        
+        if (!userData?.role) {          
           Notify.create({
             message: `Twoje konto czeka na autoryzację. Napisz do Pawła lub Edyty`,
             color: "warning",
@@ -85,6 +85,7 @@ export const useAuth = defineStore("auth", {
       //@ts-ignore
       return await set(ref(db, "users/" + auth.currentUser?.uid), {
         name: auth.currentUser?.displayName,
+        profile:"",
         role: "",
       });
     },

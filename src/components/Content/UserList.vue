@@ -10,9 +10,11 @@
       </q-field>
       <q-select
         :model-value="user.profile.id"
-        @update:model-value="(el)=>{
-          const profile = {name: el.label, id: el.value} as DocumentReference<Profile>
-          updateUser(user.id, {profile} as User)}"
+        @update:model-value="
+          (el) => {
+            updateSelect(user.id, el);
+          }
+        "
         :options="options"
         map-options
         label="Profil"
@@ -65,8 +67,6 @@ const updateUser = (id: string, user: User) => {
     findUser = { id: user.id } as User;
     updateList.value.push(findUser);
   }
-
-  console.log(user);
 
   for (const [key, value] of Object.entries(user)) {
     //@ts-ignore
