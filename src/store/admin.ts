@@ -1,9 +1,14 @@
-import { db , useStore} from "./index";
+import { db, useStore } from "./index";
 import { errorLog } from "@/functions/helpers";
 import { User } from "@/@types/database";
 
 import { defineStore } from "pinia";
-import { child, get, ref } from "firebase/database";
+import { child, get, ref, update } from "firebase/database";
+import { Notify } from "quasar";
+
+interface userRequest {
+  [key: string]: { profile?: string; role: string };
+}
 
 export const useAdminStore = defineStore("adminStore", {
   state: () => {
@@ -24,11 +29,35 @@ export const useAdminStore = defineStore("adminStore", {
         for (const id in usersReps) {
           const currentUser = usersReps[id];
           //@ts-ignore
-          const profile= store.users[currentUser.profile];
+          const profile = store.users[currentUser.profile];
           this.users.push({ ...usersReps[id], profile, id });
         }
       } catch (err) {
         errorLog(err);
+      }
+    },
+    async updateListOfUsers(list: User[]) {
+      const updates = list.reduce((obj, el) => {
+        const { id, ...rest } = el;
+        for (const k of Object.keys(rest)) {
+          //@ts-ignore
+          obj[`${id}/${k}`] = k == "profile" ? rest[k].id : rest[k];
+        }
+        return obj;
+      }, {});
+      try {
+        await update(ref(db, "/users/"), updates);
+        Notify.create({
+          message: `Dane zostały zmienione`,
+          color: "positive",
+          position: "top",
+        });
+      } catch (err) {
+        Notify.create({
+          message: `Wystąpił błąd podczas zapisu ${err}`,
+          color: "negative",
+          position: "top",
+        });
       }
     },
   },

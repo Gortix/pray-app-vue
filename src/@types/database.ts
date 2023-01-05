@@ -20,6 +20,7 @@ export interface Profile {
 export interface User {
   id: string;
   name: string;
+  email: string;
   profile: Profile;
   role: "" | "user" | "admin" | "superadmin";
 }

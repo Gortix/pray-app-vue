@@ -85,6 +85,7 @@ export const useAuth = defineStore("auth", {
       //@ts-ignore
       return await set(ref(db, "users/" + auth.currentUser?.uid), {
         name: auth.currentUser?.displayName,
+        email:auth.currentUser?.email,
         profile:"",
         role: "",
       });
