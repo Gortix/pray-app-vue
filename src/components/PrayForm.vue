@@ -77,7 +77,8 @@ import { computed } from "@vue/reactivity";
 import { ref, defineEmits, onMounted, defineProps } from "vue";
 import { useAuth } from "@/store/auth";
 import { Pray } from "@/@types/database";
-import { useQuasar } from "quasar";
+import { dateToString } from "@/functions/helpers";
+import { useQuasar} from "quasar";
 
 const props = defineProps<{ data?: Pray }>();
 
@@ -92,7 +93,7 @@ const emit = defineEmits(["submit"]);
 
 const description = ref("");
 const user = ref("");
-const date = ref(`${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`);
+const date = ref(dateToString(new Date()));
 const newUserName = ref("");
 const showAddNew = ref(false);
 const submitting = ref(false);
@@ -217,10 +218,9 @@ onMounted(() => {
   if (editMode.value) {
     description.value = props.data?.description || "";
     //@ts-ignore
-    user.value = props.data?.owner.id as string;
-    const dt = props.data?.date.toDate();
+    user.value = props.data?.owner.id;
     //@ts-ignore
-    date.value = `${dt.getDate()}.${dt.getMonth() + 1}.${dt.getFullYear()}`;
+    date.value = dateToString(props.data?.date);
   }
 });
 </script>

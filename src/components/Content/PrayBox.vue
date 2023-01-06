@@ -50,7 +50,6 @@
   </q-card>
 </template>
 <script setup lang="ts">
-import { Timestamp } from "@firebase/firestore";
 import { Profile } from "@/@types/database";
 import { computed } from "@vue/reactivity";
 import { date } from "quasar";
@@ -63,7 +62,7 @@ const showMenu = ref<boolean>(false);
 const props = withDefaults(
   defineProps<{
     id?: string;
-    date: Timestamp;
+    date: Date;
     description: string;
     owner: Profile;
     prayers?: Prayer[];
@@ -78,10 +77,10 @@ const props = withDefaults(
   { archived: false, selected: false, showOwner: true, fullSize: false }
 );
 
-const convertedDate = computed(() => props.date?.toDate().toLocaleDateString());
+const convertedDate = computed(() => props.date.toLocaleDateString());
 const isLast7Days = computed(() => {
   const weekAgo = date.subtractFromDate(new Date(), { days: 7 });
-  const createdDate = props.date?.toDate() || Date.now();
+  const createdDate = props.date || Date.now();
 
   return weekAgo <= createdDate;
 });
