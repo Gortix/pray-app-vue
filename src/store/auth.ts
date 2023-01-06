@@ -1,7 +1,6 @@
 import { db } from "./index";
 import { auth } from "@/@firebase";
 import { errorLog } from "@/functions/helpers";
-
 import {
   signInWithPopup,
   signOut,
@@ -9,17 +8,9 @@ import {
   setPersistence,
   browserLocalPersistence,
 } from "firebase/auth";
-import {
-  doc,
-  updateDoc,
-  DocumentReference,
-  getDoc,
-  setDoc,
-} from "firebase/firestore";
 import { defineStore } from "pinia";
-import { User } from "@/@types/database";
-import { db as appDB } from "@/store/index";
 import { Notify } from "quasar";
+import { get, ref, set, update } from "firebase/database";
 
 const provider = new GoogleAuthProvider();
 
@@ -34,7 +25,7 @@ export const useAuth = defineStore("auth", {
     };
   },
   actions: {
-    async authorize() {
+    async authorize() {      
       try {
         const result = await signInWithPopup(auth, provider);
         const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -60,17 +51,13 @@ export const useAuth = defineStore("auth", {
     },
     async getUserProfileID() {
       try {
-        const userRef = doc(
-          db,
-          `users/${auth.currentUser?.uid}`
-        ) as DocumentReference<User>;
-        const getUserResponse = await getDoc(userRef);
-        const userData = getUserResponse.data();
+        const userRef = await get(ref(db, `users/${auth.currentUser?.uid}`));             
+        const userData = userRef.val();
         this.role = userData?.role || "";
 
         if (!userData) await this.createUser();
-
-        if (!userData?.role) {
+        
+        if (!userData?.role) {          
           Notify.create({
             message: `Twoje konto czeka na autoryzację. Napisz do Pawła lub Edyty`,
             color: "warning",
@@ -79,20 +66,15 @@ export const useAuth = defineStore("auth", {
           });
         }
 
-        return userData?.profile.id || "";
+        return userData?.profile || "";
       } catch (err) {
         errorLog(err);
       }
     },
     async updateUserProfile(name: string) {
       try {
-        const docRef = doc(db, `profiles/${this.profile.id}`);
-        try {
-          await updateDoc(docRef, { name });
-          this.profile.name = name;
-        } catch (err) {
-          errorLog(err);
-        }
+        await update(ref(db, `profiles/${this.profile.id}`), { name });
+        this.profile.name = name;
       } catch (err) {
         errorLog(err);
       }
@@ -100,10 +82,11 @@ export const useAuth = defineStore("auth", {
     async createUser() {
       // eslint-disable-next-line
       //@ts-ignore
-      return await setDoc(doc(appDB, "users", auth.currentUser?.uid), {
+      return await set(ref(db, "users/" + auth.currentUser?.uid), {
         name: auth.currentUser?.displayName,
+        email:auth.currentUser?.email,
+        profile:"",
         role: "",
-        profile: doc(appDB, "profiles", "x"),
       });
     },
   },

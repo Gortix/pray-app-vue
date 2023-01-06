@@ -17,10 +17,10 @@
     <q-drawer :width="230" v-model="showFilterMenu" side="right" bordered>
       <FiltersMenu />
     </q-drawer>
-    <q-page-container >
+    <q-page-container>
       <router-view />
     </q-page-container>
-    <AddPrayCompoment />
+    <AddPrayCompoment v-if="route.name == 'prayers'" />
   </q-layout>
 </template>
 
@@ -31,8 +31,10 @@ import { ref, watch } from "vue";
 import PageHeader from "@/components/Header/PageHeader.vue";
 import ControlPanel from "@/components/Header/ControlPanel.vue";
 import { useSelectedList } from "@/store/selectedList";
+import { useRoute } from "vue-router";
 
 const slStore = useSelectedList();
+const route = useRoute();
 
 const renderPanel = ref(false);
 const showFilterMenu = ref(false);

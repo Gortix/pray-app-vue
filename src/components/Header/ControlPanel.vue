@@ -8,7 +8,7 @@
       color="teal"
       label="Wszystkie"
     />
-    <q-btn flat @click="() => selectedListStore.copySelectedPrays">
+    <q-btn flat @click="() => selectedListStore.copySelectedPrays()">
       <q-icon name="o_content_copy" />
     </q-btn>
   </div>
