@@ -2,6 +2,7 @@
 
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getDatabase } from "firebase/database";
 
 // TODO: Add SDKs for Firebase products that you want to use
 
@@ -15,7 +16,7 @@ const firebaseConfig = {
   authDomain: "pray-app-dzialodow.firebaseapp.com",
 
   databaseURL:
-    "https://pray-app-dzialodow-default-rtdb.europe-west1.firebasedatabase.app",
+    "https://pray-app-dzialodow-default-rtdb.europe-west1.firebasedatabase.app/",
 
   projectId: "pray-app-dzialodow",
 
@@ -29,6 +30,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig, "App");
 export const auth = getAuth(app);
+
 auth.languageCode = "pl";
 
 export default app;

@@ -10,16 +10,20 @@ import { useRouter, useRoute } from "vue-router";
 const auth = useAuth();
 const store = useStore();
 const router = useRouter();
+const route = useRoute();
 
 firebaseAuthObject.onAuthStateChanged(async (user) => {
   auth.loggedIn = user != null;
   if (auth.loggedIn) {
-    router.push({ name: "prayers" });
+    //@ts-ignore
+    router.push({ name: route.query?.redirect || "prayers" });
+  } else {
+    router.push({ name: "login" });
   }
   await store.getListOfUsers();
   await store.getListOfPray();
 
-  const profileId = (await auth.getUserProfileID()) as string;
+  const profileId = (await auth.getUserProfileID()) as string;    
   const userProfile = store.users[profileId];
 
   if (userProfile) {

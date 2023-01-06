@@ -27,19 +27,19 @@ export const useSelectedList = defineStore("selectedList", {
       const store = useStore();
 
       const prayToCopy = {} as { [key: string]: Pray[] };
-      const praysMap = store.getFilteredData.map(
+      const praysMap = [...store.getFilteredData].map(
         // eslint-disable-next-line
         //@ts-ignore
         (el, i, obj) => (obj[el["id"]] = el),
         {}
       );
 
-      for (const recID in this.selectedList) {
-        const currentPray = praysMap[recID];
+      for (const recID of this.selectedList) {
+        const currentPray = {...praysMap.find((el)=>el.id == recID)};
         const listOfPray = getOrCreateList(currentPray.owner.id, prayToCopy);
         listOfPray.push(currentPray);
       }
-      let txt = "";
+      let txt = "";      
 
       for (const k of Object.keys(prayToCopy)) {
         txt += `${prayToCopy[k][0].owner.name}: \n- ${prayToCopy[k]

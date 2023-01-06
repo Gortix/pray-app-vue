@@ -17,29 +17,27 @@
     <q-drawer :width="230" v-model="showFilterMenu" side="right" bordered>
       <FiltersMenu />
     </q-drawer>
-    <q-page-container >
+    <q-page-container>
       <router-view />
     </q-page-container>
-    <AddPrayCompoment />
+    <AddPrayCompoment v-if="route.name == 'prayers'" />
   </q-layout>
 </template>
 
 <script setup lang="ts">
 import AddPrayCompoment from "@/components/AddPrayCompoment.vue";
 import FiltersMenu from "@/components/FiltersMenu.vue";
-import { useStore } from "@/store/index";
-import { computed, ref, watch } from "vue";
-import PageHeader from "@/components/PageHeader.vue";
-import ControlPanel from "@/components/ControlPanel.vue";
+import { ref, watch } from "vue";
+import PageHeader from "@/components/Header/PageHeader.vue";
+import ControlPanel from "@/components/Header/ControlPanel.vue";
 import { useSelectedList } from "@/store/selectedList";
+import { useRoute } from "vue-router";
 
-const store = useStore();
 const slStore = useSelectedList();
+const route = useRoute();
 
 const renderPanel = ref(false);
 const showFilterMenu = ref(false);
-
-const data = computed(() => store.getFilteredData);
 
 watch(
   () => slStore.selectedList.length,

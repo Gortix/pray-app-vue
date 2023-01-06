@@ -5,6 +5,14 @@
 
   <q-menu v-model="openMenu">
     <q-list style="min-width: 200px">
+      <template v-if="auth.role.includes('admin')">
+        <q-item clickable v-close-popup>
+          <q-item-section @click="() => router.push({ name: 'users' })">
+            Użytkownicy
+          </q-item-section>
+        </q-item>
+        <q-separator />
+      </template>
       <q-item clickable v-close-popup>
         <q-item-section @click="() => (editProfile = true)">
           Edytuj profil
@@ -20,8 +28,10 @@
 <script lang="ts" setup>
 import { useAuth } from "@/store/auth";
 import { ref, defineAsyncComponent, watch } from "vue";
+import { useRouter } from "vue-router";
 
 const auth = useAuth();
+const router = useRouter();
 
 const EditProfileComponent = defineAsyncComponent({
   loader: () => import("./EditProfileComponent.vue"),
