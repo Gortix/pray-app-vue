@@ -138,7 +138,6 @@ export const useStore = defineStore("database", {
       console.log(data.owner);
       
       try {
-        // const docRef = doc(db, `prayers/${id}`);
         await update(ref(db, "prayers/"+id), prayObj );
         const rec = this.data.find((rec) => rec.id == id);
         //@ts-ignore
