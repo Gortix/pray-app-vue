@@ -1,5 +1,5 @@
 <template>
-  <q-btn class="fixed-center" size="lg" @click="()=>auth.authorize()">
+  <q-btn class="fixed-center" size="lg" @click="auth.authorize">
     <img
       src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
       alt="google icon"
