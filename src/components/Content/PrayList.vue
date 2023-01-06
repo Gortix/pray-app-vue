@@ -1,4 +1,15 @@
 <template>
+  <q-drawer :width="230" v-model="showFilterMenu" side="right" bordered>
+    <FiltersMenu />
+  </q-drawer>
+  <q-btn
+    dense
+    flat
+    class="q-mr-sm"
+    round
+    icon="o_filter_alt"
+    @click="showFilterMenu = !showFilterMenu"
+  />
   <TransitionGroup
     name="pray-box-list"
     class="row wrap q-mt-sm justify-center custom-gap render-list items-stretch"
@@ -32,6 +43,7 @@ import { ref, computed } from "vue";
 import { useStore } from "@/store/index";
 import { useAuth } from "@/store/auth";
 import { useSelectedList } from "@/store/selectedList";
+import FiltersMenu from "@/components/FiltersMenu.vue";
 import PrayBox from "./PrayBox.vue";
 import BasicPopup from "../BasicPopup.vue";
 import PrayForm from "../PrayForm.vue";
@@ -43,6 +55,7 @@ const slStore = useSelectedList();
 
 const toolbar = ref(false);
 const editPray = ref(false);
+const showFilterMenu = ref(false);
 const popupData = ref({} as PrayBoxTypes);
 
 const data = computed(() => store.getFilteredData);

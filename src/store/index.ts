@@ -1,3 +1,4 @@
+import { usePrayFilter } from "./filterStore";
 import { dateToString, errorLog } from "@/functions/helpers";
 import { Pray, Profile } from "./../@types/database";
 import { defineStore } from "pinia";
@@ -29,9 +30,10 @@ const createPrayObject = async (
   const owner = users[docData.owner];
   //@ts-ignore
   const [day, month, year] = docData.date.split(".");
+
   return {
     archived: docData?.archived || true,
-    date: new Date(year, month, day),
+    date: new Date(year, month - 1, day),
     description: docData?.description || "",
     prayers: [],
     id,
@@ -56,10 +58,12 @@ export const useStore = defineStore("database", {
       );
     },
     getFilteredData(state) {
+      const filters = usePrayFilter();
+
       //@ts-ignore
-      const currentFilterFunc = declaredFilters[state.filter]["filter"];
-      //@ts-ignore
-      return state.getSortedData.filter(currentFilterFunc);
+      return state.getSortedData
+        .filter(filters.dateFilter)
+        .filter(filters.ownerFilter);
     },
     getFilters() {
       return declaredFilters;
@@ -117,8 +121,10 @@ export const useStore = defineStore("database", {
 
       try {
         const keyOfNewPush = push(ref(db, "prayers"), prayObj).key as string;
-        
-        this.data.push(await createPrayObject(keyOfNewPush, prayObj, this.users));
+
+        this.data.push(
+          await createPrayObject(keyOfNewPush, prayObj, this.users)
+        );
       } catch (err) {
         console.error(err);
       }
@@ -127,18 +133,17 @@ export const useStore = defineStore("database", {
       id: string,
       data: { date: Date; description: string; owner: string }
     ) {
-      
       const prayObj: Pray = {
         //@ts-ignore
         date: dateToString(data.date),
         description: data.description,
         // @ts-ignore
-        owner: data.owner
+        owner: data.owner,
       };
       console.log(data.owner);
-      
+
       try {
-        await update(ref(db, "prayers/"+id), prayObj );
+        await update(ref(db, "prayers/" + id), prayObj);
         const rec = this.data.find((rec) => rec.id == id);
         //@ts-ignore
         rec.description = data.description;
@@ -152,9 +157,9 @@ export const useStore = defineStore("database", {
     },
     async addProfile(userName: string) {
       try {
-        const profileKey = await push(ref(db,"profiles"),{
+        const profileKey = (await push(ref(db, "profiles"), {
           name: userName,
-        }).key as string;
+        }).key) as string;
         this.users[profileKey] = { id: profileKey, name: userName };
 
         return profileKey;
@@ -164,7 +169,7 @@ export const useStore = defineStore("database", {
       }
     },
     async removePray(prayID: string) {
-      await remove((ref(db, `prayers/${prayID}`)));
+      await remove(ref(db, `prayers/${prayID}`));
 
       const rmIndex = this.data.findIndex((rec) => rec.id == prayID);
       this.data.splice(rmIndex, 1);

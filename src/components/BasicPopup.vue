@@ -1,16 +1,13 @@
 <template>
   <Teleport to="body">
     <q-dialog
+      :position="props.posstion"
       :model-value="props.modelValue"
       @show="emit('update:modelValue', true)"
       @hide="emit('update:modelValue', false)"
     >
       <q-card class="width">
         <q-toolbar>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg" />
-          </q-avatar>
-
           <q-toolbar-title>{{ title }}</q-toolbar-title>
 
           <q-btn flat round icon="close" dense v-close-popup />
@@ -26,7 +23,11 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from "vue";
 
-const props = defineProps({ modelValue: Boolean, title: String });
+const props = defineProps<{
+  posstion?: "standard" | "top" | "right" | "bottom" | "left" | undefined;
+  modelValue: boolean;
+  title: string;
+}>();
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): boolean;
 }>();

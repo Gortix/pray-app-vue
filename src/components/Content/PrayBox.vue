@@ -55,6 +55,7 @@ import { computed } from "@vue/reactivity";
 import { date } from "quasar";
 import { defineProps, defineEmits, ref, withDefaults } from "vue";
 import { Prayer } from "@/@types/database";
+import { dateToString } from "@/functions/helpers";
 
 const emits = defineEmits(["removeDoc", "update:selected", "open", "edit"]);
 const showMenu = ref<boolean>(false);
@@ -77,7 +78,7 @@ const props = withDefaults(
   { archived: false, selected: false, showOwner: true, fullSize: false }
 );
 
-const convertedDate = computed(() => props.date.toLocaleDateString());
+const convertedDate = computed(() => dateToString(props.date));
 const isLast7Days = computed(() => {
   const weekAgo = date.subtractFromDate(new Date(), { days: 7 });
   const createdDate = props.date || Date.now();
