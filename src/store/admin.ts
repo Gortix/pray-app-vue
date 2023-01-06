@@ -6,10 +6,6 @@ import { defineStore } from "pinia";
 import { child, get, ref, update } from "firebase/database";
 import { Notify } from "quasar";
 
-interface userRequest {
-  [key: string]: { profile?: string; role: string };
-}
-
 export const useAdminStore = defineStore("adminStore", {
   state: () => {
     return {
