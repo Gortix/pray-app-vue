@@ -1,7 +1,6 @@
 import { db } from "./index";
 import { auth } from "@/@firebase";
 import { errorLog } from "@/functions/helpers";
-
 import {
   signInWithPopup,
   signOut,
