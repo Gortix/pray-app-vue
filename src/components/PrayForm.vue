@@ -174,8 +174,6 @@ const simulateSubmit = async () => {
   showAddNew.value = false;
 
   if (editMode.value) {
-    console.log(user.value);
-    
     store.updatePray(props.data?.id || "", {
       description: description.value,
       owner: user.value,
