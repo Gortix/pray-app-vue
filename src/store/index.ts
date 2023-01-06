@@ -20,11 +20,6 @@ interface profilesMap {
 export const db = getDatabase(app);
 const dbRef = ref(db);
 
-// export const getRelatedDoc = async (path: string) => {
-//   const getDocResponse = await getDoc(doc(db, path));
-//   return { ...getDocResponse.data(), id: getDocResponse.id };
-// };
-
 const createPrayObject = async (
   id: string,
   docData: Pray,
@@ -79,10 +74,8 @@ export const useStore = defineStore("database", {
 
       try {
         const snapshot = await get(child(dbRef, `prayers`));
-        // const querySnapshot = await getDocs(
-        //   collection(db, "prayers") as CollectionReference<Pray>
-        // );
         const snapshotList = snapshot.val();
+
         for (const i in snapshotList) {
           const rec = snapshotList[i];
           prayList.push(await createPrayObject(i, rec, this.users));
@@ -118,7 +111,6 @@ export const useStore = defineStore("database", {
         date: dateToString(date),
         description: description,
         prayers: [],
-        // eslint-disable-next-line
         //@ts-ignore
         owner,
       };
@@ -181,14 +173,6 @@ export const useStore = defineStore("database", {
     async getUserProfile() {
       const resp = await get(child(dbRef, `profiles/${auth.currentUser?.uid}`));
       return resp.val()?.name;
-    },
-    async updateUserProfile(name: string) {
-      try {
-        // const docRef = doc(db, `profiles/${auth.currentUser?.uid}`);
-        // updateDoc(docRef, { name });
-      } catch (err) {
-        errorLog(err);
-      }
     },
   },
 });
