@@ -2,14 +2,14 @@
   <form @submit.prevent="onSubmitHandler">
     <ul>
       <li v-for="user in listOfUsers" :key="user.id" class="row even">
-        <q-field label="Nazwa" stack-label class="col-xs-12 col-md-2 " >
+        <q-field label="Nazwa" stack-label class="col " >
           <template v-slot:control>
             <div class="self-center no-outline" tabindex="0">
               {{ user.name }}
             </div>
           </template>
         </q-field>
-        <q-field label="Email" stack-label class="col-xs-12 col-md-3 ">
+        <q-field label="Email" stack-label class="col">
           <template v-slot:control>
             <div class="self-center no-outline" tabindex="0">
               {{ user.email }}
