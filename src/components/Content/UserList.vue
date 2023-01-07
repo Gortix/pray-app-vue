@@ -25,7 +25,7 @@
                 updateSelect(user.id, el);
               }
             "
-            :options="profileOptions"
+            :options="store.getProfileOptions"
             map-options
             label="Profil"
             class="col-md-3 col-xs-12"
@@ -123,18 +123,6 @@ const onSubmitHandler = async () => {
 onMounted(async () => {
   await adminStore.getUserList();
   listOfUsers.value = adminStore.users;
-});
-
-const profileOptions = computed(() => {
-  type Options = { label: string; value: string };
-  const listOfProfiles: Options[] = [];
-  const profiles = store.users;
-
-  for (const k of Object.keys(profiles)) {
-    listOfProfiles.push({ label: profiles[k].name, value: profiles[k].id });
-  }
-
-  return listOfProfiles;
 });
 
 const roleOptions = ["user", "admin", "superadmin"];

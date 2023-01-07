@@ -1,9 +1,8 @@
 import { usePrayFilter } from "./filterStore";
-import { dateToString, errorLog } from "@/functions/helpers";
+import { dateToString } from "@/functions/helpers";
 import { Pray, Profile } from "./../@types/database";
 import { defineStore } from "pinia";
 import app, { auth } from "@/@firebase";
-import { filters as declaredFilters } from "./filters";
 import {
   getDatabase,
   ref,
@@ -65,8 +64,16 @@ export const useStore = defineStore("database", {
         .filter(filters.dateFilter)
         .filter(filters.ownerFilter);
     },
-    getFilters() {
-      return declaredFilters;
+    getProfileOptions() {
+      type Options = { label: string; value: string };
+      const listOfUsers: Options[] = [];
+      const users = this.users;
+
+      for (const k of Object.keys(users)) {
+        listOfUsers.push({ label: users[k].name, value: users[k].id });
+      }
+
+      return listOfUsers;
     },
   },
   actions: {

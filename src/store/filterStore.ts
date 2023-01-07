@@ -2,21 +2,45 @@ import { date } from "quasar";
 import { Pray } from "@/@types/database";
 import { defineStore } from "pinia";
 
+export const dataFilters = {
+  week: "Ostatnie 7 dni",
+  last30days: "Ostatnie 30 dni",
+  currentMonth: "Ten miesiąc",
+  previousMonth: "Poprzedni miesiąc",
+};
+
+export const ownerFIlters = {
+  owner: "Właściciel",
+};
+
 export const usePrayFilter = defineStore("prayFilter", {
   state: () => {
     return {
       owner: "",
-      date: "" as "" | "week" | "month",
+      date: "" as "" | "week" | "currentMonth" | "last30days" | "previousMonth",
     };
   },
   getters: {
     dateFilter() {
       if (!this.date) return (el: Pray) => el;
+      const d = new Date();
+
+      if (this.date == "currentMonth") {
+        const compareDate = date.startOfDate(d, "month");
+
+        return (el: Pray) => el.date >= compareDate;
+      }
+
+      if (this.date == "previousMonth") {
+        let compareDate = date.subtractFromDate(d, { month: 1 });
+        compareDate = date.startOfDate(compareDate, "month");
+
+        return (el: Pray) => el.date >= compareDate;
+      }
 
       const days = this.date == "week" ? 7 : 30;
-
-      return (el: Pray): boolean =>
-        el.date >= date.subtractFromDate(new Date(), { days });
+      const compareDate = date.subtractFromDate(d, { days });
+      return (el: Pray): boolean => el.date >= compareDate;
     },
     ownerFilter() {
       const owner = this.owner;

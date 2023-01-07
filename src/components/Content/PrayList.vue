@@ -1,7 +1,7 @@
 <template>
-  <q-drawer :width="230" v-model="showFilterMenu" side="right" bordered>
+  <BasicPopup posstion="bottom" v-model="showFilterMenu" title="Filtry">
     <FiltersMenu />
-  </q-drawer>
+  </BasicPopup>
   <q-btn
     dense
     flat
@@ -10,6 +10,30 @@
     icon="o_filter_alt"
     @click="showFilterMenu = !showFilterMenu"
   />
+  <!-- <q-select
+    borderless
+    hide-dropdown-icon
+    disable
+    :options="['date','owner']"
+    stack-label
+    label=""
+    color="secondary"
+  >
+    <template v-slot:selected-item="scope">
+      <q-chip
+        removable
+        dense
+        @remove="scope.removeAtIndex(scope.index)"
+        :tabindex="scope.tabindex"
+        color="white"
+        text-color="secondary"
+        class="q-ma-none"
+      >
+        <q-avatar color="secondary" text-color="white" :icon="scope.opt.icon" />
+        {{ scope.opt.label }}
+      </q-chip>
+    </template>
+  </q-select> -->
   <TransitionGroup
     name="pray-box-list"
     class="row wrap q-mt-sm justify-center custom-gap render-list items-stretch"
@@ -46,7 +70,7 @@ import { useSelectedList } from "@/store/selectedList";
 import FiltersMenu from "@/components/FiltersMenu.vue";
 import PrayBox from "./PrayBox.vue";
 import BasicPopup from "../BasicPopup.vue";
-import PrayForm from "../PrayForm.vue";
+import PrayForm from "../Pray/PrayForm.vue";
 import { PrayBoxTypes } from "@/@types/components";
 
 const store = useStore();

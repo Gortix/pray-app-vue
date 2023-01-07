@@ -12,7 +12,6 @@
 
           <q-btn flat round icon="close" dense v-close-popup />
         </q-toolbar>
-
         <q-card-section>
           <slot name="default"></slot>
         </q-card-section>
@@ -28,6 +27,7 @@ const props = defineProps<{
   modelValue: boolean;
   title: string;
 }>();
+
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): boolean;
 }>();
