@@ -83,7 +83,6 @@ import { useQuasar} from "quasar";
 const props = defineProps<{ data?: Pray }>();
 
 const datePattern = /^[0-3]\d.[0-1]\d.[\d]{4}$/;
-const d = new Date();
 
 const store = useStore();
 const auth = useAuth();

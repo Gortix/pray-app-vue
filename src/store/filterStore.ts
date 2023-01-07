@@ -32,10 +32,11 @@ export const usePrayFilter = defineStore("prayFilter", {
       }
 
       if (this.date == "previousMonth") {
-        let compareDate = date.subtractFromDate(d, { month: 1 });
-        compareDate = date.startOfDate(compareDate, "month");
+        let previousMonth = date.subtractFromDate(d, { months: 1 });
+        previousMonth = date.startOfDate(previousMonth, "month");
+        const thisMonth = date.startOfDate(d, "month");
 
-        return (el: Pray) => el.date >= compareDate;
+        return (el: Pray) => el.date >= previousMonth && el.date < thisMonth;
       }
 
       const days = this.date == "week" ? 7 : 30;

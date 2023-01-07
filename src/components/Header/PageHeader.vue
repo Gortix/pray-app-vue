@@ -11,14 +11,14 @@
       </q-avatar>
       Kościół w Działdowie
     </q-toolbar-title>
-    <q-btn
+    <!-- <q-btn
       dense
       flat
       class="q-mr-sm"
       round
-      icon="o_filter_alt"
+      icon="o_menu"
       @click="(el) => $emit('filterMenuAction')"
-    />
+    /> -->
     <q-btn round flat>
       <q-icon size="2.5rem" color="blue-grey-1" name="o_account_circle" />
       <ProfileMenu />

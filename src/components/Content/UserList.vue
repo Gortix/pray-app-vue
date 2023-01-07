@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import { useAdminStore } from "@/store/admin";
 import { User, Profile } from "@/@types/database";
-import { onMounted, ref, computed, TransitionGroup } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useStore } from "@/store";
 import { useAuth } from "@/store/auth";
 

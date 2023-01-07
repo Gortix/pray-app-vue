@@ -12,7 +12,7 @@
       text-color="black"
       clickable
       v-ripple
-      @click="() => (filterStore.date = key)"
+      @click="dateSelect(key)"
     >
       {{ value }}
     </q-btn>
@@ -25,7 +25,7 @@
       text-color="black"
       clickable
       v-ripple
-      @click="() => (filterStore.owner = auth.profile.id)"
+      @click="ownerSelect"
     >
       Moje
     </q-btn>
@@ -43,12 +43,12 @@
 import { usePrayFilter, dataFilters } from "@/store/filterStore";
 import { useAuth } from "@/store/auth";
 import { useStore } from "@/store/index";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 
 const filterStore = usePrayFilter();
 const auth = useAuth();
 const store = useStore();
-const iAmOwner = computed(() => (filterStore.owner == auth.profile.id));
+const iAmOwner = computed(() => filterStore.owner == auth.profile.id);
 
 const user = computed({
   get() {
@@ -58,4 +58,17 @@ const user = computed({
     filterStore.owner = value;
   },
 });
+
+const ownerSelect = () => {
+  if (iAmOwner.value) return (filterStore.owner = "");
+
+  return (filterStore.owner = auth.profile.id);
+};
+
+const dateSelect = (key: unknown) => {
+  if (filterStore.date == key) return (filterStore.date = "");
+
+  //@ts-ignore
+  return (filterStore.date = key);
+};
 </script>

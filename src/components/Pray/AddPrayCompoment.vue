@@ -9,7 +9,7 @@
     color="info"
     @click="() => (toolbar = true)"
   >
-    <span style="font-size: 1.4rem">&plus;</span>
+    <q-icon name="add" size="1.45em"/>
   </q-btn>
 </template>
 <script setup lang="ts">

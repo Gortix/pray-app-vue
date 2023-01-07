@@ -1,39 +1,5 @@
 <template>
-  <BasicPopup posstion="bottom" v-model="showFilterMenu" title="Filtry">
-    <FiltersMenu />
-  </BasicPopup>
-  <q-btn
-    dense
-    flat
-    class="q-mr-sm"
-    round
-    icon="o_filter_alt"
-    @click="showFilterMenu = !showFilterMenu"
-  />
-  <!-- <q-select
-    borderless
-    hide-dropdown-icon
-    disable
-    :options="['date','owner']"
-    stack-label
-    label=""
-    color="secondary"
-  >
-    <template v-slot:selected-item="scope">
-      <q-chip
-        removable
-        dense
-        @remove="scope.removeAtIndex(scope.index)"
-        :tabindex="scope.tabindex"
-        color="white"
-        text-color="secondary"
-        class="q-ma-none"
-      >
-        <q-avatar color="secondary" text-color="white" :icon="scope.opt.icon" />
-        {{ scope.opt.label }}
-      </q-chip>
-    </template>
-  </q-select> -->
+  <PrayListFiltersPanel />
   <TransitionGroup
     name="pray-box-list"
     class="row wrap q-mt-sm justify-center custom-gap render-list items-stretch"
@@ -67,11 +33,11 @@ import { ref, computed } from "vue";
 import { useStore } from "@/store/index";
 import { useAuth } from "@/store/auth";
 import { useSelectedList } from "@/store/selectedList";
-import FiltersMenu from "@/components/FiltersMenu.vue";
 import PrayBox from "./PrayBox.vue";
 import BasicPopup from "../BasicPopup.vue";
 import PrayForm from "../Pray/PrayForm.vue";
 import { PrayBoxTypes } from "@/@types/components";
+import PrayListFiltersPanel from "../PrayListFiltersPanel.vue";
 
 const store = useStore();
 const auth = useAuth();
@@ -79,7 +45,6 @@ const slStore = useSelectedList();
 
 const toolbar = ref(false);
 const editPray = ref(false);
-const showFilterMenu = ref(false);
 const popupData = ref({} as PrayBoxTypes);
 
 const data = computed(() => store.getFilteredData);
