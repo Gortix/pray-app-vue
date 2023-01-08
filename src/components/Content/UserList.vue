@@ -2,7 +2,11 @@
   <form @submit.prevent="onSubmitHandler">
     <ul>
       <TransitionGroup>
-        <li v-for="user in sortedListOfUsers" :key="user.id" class="row even">
+        <li
+          v-for="user in sortedListOfUsers"
+          :key="user.id"
+          class="row even gap"
+        >
           <q-field label="Nazwa" stack-label class="col">
             <template v-slot:control>
               <div class="self-center no-outline" tabindex="0">
@@ -17,20 +21,17 @@
               </div>
             </template>
           </q-field>
-          <q-select
-            clearable
-            :model-value="user.profile?.id || null"
-            @update:model-value="
+          <ProfileSelect
+            class="col-md-3 col-xs-12"
+            label="Profil"
+            :profile="user.profile?.id"
+            :suggest="user.name"
+            @update:profile="
               (el) => {
                 updateSelect(user.id, el);
               }
             "
-            :options="store.getProfileOptions"
-            map-options
-            label="Profil"
-            class="col-md-3 col-xs-12"
           />
-
           <q-select
             @update:model-value="(v)=>updateUser(user.id,{'role':v} as User)"
             :model-value="user.role"
@@ -61,10 +62,9 @@
 import { useAdminStore } from "@/store/admin";
 import { User, Profile } from "@/@types/database";
 import { onMounted, ref, computed } from "vue";
-import { useStore } from "@/store";
 import { useAuth } from "@/store/auth";
+import ProfileSelect from "../ProfileSelect.vue";
 
-const store = useStore();
 const auth = useAuth();
 
 const adminStore = useAdminStore();
@@ -136,7 +136,7 @@ ul {
   padding: 0 0 3rem;
 }
 
-.row {
+.gap {
   gap: 0.5rem;
   margin-bottom: 0.3rem;
 }

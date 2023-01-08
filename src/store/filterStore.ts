@@ -9,7 +9,8 @@ export type dateType =
   | "last30days"
   | "previousMonth";
 
-export const dataFilters: { [key in Exclude<dateType, "">]: string } = {
+//@ts-ignore
+export const dataFilters: { [key in dateType]: string } = {
   week: "Ostatnie 7 dni",
   last30days: "Ostatnie 30 dni",
   currentMonth: "Ten miesiąc",
