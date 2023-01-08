@@ -19,7 +19,6 @@ import NewPrayForm from "./PrayForm.vue";
 
 const toolbar = ref(false);
 </script>
-u
 <style lang="scss" scoped>
 .btn-fixed {
   position: fixed;
