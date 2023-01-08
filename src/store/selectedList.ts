@@ -29,8 +29,6 @@ export const useSelectedList = defineStore("selectedList", {
 
       const prayToCopy = {} as { [key: string]: Pray[] };
       const praysMap = [...store.getFilteredData].map(
-        // eslint-disable-next-line
-        //@ts-ignore
         (el, i, obj) => (obj[el["id"]] = el),
         {}
       );

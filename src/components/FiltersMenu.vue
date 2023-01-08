@@ -40,7 +40,7 @@
   </q-card-actions>
 </template>
 <script setup lang="ts">
-import { usePrayFilter, dataFilters } from "@/store/filterStore";
+import { usePrayFilter, dataFilters, dateType } from "@/store/filterStore";
 import { useAuth } from "@/store/auth";
 import { useStore } from "@/store/index";
 import { computed } from "vue";
@@ -65,10 +65,9 @@ const ownerSelect = () => {
   return (filterStore.owner = auth.profile.id);
 };
 
-const dateSelect = (key: unknown) => {
+const dateSelect = (key: dateType) => {
   if (filterStore.date == key) return (filterStore.date = "");
 
-  //@ts-ignore
   return (filterStore.date = key);
 };
 </script>

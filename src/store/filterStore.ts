@@ -2,7 +2,14 @@ import { date } from "quasar";
 import { Pray } from "@/@types/database";
 import { defineStore } from "pinia";
 
-export const dataFilters = {
+export type dateType =
+  | ""
+  | "week"
+  | "currentMonth"
+  | "last30days"
+  | "previousMonth";
+
+export const dataFilters: { [key in Exclude<dateType, "">]: string } = {
   week: "Ostatnie 7 dni",
   last30days: "Ostatnie 30 dni",
   currentMonth: "Ten miesiąc",
@@ -17,7 +24,7 @@ export const usePrayFilter = defineStore("prayFilter", {
   state: () => {
     return {
       owner: "",
-      date: "" as "" | "week" | "currentMonth" | "last30days" | "previousMonth",
+      date: "" as dateType,
     };
   },
   getters: {
