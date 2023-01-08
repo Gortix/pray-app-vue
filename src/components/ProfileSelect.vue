@@ -7,6 +7,7 @@
         :options="options"
         map-options
         use-input
+        :emit-value="props.emitValue"
         @filter="selectFilter"
         :label="props.label"
       />
@@ -47,6 +48,7 @@ const props = defineProps({
   label: { type: String, default: "Osoba" },
   profile: { type: String, default: "" },
   suggest: { type: String, default: "" },
+  emitValue: { type: Boolean, default: false },
 });
 const emit = defineEmits(["update:profile", "edit-mode"]);
 
@@ -107,7 +109,10 @@ const addNewProfile = async () => {
   }
 
   const profileID = (await store.addProfile(newUserName.value)) as string;
-  user.value = profileID;
+  emit(
+    "update:profile",
+    props.emitValue ? profileID: { label: newUserName.value, value: profileID } 
+  );
   newUserName.value = "";
   showAddNew.value = false;
 };
@@ -131,16 +136,16 @@ onMounted(() => {
 <style lang="scss" scoped>
 .user-section-enter-active,
 .user-section-leave-active {
-  transition: all .25s ease-out;
+  transition: all 0.25s ease-out;
   transform-origin: left;
 }
 
 .user-section-enter-from {
   opacity: 0;
-  transform: translateX(-100%) ;
+  transform: translateX(-100%);
 }
 .user-section-leave-to {
   opacity: 0;
-  transform: translateX(-100%) ;
+  transform: translateX(-100%);
 }
 </style>
