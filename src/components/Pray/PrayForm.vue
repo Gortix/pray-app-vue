@@ -1,43 +1,10 @@
 <template>
   <form @submit.prevent="simulateSubmit" class="custom-flex">
-    <Transition name="user-section" mode="out-in">
-      <div class="row" v-if="!showAddNew">
-        <q-select
-          class="col"
-          v-model="user"
-          :options="store.getProfileOptions"
-          emit-value
-          map-options
-          label="Osoba"
-        />
-        <q-btn
-          type="button"
-          @click="showAddNew = !showAddNew"
-          flat
-          color="positive"
-        >
-          <span style="font-size: 1.3rem"> &#43;</span>
-        </q-btn>
-      </div>
-      <div class="row" v-else>
-        <q-input class="col" v-model="newUserName" label="Imię nazwisko" />
-        <q-btn
-          type="button"
-          @click="addNewProfile"
-          flat
-          color="primary"
-          label="Dodaj"
-        />
-        <q-btn
-          type="button"
-          @click="showAddNew = !showAddNew"
-          flat
-          color="negative"
-          label="&#10005;"
-        />
-      </div>
-    </Transition>
-
+    <ProfileSelect
+      v-model:profile="user"
+      emit-value
+      @edit-mode="(edited) => (showAddNew = edited)"
+    />
     <q-input
       v-model="date"
       :rules="[(val) => datePattern.test(val)]"
@@ -78,7 +45,8 @@ import { ref, defineEmits, onMounted, defineProps } from "vue";
 import { useAuth } from "@/store/auth";
 import { Pray } from "@/@types/database";
 import { dateToString } from "@/functions/helpers";
-import { useQuasar} from "quasar";
+import { useQuasar } from "quasar";
+import ProfileSelect from "../ProfileSelect.vue";
 
 const props = defineProps<{ data?: Pray }>();
 
@@ -93,43 +61,12 @@ const emit = defineEmits(["submit"]);
 const description = ref("");
 const user = ref("");
 const date = ref(dateToString(new Date()));
-const newUserName = ref("");
 const showAddNew = ref(false);
 const submitting = ref(false);
 
 const editMode = computed(() => {
   return props.data?.description.length || 0 > 0;
 });
-
-const addNewProfile = async () => {
-  newUserName.value = newUserName.value.trim();
-  if (!newUserName.value) {
-    $q.notify({
-      message: "Podaj imię i nazwisko",
-      color: "warning",
-      textColor: "black",
-      position: "top",
-    });
-
-    return;
-  }
-
-  if (store.getProfileOptions.find((el) => el.label == newUserName.value)) {
-    $q.notify({
-      message: "Taki użytkownik już istnieje",
-      color: "warning",
-      textColor: "black",
-      position: "top",
-    });
-
-    return;
-  }
-
-  const profileID = (await store.addProfile(newUserName.value)) as string;
-  user.value = profileID;
-  newUserName.value = "";
-  showAddNew.value = false;
-};
 
 const simulateSubmit = async () => {
   if (showAddNew.value) {
@@ -216,19 +153,5 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-}
-
-.user-section-enter-active,
-.user-section-leave-active {
-  transition: all 0.3s ease-out;
-}
-
-.user-section-enter-from {
-  opacity: 0;
-  transform: translateY(30px);
-}
-.user-section-leave-to {
-  opacity: 0;
-  transform: translateY(-30px);
 }
 </style>

@@ -17,6 +17,8 @@ interface profilesMap {
   [key: string]: Profile;
 }
 
+export type Options = { label: string; value: string };
+
 export const db = getDatabase(app);
 const dbRef = ref(db);
 
@@ -65,7 +67,6 @@ export const useStore = defineStore("database", {
         .filter(filters.ownerFilter);
     },
     getProfileOptions() {
-      type Options = { label: string; value: string };
       const listOfUsers: Options[] = [];
       const users = this.users;
 
