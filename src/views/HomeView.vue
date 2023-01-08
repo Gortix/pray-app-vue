@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import AddPrayCompoment from "@/components/AddPrayCompoment.vue";
+import AddPrayCompoment from "@/components/Pray/AddPrayCompoment.vue";
 import FiltersMenu from "@/components/FiltersMenu.vue";
 import { ref, watch } from "vue";
 import PageHeader from "@/components/Header/PageHeader.vue";

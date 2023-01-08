@@ -2,7 +2,7 @@ import { Pray } from "@/@types/database";
 import { date as quasarDate } from "quasar";
 
 // @ts-ignore
-export const errorLog = (err: any) => {
+export const errorLog = (err: unknown) => {
   console.log(`%c${err}`, "color:red;font-size:16px");
 };
 

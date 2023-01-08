@@ -1,6 +1,7 @@
 import { useStore } from "./index";
 import { Pray } from "@/@types/database";
 import { getOrCreateList } from "@/functions/helpers";
+import { Notify } from "quasar";
 
 import { defineStore } from "pinia";
 
@@ -23,31 +24,44 @@ export const useSelectedList = defineStore("selectedList", {
 
       this.selectedList.push(recID);
     },
-    copySelectedPrays() {
+    async copySelectedPrays() {
       const store = useStore();
 
       const prayToCopy = {} as { [key: string]: Pray[] };
       const praysMap = [...store.getFilteredData].map(
-        // eslint-disable-next-line
-        //@ts-ignore
         (el, i, obj) => (obj[el["id"]] = el),
         {}
       );
 
       for (const recID of this.selectedList) {
-        const currentPray = {...praysMap.find((el)=>el.id == recID)};
+        const currentPray = { ...praysMap.find((el) => el.id == recID) };
         const listOfPray = getOrCreateList(currentPray.owner.id, prayToCopy);
         listOfPray.push(currentPray);
       }
-      let txt = "";      
+      let txt = "";
 
       for (const k of Object.keys(prayToCopy)) {
         txt += `${prayToCopy[k][0].owner.name}: \n- ${prayToCopy[k]
           .map((el) => el.description)
           .join("\n- ")} \n`;
       }
-
-      navigator.clipboard.writeText(txt);
+      try {
+        await navigator.clipboard.writeText(txt);
+        Notify.create({
+          message: `Modlitwy skopiowane`,
+          color: "info",
+          textColor: "white",
+          position: "top",
+        });
+      } catch (err) {
+        Notify.create({
+          message: `Kopiowanie nie powiodło się ${err}`,
+          color: "negative",
+          textColor: "white",
+          position: "top",
+          multiLine: true,
+        });
+      }
     },
   },
 });

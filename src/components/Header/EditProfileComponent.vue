@@ -1,5 +1,5 @@
 <template>
-  <BasicPopup v-model="editProfile">
+  <BasicPopup title="Mój profil" v-model="editProfile">
     <form @submit.prevent="submit" class="custom-flex">
       <q-input v-model="userName" label="Nazwa użytkownika" />
       <q-btn

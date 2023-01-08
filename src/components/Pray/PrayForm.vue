@@ -5,7 +5,7 @@
         <q-select
           class="col"
           v-model="user"
-          :options="options"
+          :options="store.getProfileOptions"
           emit-value
           map-options
           label="Osoba"
@@ -83,7 +83,6 @@ import { useQuasar} from "quasar";
 const props = defineProps<{ data?: Pray }>();
 
 const datePattern = /^[0-3]\d.[0-1]\d.[\d]{4}$/;
-const d = new Date();
 
 const store = useStore();
 const auth = useAuth();
@@ -102,18 +101,6 @@ const editMode = computed(() => {
   return props.data?.description.length || 0 > 0;
 });
 
-const options = computed(() => {
-  type Options = { label: string; value: string };
-  const listOfUsers: Options[] = [];
-  const users = store.users;
-
-  for (const k of Object.keys(users)) {
-    listOfUsers.push({ label: users[k].name, value: users[k].id });
-  }
-
-  return listOfUsers;
-});
-
 const addNewProfile = async () => {
   newUserName.value = newUserName.value.trim();
   if (!newUserName.value) {
@@ -127,7 +114,7 @@ const addNewProfile = async () => {
     return;
   }
 
-  if (options.value.find((el) => el.label == newUserName.value)) {
+  if (store.getProfileOptions.find((el) => el.label == newUserName.value)) {
     $q.notify({
       message: "Taki użytkownik już istnieje",
       color: "warning",
