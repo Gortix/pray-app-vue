@@ -1,38 +1,40 @@
 <template>
-  <q-layout view="hHh lpR fFf">
-    <q-header elevated class="bg-primary text-white" height-hint="98">
-      <PageHeader />
-    </q-header>
-
-    <q-page-container
-      class="row wrap justify-evenly"
-      style="gap: 1rem"
-      v-if="data[0]"
-    >
-      <PrayBox
-        class="col-xs-12 col-md-5 col-lg-3"
-        v-for="rec in store.data"
-        :key="rec.id"
-        v-bind="rec"
-        :owner="rec.owner?.name || ''"
-      />
-    </q-page-container>
-  </q-layout>
+  <router-view />
 </template>
-
 <script setup lang="ts">
-import PrayBox from "./components/PrayBox.vue";
+import { auth as firebaseAuthObject } from "@/@firebase/index";
+import { useAuth } from "@/store/auth";
 import { useStore } from "@/store/index";
-import { computed } from "@vue/runtime-core";
-import PageHeader from "./components/PageHeader.vue";
+import { useRouter, useRoute } from "vue-router";
 
+const auth = useAuth();
 const store = useStore();
-store.getListOfPray();
+const router = useRouter();
+const route = useRoute();
 
-const data = computed(() => store.data);
+firebaseAuthObject.onAuthStateChanged(async (user) => {
+  auth.loggedIn = user != null;
+  if (auth.loggedIn) {
+    //@ts-ignore
+    router.push({ name: route.query?.redirect || "prayers" });
+  } else {
+    router.push({ name: "login" });
+  }
+  await store.getListOfUsers();
+  await store.getListOfPray();
+
+  const profileId = (await auth.getUserProfileID()) as string;    
+  const userProfile = store.users[profileId];
+
+  if (userProfile) {
+    auth.profile = userProfile;
+  }
+});
 </script>
 <style lang="scss">
-#app {
-  margin: 1.5rem;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 </style>

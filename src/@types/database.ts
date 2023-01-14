@@ -1,20 +1,26 @@
-import { DocumentReference, Timestamp } from "firebase/firestore";
-
 export interface Prayer {
   date: string;
-  person: string;
+  person: Profile;
 }
 
 export interface Pray {
-  id: string,
-  date: Timestamp;
+  id?: string;
+  date: Date;
   description: string;
-  owner: User;
-  prayers: Prayer[];
+  owner: Profile;
+  prayers?: Prayer[];
   archived: boolean;
 }
 
-export interface User{
-    name: string,
-    id: string,
+export interface Profile {
+  name: string;
+  id: string;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  profile: Profile;
+  role: "" | "user" | "admin" | "superadmin";
 }

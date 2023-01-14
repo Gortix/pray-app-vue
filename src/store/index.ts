@@ -1,22 +1,45 @@
-import { Pray, User } from "./../@types/database";
+import { usePrayFilter } from "./filterStore";
+import { dateToString } from "@/functions/helpers";
+import { Pray, Profile } from "./../@types/database";
 import { defineStore } from "pinia";
-import app from "@/@firebase";
+import app, { auth } from "@/@firebase";
 import {
-  collection,
-  getDocs,
-  getFirestore,
-  doc as firebaseDoc,
-  getDoc,
-  Timestamp,
-  addDoc,
-  doc,
-} from "firebase/firestore";
+  getDatabase,
+  ref,
+  child,
+  get,
+  push,
+  update,
+  remove,
+} from "firebase/database";
 
-const db = getFirestore(app);
+interface profilesMap {
+  [key: string]: Profile;
+}
 
-export const getRelatedDoc = async (path: string) => {
-  const doc = await getDoc(firebaseDoc(db, path));
-  return { ...doc.data(), id: doc.id };
+export type Options = { label: string; value: string };
+
+export const db = getDatabase(app);
+const dbRef = ref(db);
+
+const createPrayObject = async (
+  id: string,
+  docData: Pray,
+  users: profilesMap
+) => {
+  //@ts-ignore
+  const owner = users[docData.owner];
+  //@ts-ignore
+  const [day, month, year] = docData.date.split(".");
+
+  return {
+    archived: docData?.archived || true,
+    date: new Date(year, month - 1, day),
+    description: docData?.description || "",
+    prayers: [],
+    id,
+    owner,
+  };
 };
 
 // useStore could be anything like useUser, useCart
@@ -25,68 +48,143 @@ export const useStore = defineStore("database", {
   state: () => {
     return {
       data: [] as Pray[],
-      users: [] as User[],
+      users: {} as profilesMap,
+      filter: "all" as string,
     };
   },
+  getters: {
+    getSortedData(state) {
+      return state.data.sort(
+        (current, previous) => previous.date.getTime() - current.date.getTime()
+      );
+    },
+    getFilteredData(state) {
+      const filters = usePrayFilter();
+
+      //@ts-ignore
+      return state.getSortedData
+        .filter(filters.dateFilter)
+        .filter(filters.ownerFilter);
+    },
+    getProfileOptions() {
+      const listOfUsers: Options[] = [];
+      const users = this.users;
+
+      for (const k of Object.keys(users)) {
+        listOfUsers.push({ label: users[k].name, value: users[k].id });
+      }
+
+      return listOfUsers;
+    },
+  },
   actions: {
-    async getListOfPray() {
+    async getListOfPray(force = false) {
+      if (this.data.length > 0 && !force) {
+        return;
+      }
       const prayList: Pray[] = [];
 
       try {
-        const querySnapshot = await getDocs(collection(db, "prayers"));
+        const snapshot = await get(child(dbRef, `prayers`));
+        const snapshotList = snapshot.val();
 
-        for (const rec of querySnapshot.docs) {
-          const docData = rec.data();
-          const owner = (await getRelatedDoc(docData.owner.path)) as User;
-
-          prayList.push({
-            archived: docData.archived,
-            date: docData.date,
-            description: docData.description,
-            prayers: [],
-            id: rec.id,
-            owner,
-          });
+        for (const i in snapshotList) {
+          const rec = snapshotList[i];
+          prayList.push(await createPrayObject(i, rec, this.users));
         }
         this.data = prayList;
       } catch (err) {
         console.error(err);
       }
     },
-    async getListOfUsers() {
-      const listOfUser: User[] = [];
+    async getListOfUsers(force = false) {
+      if (Object.keys(this.users).length > 0 && !force) {
+        return;
+      }
       try {
-        const querySnapshot = await getDocs(collection(db, "users"));
+        const snapshot = await get(child(dbRef, `profiles`));
+        const listOfProofiles: Profile[] = snapshot.val();
 
-        for (const rec of querySnapshot.docs) {
-          const databaseUser = rec.data();
-
-          listOfUser.push({ id: rec.id, name: databaseUser.name });
+        for (const i in listOfProofiles) {
+          const rec = listOfProofiles[i];
+          this.users[i] = {
+            id: i,
+            name: rec.name,
+          } as Profile;
         }
-        this.users = listOfUser;
       } catch (err) {
         console.error(err);
       }
     },
-    async addPray(owner: string, description: string) {
+    async addPray(owner: string, date: Date, description: string) {
+      const prayObj: Pray = {
+        archived: false,
+        //@ts-ignore
+        date: dateToString(date),
+        description: description,
+        prayers: [],
+        //@ts-ignore
+        owner,
+      };
+
       try {
-        await addDoc(collection(db, "prayers"), {
-          archived: false,
-          date: Timestamp.now(),
-          description: description,
-          prayers: [],
-          owner: doc(db, "users/" + owner),
-        });
+        const keyOfNewPush = push(ref(db, "prayers"), prayObj).key as string;
+
+        this.data.push(
+          await createPrayObject(keyOfNewPush, prayObj, this.users)
+        );
       } catch (err) {
         console.error(err);
       }
     },
-    async addUser(userName: string) {
+    async updatePray(
+      id: string,
+      data: { date: Date; description: string; owner: string }
+    ) {
+      const prayObj: Pray = {
+        //@ts-ignore
+        date: dateToString(data.date),
+        description: data.description,
+        // @ts-ignore
+        owner: data.owner,
+      };
+      console.log(data.owner);
+
       try {
-        await addDoc(collection(db, "users"), { name: userName });
+        await update(ref(db, "prayers/" + id), prayObj);
+        const rec = this.data.find((rec) => rec.id == id);
+        //@ts-ignore
+        rec.description = data.description;
+        //@ts-ignore
+        rec.date = data.date;
+        //@ts-ignore
+        rec.owner = this.users[data.owner];
       } catch (err) {
         console.error(err);
       }
+    },
+    async addProfile(userName: string) {
+      try {
+        const profileKey = (await push(ref(db, "profiles"), {
+          name: userName,
+        }).key) as string;
+        this.users[profileKey] = { id: profileKey, name: userName };
+
+        return profileKey;
+      } catch (err) {
+        console.error(err);
+        return err;
+      }
+    },
+    async removePray(prayID: string) {
+      await remove(ref(db, `prayers/${prayID}`));
+
+      const rmIndex = this.data.findIndex((rec) => rec.id == prayID);
+      this.data.splice(rmIndex, 1);
+    },
+    async getUserProfile() {
+      const resp = await get(child(dbRef, `profiles/${auth.currentUser?.uid}`));
+      return resp.val()?.name;
     },
   },
 });

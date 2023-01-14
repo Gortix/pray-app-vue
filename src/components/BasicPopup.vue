@@ -1,31 +1,42 @@
 <template>
-  <q-dialog
-    :model-value="props.modelValue"
-    @show="emit('update:modelValue', true)"
-    @hide="emit('update:modelValue', false)"
-  >
-    <q-card style="width: 60vw">
-      <q-toolbar>
-        <q-avatar>
-          <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg" />
-        </q-avatar>
+  <Teleport to="body">
+    <q-dialog
+      :position="props.posstion"
+      :model-value="props.modelValue"
+      @show="emit('update:modelValue', true)"
+      @hide="emit('update:modelValue', false)"
+    >
+      <q-card class="width">
+        <q-toolbar>
+          <q-toolbar-title>{{ title }}</q-toolbar-title>
 
-        <q-toolbar-title>{{ title }}</q-toolbar-title>
-
-        <q-btn flat round icon="close" dense v-close-popup/>
-      </q-toolbar>
-
-      <q-card-section>
-        <slot name="default"></slot>
-      </q-card-section>
-    </q-card>
-  </q-dialog>
+          <q-btn flat round icon="close" dense v-close-popup />
+        </q-toolbar>
+        <q-card-section>
+          <slot name="default"></slot>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+  </Teleport>
 </template>
 <script setup lang="ts">
 import { defineProps, defineEmits } from "vue";
 
-const props = defineProps({ modelValue: Boolean, title: String });
+const props = defineProps<{
+  posstion?: "standard" | "top" | "right" | "bottom" | "left" | undefined;
+  modelValue: boolean;
+  title: string;
+}>();
+
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): boolean;
 }>();
 </script>
+<style lang="scss" scoped>
+.width {
+  width: 100vw;
+  @media (width> $desktop) {
+    width: 60vw;
+  }
+}
+</style>
