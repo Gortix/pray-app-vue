@@ -1,18 +1,16 @@
-export const firebaseConfig = {
-  apiKey: "AIzaSyBPadQ_aiYVLLjONahtyZWw9V96pFfnApI",
+const firebaseConfig = {
+  apiKey: "AIzaSyAV9MZw63cJubTUMj8C6bm5G5xTn4s847c",
 
-  authDomain: "modlitwy-dzialdowo.firebaseapp.com",
+  authDomain: "pray-app-dzialodow.firebaseapp.com",
 
   databaseURL:
-    "https://modlitwy-dzialdowo-default-rtdb.europe-west1.firebasedatabase.app",
+    "https://pray-app-dzialodow-default-rtdb.europe-west1.firebasedatabase.app/",
 
-  projectId: "modlitwy-dzialdowo",
+  projectId: "pray-app-dzialodow",
 
-  storageBucket: "modlitwy-dzialdowo.appspot.com",
+  storageBucket: "pray-app-dzialodow.appspot.com",
 
-  messagingSenderId: "1008530903917",
+  messagingSenderId: "817782987044",
 
-  appId: "1:1008530903917:web:0b658a162cbfd303a44064",
-
-  measurementId: "G-96MYD426QP",
+  appId: "1:817782987044:web:1adeb2e41ac9e4246a7bb1",
 };
