@@ -51,6 +51,7 @@ export const useAuth = defineStore("auth", {
     },
     async getUserProfileID() {
       try {
+        //TODO: co wysyła jeżeli użytkownik nie istnieje?
         const userRef = await get(ref(db, `users/${auth.currentUser?.uid}`));             
         const userData = userRef.val();
         this.role = userData?.role || "";

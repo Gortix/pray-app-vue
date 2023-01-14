@@ -33,7 +33,7 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx"
-  ],
+, "src/@firebase/messages.js", "src/@firebase/messages.js"  ],
   "exclude": [
     "node_modules"
   ]
