@@ -148,7 +148,6 @@ export const useStore = defineStore("database", {
         // @ts-ignore
         owner: data.owner,
       };
-      console.log(data.owner);
 
       try {
         await update(ref(db, "prayers/" + id), prayObj);
