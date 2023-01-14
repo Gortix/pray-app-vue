@@ -78,7 +78,7 @@ const selectFilter = (val: string, update: (fn: () => void) => void) => {
   }
   update(() => {
     options.value = store.getProfileOptions.filter((el) =>
-      el.label.toLowerCase().includes(val)
+      el.label.toLowerCase().includes(val.toLowerCase())
     );
   });
 };
@@ -111,7 +111,7 @@ const addNewProfile = async () => {
   const profileID = (await store.addProfile(newUserName.value)) as string;
   emit(
     "update:profile",
-    props.emitValue ? profileID: { label: newUserName.value, value: profileID } 
+    props.emitValue ? profileID : { label: newUserName.value, value: profileID }
   );
   newUserName.value = "";
   showAddNew.value = false;
