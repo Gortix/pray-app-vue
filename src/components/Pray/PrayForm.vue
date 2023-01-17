@@ -6,6 +6,7 @@
       @edit-mode="(edited) => (showAddNew = edited)"
     />
     <q-input
+      v-if="['admin', 'superadmin'].includes(auth.role)"
       v-model="date"
       :rules="[(val) => datePattern.test(val)]"
       label="Data zgłoszenia"
@@ -49,7 +50,6 @@ import { useQuasar } from "quasar";
 import ProfileSelect from "../ProfileSelect.vue";
 
 const props = defineProps<{ data?: Pray }>();
-
 const datePattern = /^[0-3]\d.[0-1]\d.[\d]{4}$/;
 
 const store = useStore();

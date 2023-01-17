@@ -32,9 +32,11 @@
     <q-select
       clearable
       v-model="user"
-      :options="store.getProfileOptions"
+      :options="options"
       emit-value
       map-options
+      use-input
+      @filter="selectFilter"
       label="Właściciel"
     />
   </q-card-actions>
@@ -43,13 +45,13 @@
 import { usePrayFilter, dataFilters, dateType } from "@/store/filterStore";
 import { useAuth } from "@/store/auth";
 import { useStore } from "@/store/index";
-import { computed } from "vue";
+import { ref, computed } from "vue";
 
+const filterValue = ref("");
 const filterStore = usePrayFilter();
 const auth = useAuth();
 const store = useStore();
 const iAmOwner = computed(() => filterStore.owner == auth.profile.id);
-
 const user = computed({
   get() {
     return filterStore.owner;
@@ -58,6 +60,13 @@ const user = computed({
     filterStore.owner = value;
   },
 });
+const options = computed(() =>
+  filterValue.value
+    ? store.getProfileOptions.filter((el) =>
+        el.label.toLowerCase().includes(filterValue.value)
+      )
+    : store.getProfileOptions
+);
 
 const ownerSelect = () => {
   if (iAmOwner.value) return (filterStore.owner = "");
@@ -69,5 +78,11 @@ const dateSelect = (key: dateType) => {
   if (filterStore.date == key) return (filterStore.date = "");
 
   return (filterStore.date = key);
+};
+
+const selectFilter = (val: string, update: (fn: () => void) => void) => {
+  update(() => {
+    filterValue.value = val.toLowerCase();
+  });
 };
 </script>
