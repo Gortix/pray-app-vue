@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "serve": "vue-cli-service serve --mode staging",
+    "serve-prod": "vue-cli-service serve",
     "lint": "vue-cli-service lint",
-    "deploy": "npm run build && firebase deploy"
+    "deploy": "firebase use default && vue-cli-service build --mode staging && firebase deploy",
+    "deploy-prod": "firebase use production && vue-cli-service build && firebase deploy"
   },
   "dependencies": {
     "@quasar/extras": "^1.15.5",
