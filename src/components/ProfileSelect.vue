@@ -45,7 +45,7 @@ import { useQuasar } from "quasar";
 import { defineProps, defineEmits, ref, computed, onMounted, watch } from "vue";
 
 const props = defineProps({
-  label: { type: String, default: "Osoba" },
+  label: { type: String, default: "W czyjej intencji?" },
   profile: { type: String, default: "" },
   suggest: { type: String, default: "" },
   emitValue: { type: Boolean, default: false },

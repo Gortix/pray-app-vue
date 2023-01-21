@@ -25,7 +25,7 @@ export const useAuth = defineStore("auth", {
     };
   },
   actions: {
-    async authorize() {      
+    async authorize() {
       try {
         const result = await signInWithPopup(auth, provider);
         const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -51,18 +51,17 @@ export const useAuth = defineStore("auth", {
     },
     async getUserProfileID() {
       try {
-        const userRef = await get(ref(db, `users/${auth.currentUser?.uid}`));             
+        const userRef = await get(ref(db, `users/${auth.currentUser?.uid}`));
         const userData = userRef.val();
         this.role = userData?.role || "";
 
         if (!userData) await this.createUser();
-        
-        if (!userData?.role) {          
+
+        if (!userData?.role) {
           Notify.create({
             message: `Twoje konto czeka na autoryzację. Napisz do Pawła lub Edyty`,
             color: "warning",
-            textColor: "dark",
-            position: "top",
+            position: "center",
           });
         }
 
@@ -84,8 +83,8 @@ export const useAuth = defineStore("auth", {
       //@ts-ignore
       return await set(ref(db, "users/" + auth.currentUser?.uid), {
         name: auth.currentUser?.displayName,
-        email:auth.currentUser?.email,
-        profile:"",
+        email: auth.currentUser?.email,
+        profile: "",
         role: "",
       });
     },

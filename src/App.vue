@@ -23,7 +23,7 @@ firebaseAuthObject.onAuthStateChanged(async (user) => {
   await store.getListOfUsers();
   await store.getListOfPray();
 
-  const profileId = (await auth.getUserProfileID()) as string;    
+  const profileId = (await auth.getUserProfileID()) as string;
   const userProfile = store.users[profileId];
 
   if (userProfile) {
