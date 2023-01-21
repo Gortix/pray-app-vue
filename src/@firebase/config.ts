@@ -35,6 +35,6 @@ const developmentFirebaseConfig = {
 };
 
 // eslint-disable-next-line
-export default !!process.env.VUE_APP_FIREBASE_PROD
+export default process.env.VUE_APP_FIREBASE_PROD == "true"
   ? productionFirebaseConfig
   : developmentFirebaseConfig;

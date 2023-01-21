@@ -35,8 +35,8 @@
 import { useStore } from "@/store";
 import { dataFilters, usePrayFilter } from "@/store/filterStore";
 import { ref } from "vue";
-import BasicPopup from "./BasicPopup.vue";
-import FiltersMenu from "./FiltersMenu.vue";
+import BasicPopup from "../BasicPopup.vue";
+import FiltersMenu from "../FiltersMenu.vue";
 
 const filterStore = usePrayFilter();
 const store = useStore();
