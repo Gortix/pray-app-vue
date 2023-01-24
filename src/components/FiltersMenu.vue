@@ -33,6 +33,7 @@
       clearable
       v-model="user"
       :options="options"
+      popup-content-style="max-height: 60vh;"
       emit-value
       map-options
       use-input

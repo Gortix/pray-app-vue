@@ -5,6 +5,7 @@
         class="col"
         v-model="user"
         :options="options"
+        popup-content-style="max-height: 60vh;"
         map-options
         use-input
         :emit-value="props.emitValue"
