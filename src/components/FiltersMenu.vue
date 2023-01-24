@@ -33,7 +33,8 @@
       clearable
       v-model="user"
       :options="options"
-      popup-content-style="max-height: 60vh;"
+      popup-content-class="dropdown-popup"
+      behavior="menu"
       emit-value
       map-options
       use-input
@@ -87,3 +88,8 @@ const selectFilter = (val: string, update: (fn: () => void) => void) => {
   });
 };
 </script>
+<style lang="scss">
+.dropdown-popup {
+  border-left: 4px solid $light-blue-11;
+}
+</style>

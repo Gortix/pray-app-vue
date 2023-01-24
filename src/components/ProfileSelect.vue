@@ -5,7 +5,8 @@
         class="col"
         v-model="user"
         :options="options"
-        popup-content-style="max-height: 60vh;"
+        popup-content-class="dropdown-popup"
+        behavior="menu"
         map-options
         use-input
         :emit-value="props.emitValue"
@@ -135,6 +136,10 @@ onMounted(() => {
 });
 </script>
 <style lang="scss" scoped>
+.dropdown-popup {
+  border-left: 4px solid $light-blue-11;
+}
+
 .user-section-enter-active,
 .user-section-leave-active {
   transition: all 0.25s ease-out;
