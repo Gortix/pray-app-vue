@@ -28,6 +28,7 @@
           color="teal-2"
           dense
           dark
+          ref="searchInput"
         >
           <template #append>
             <q-icon
@@ -40,9 +41,7 @@
           </template>
         </q-input>
       </Transition>
-      <Transition>
-        <q-btn flat @click="showSearcher = !showSearcher" icon="search" />
-      </Transition>
+      <q-btn flat @click="showSearcher = !showSearcher" icon="search" />
     </div>
     <q-btn round flat>
       <q-icon size="2.5rem" color="blue-grey-1" name="o_account_circle" />
@@ -51,15 +50,23 @@
   </q-toolbar>
 </template>
 <script setup lang="ts">
-import { ref, inject } from "vue";
+import { ref, inject, watch } from "vue";
 import { useRouter } from "vue-router";
 import ProfileMenu from "./ProfileMenu.vue";
 
 const router = useRouter();
 
-const searchText = inject("searchText","")
+const searchText = inject("searchText", "");
 const showSearcher = ref(false);
+const searchInput = ref<HTMLInputElement>();
 
+watch(showSearcher, (val) => {
+  if (val) {
+    setTimeout(() => {
+      searchInput.value?.focus();
+    }, 100);
+  }
+});
 </script>
 <style lang="scss" scoped>
 .v-enter-active,

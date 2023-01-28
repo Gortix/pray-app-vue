@@ -29,7 +29,7 @@
   </Suspense>
 </template>
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, inject } from "vue";
 import { useStore } from "@/store/index";
 import { useAuth } from "@/store/auth";
 import { useSelectedList } from "@/store/selectedList";
@@ -46,8 +46,21 @@ const slStore = useSelectedList();
 const toolbar = ref(false);
 const editPray = ref(false);
 const popupData = ref({} as PrayBoxTypes);
+const searchText = inject("searchText", ref(""));
 
-const data = computed(() => store.getFilteredData);
+const data = computed(() => {
+  const lower = searchText.value.trim().toLowerCase();
+
+  if (lower.length < 3) {
+    return store.getFilteredData;
+  }
+
+  return store.getFilteredData.filter(
+    (el: PrayBoxTypes) =>
+      el.description.toLowerCase().includes(lower) ||
+      el.owner.name.toLowerCase().includes(lower)
+  );
+});
 const selectedList = computed(() => slStore.selectedList);
 
 const isSelected = (recID: string) => {
