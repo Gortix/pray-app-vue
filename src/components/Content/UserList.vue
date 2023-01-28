@@ -1,11 +1,5 @@
 <template>
   <div class="content">
-    <Transition>
-      <UserListFilterPanes
-        v-if="renderSearchPanel"
-        v-model:search-text="searchText"
-      />
-    </Transition>
     <form @submit.prevent="onSubmitHandler">
       <ul>
         <TransitionGroup>
@@ -69,7 +63,7 @@
 <script setup lang="ts">
 import { useAdminStore } from "@/store/admin";
 import { User, Profile } from "@/@types/database";
-import { onMounted, ref, computed, watch } from "vue";
+import { onMounted, inject, ref, computed, watch, Ref } from "vue";
 import { useAuth } from "@/store/auth";
 import ProfileSelect from "../ProfileSelect.vue";
 import UserListFilterPanes from "../FilterPanels/UserListFilterPanes.vue";
@@ -80,7 +74,7 @@ const adminStore = useAdminStore();
 const updateList = ref([] as User[]);
 const listOfUsers = ref([] as User[]);
 const renderSearchPanel = ref(false);
-const searchText = ref("");
+const searchText = inject<Ref<string>>("searchText", ref(""));
 
 const sortedListOfUsers = computed(() => {
   let newList = [...listOfUsers.value];
@@ -145,7 +139,7 @@ onMounted(async () => {
   listOfUsers.value = adminStore.users;
 });
 
-watch(listOfUsers, (val) => {  
+watch(listOfUsers, (val) => {
   renderSearchPanel.value = !!val.length;
 });
 

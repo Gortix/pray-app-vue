@@ -5,12 +5,16 @@
 import { auth as firebaseAuthObject } from "@/@firebase/index";
 import { useAuth } from "@/store/auth";
 import { useStore } from "@/store/index";
+import { provide, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 
 const auth = useAuth();
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
+
+const searchText = ref("");
+provide("searchText", searchText);
 
 firebaseAuthObject.onAuthStateChanged(async (user) => {
   auth.loggedIn = user != null;
