@@ -1,5 +1,5 @@
 <template>
-  <q-toolbar style="gap: 1rem">
+  <q-toolbar  class="relative-position">
     <q-toolbar-title>
       <q-avatar
         class="cursor-pointer"
@@ -19,13 +19,14 @@
       icon="o_menu"
       @click="(el) => $emit('filterMenuAction')"
     /> -->
-    <div class="row">
+    <div class="row absolute z-top">
       <Transition>
         <q-input
           v-if="showSearcher"
+          bg-color="primary"
           v-model="searchText"
           label="Szukaj"
-          color="teal-2"
+          color="light-blue-3"
           dense
           dark
           ref="searchInput"
@@ -71,12 +72,19 @@ watch(showSearcher, (val) => {
 <style lang="scss" scoped>
 .v-enter-active,
 .v-leave-active {
-  transform-origin: right;
+  transform-origin: 110%;
   transition: all 0.5s linear;
 }
 
 .v-enter-from,
 .v-leave-to {
   transform: scaleX(0);
+}
+.absolute{
+  right: 3rem;
+}
+
+@keyframes sho {
+  
 }
 </style>

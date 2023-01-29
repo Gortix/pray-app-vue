@@ -66,7 +66,6 @@ import { User, Profile } from "@/@types/database";
 import { onMounted, inject, ref, computed, watch, Ref } from "vue";
 import { useAuth } from "@/store/auth";
 import ProfileSelect from "../ProfileSelect.vue";
-import UserListFilterPanes from "../FilterPanels/UserListFilterPanes.vue";
 
 const auth = useAuth();
 
