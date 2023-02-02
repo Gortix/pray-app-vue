@@ -1,16 +1,17 @@
 <template>
-  <q-toolbar  class="relative-position">
-    <q-toolbar-title>
-      <q-avatar
-        class="cursor-pointer"
-        square
-        size="2rem"
-        @click="() => router.push({ name: 'prayers' })"
-      >
-        <img src="@/assets/logo-kch.png" />
-      </q-avatar>
-      Kościół w Działdowie
-    </q-toolbar-title>
+  <q-toolbar class="relative-position">
+    <q-icon
+      class="cursor-pointer"
+      square
+      size="2rem"
+      @click="() => router.push({ name: 'prayers' })"
+    >
+      <img src="@/assets/logo-kch.png" />
+    </q-icon>
+    <Transition mode="out-in" name="header-title">
+      <q-toolbar-title v-if="showTitle"> Kościół w Działdowie </q-toolbar-title>
+      <q-toolbar-title v-else> </q-toolbar-title>
+    </Transition>
     <!-- <q-btn
       dense
       flat
@@ -19,10 +20,11 @@
       icon="o_menu"
       @click="(el) => $emit('filterMenuAction')"
     /> -->
-    <div class="row absolute z-top">
+    <div class="col-xs-9 col-sm row absolute z-top">
       <Transition>
         <q-input
           v-if="showSearcher"
+          class="col"
           bg-color="primary"
           v-model="searchText"
           label="Szukaj"
@@ -41,6 +43,7 @@
             <q-icon v-else />
           </template>
         </q-input>
+        <q-space v-else class="col" />
       </Transition>
       <q-btn flat @click="showSearcher = !showSearcher" icon="search" />
     </div>
@@ -51,15 +54,31 @@
   </q-toolbar>
 </template>
 <script setup lang="ts">
-import { ref, inject, watch } from "vue";
+import {
+  ref,
+  computed,
+  inject,
+  watch,
+  onMounted,
+  onBeforeUnmount,
+  nextTick,
+} from "vue";
 import { useRouter } from "vue-router";
 import ProfileMenu from "./ProfileMenu.vue";
+
+const checkIsMobile = () => {
+  isMobileScreen.value = screen.width <= 600;
+};
 
 const router = useRouter();
 
 const searchText = inject("searchText", "");
+const isMobileScreen = ref(screen.width <= 600);
 const showSearcher = ref(false);
 const searchInput = ref<HTMLInputElement>();
+const showTitle = computed(() =>
+  isMobileScreen.value ? !showSearcher.value : true
+);
 
 watch(showSearcher, (val) => {
   if (val) {
@@ -67,6 +86,16 @@ watch(showSearcher, (val) => {
       searchInput.value?.focus();
     }, 100);
   }
+});
+
+onMounted(() => {
+  nextTick(() => {
+    window.addEventListener("resize", checkIsMobile);
+  });
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", checkIsMobile);
 });
 </script>
 <style lang="scss" scoped>
@@ -80,11 +109,17 @@ watch(showSearcher, (val) => {
 .v-leave-to {
   transform: scaleX(0);
 }
-.absolute{
-  right: 3rem;
+.header-title-enter-active,
+.header-title-leave-active {
+  transform-origin: -10%;
+  transition: all 0.35s linear;
 }
 
-@keyframes sho {
-  
+.header-title-enter-from,
+.header-title-leave-to {
+  transform: scaleX(0);
+}
+.absolute {
+  right: 3rem;
 }
 </style>
