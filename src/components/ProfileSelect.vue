@@ -2,17 +2,30 @@
   <Transition name="user-section" mode="out-in">
     <div class="row" v-if="!showAddNew">
       <q-select
+        ref="quasarSelect"
+        @popup-hide="updateDisplayPopupValue"
+        @popup-show="updateDisplayPopupValue"
+        :error="!user"
         class="col"
         v-model="user"
         :options="options"
         popup-content-class="dropdown-popup"
-        behavior="menu"
         map-options
         use-input
         :emit-value="props.emitValue"
         @filter="selectFilter"
         :label="props.label"
-      />
+      >
+        <template #append>
+          <q-icon
+            v-if="displayPopup"
+            name="o_close"
+            color="red"
+            class="cursor-pointer"
+            @click="quasarSelect.hidePopup"
+          />
+        </template>
+      </q-select>
       <q-btn
         type="button"
         @click="showAddNew = !showAddNew"
@@ -43,7 +56,7 @@
 </template>
 <script setup lang="ts">
 import { useStore, Options } from "@/store";
-import { useQuasar } from "quasar";
+import { useQuasar, QSelect, Platform } from "quasar";
 import { defineProps, defineEmits, ref, computed, onMounted, watch } from "vue";
 
 const props = defineProps({
@@ -57,6 +70,9 @@ const emit = defineEmits(["update:profile", "edit-mode"]);
 const store = useStore();
 const $q = useQuasar();
 
+const quasarSelect = ref<QSelect>();
+
+const displayPopup = ref<boolean>(false);
 const options = ref([{}] as Options[]);
 const showAddNew = ref(false);
 const newUserName = ref("");
@@ -69,6 +85,10 @@ const user = computed({
     emit("update:profile", profile);
   },
 });
+
+const updateDisplayPopupValue = () => {
+  if (Platform.is.mobile) displayPopup.value = !displayPopup.value
+};
 
 const selectFilter = (val: string, update: (fn: () => void) => void) => {
   if (!val) {
@@ -136,6 +156,10 @@ onMounted(() => {
 });
 </script>
 <style lang="scss" scoped>
+.q-select__dialog {
+  margin-top: 5rem;
+  top: 5rem;
+}
 .dropdown-popup {
   border-left: 4px solid $light-blue-11;
 }

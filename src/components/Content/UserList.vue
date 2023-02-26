@@ -6,7 +6,7 @@
           <li
             v-for="user in sortedListOfUsers"
             :key="user.id"
-            class="row even gap"
+            class="row even gap shadow-2 q-pa-sm"
           >
             <q-field label="Nazwa" stack-label class="col">
               <template v-slot:control>
@@ -160,7 +160,7 @@ ul {
 }
 
 .even:nth-child(even) {
-  background-color: lighten($blue-grey-1, 3%);
+  background-color: lighten($light-blue-1, 1%);
 }
 
 .v-move,
