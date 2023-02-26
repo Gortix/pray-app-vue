@@ -17,13 +17,13 @@
         :label="props.label"
       >
         <template #append>
-          <q-icon
-            v-if="displayPopup"
-            name="o_close"
-            color="red"
-            class="cursor-pointer"
-            @click="quasarSelect.hidePopup"
-          />
+            <q-icon
+              v-if="displayPopup"
+              name="o_close"
+              color="red"
+              class="cursor-pointer"
+              @click="quasarSelect?.hidePopup"
+            />
         </template>
       </q-select>
       <q-btn
@@ -156,10 +156,6 @@ onMounted(() => {
 });
 </script>
 <style lang="scss" scoped>
-.q-select__dialog {
-  margin-top: 5rem;
-  top: 5rem;
-}
 .dropdown-popup {
   border-left: 4px solid $light-blue-11;
 }
