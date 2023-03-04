@@ -1,7 +1,7 @@
 <template>
-  <BasicPopup posstion="bottom" v-model="showFilterMenu" title="Filtry">
-    <FiltersMenu />
-  </BasicPopup>
+  <AppPopup posstion="bottom" v-model="showFilterMenu" title="Filtry">
+    <PrayerFiltersMenu />
+  </AppPopup>
   <q-btn
     size="1.1rem"
     dense
@@ -35,8 +35,8 @@
 import { useStore } from "@/store";
 import { dataFilters, usePrayFilter } from "@/store/filterStore";
 import { ref } from "vue";
-import BasicPopup from "./AppPopup.vue";
-import FiltersMenu from "./PrayerFiltersMenu.vue";
+import AppPopup from "./AppPopup.vue";
+import PrayerFiltersMenu from "./PrayerFiltersMenu.vue";
 
 const filterStore = usePrayFilter();
 const store = useStore();

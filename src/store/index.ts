@@ -3,6 +3,7 @@ import { dateToString } from "@/functions/helpers";
 import { Pray, Profile } from "./../@types/database";
 import { defineStore } from "pinia";
 import app, { auth } from "@/@firebase";
+import { Notify } from "quasar";
 import {
   getDatabase,
   ref,
@@ -143,6 +144,12 @@ export const useStore = defineStore("database", {
           await createPrayObject(keyOfNewPush, prayObj, this.users)
         );
       } catch (err) {
+        Notify.create({
+          message: "Błąd podczas zapisu do bazy",
+          color: "negative",
+          position: "top",
+        });
+
         console.error(err);
       }
     },

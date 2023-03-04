@@ -17,13 +17,13 @@
         :label="props.label"
       >
         <template #append>
-            <q-icon
-              v-if="displayPopup"
-              name="o_close"
-              color="red"
-              class="cursor-pointer"
-              @click="quasarSelect?.hidePopup"
-            />
+          <q-icon
+            v-if="displayPopup"
+            name="o_close"
+            color="red"
+            class="cursor-pointer"
+            @click="quasarSelect?.hidePopup"
+          />
         </template>
       </q-select>
       <q-btn
@@ -87,7 +87,7 @@ const user = computed({
 });
 
 const updateDisplayPopupValue = () => {
-  if (Platform.is.mobile) displayPopup.value = !displayPopup.value
+  if (Platform.is.mobile) displayPopup.value = !displayPopup.value;
 };
 
 const selectFilter = (val: string, update: (fn: () => void) => void) => {

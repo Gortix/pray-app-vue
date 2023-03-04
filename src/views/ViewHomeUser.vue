@@ -22,7 +22,7 @@
                 </div>
               </template>
             </q-field>
-            <ProfileSelect
+            <SelectProfile
               class="col-md-3 col-xs-12"
               label="Profil"
               :profile="user.profile?.id"
@@ -65,7 +65,7 @@ import { useAdminStore } from "@/store/admin";
 import { User, Profile } from "@/@types/database";
 import { onMounted, inject, ref, computed, watch, Ref } from "vue";
 import { useAuth } from "@/store/auth";
-import ProfileSelect from "@/components/SelectProfile.vue";
+import SelectProfile from "@/components/SelectProfile.vue";
 
 const auth = useAuth();
 

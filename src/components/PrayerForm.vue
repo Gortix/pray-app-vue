@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent="simulateSubmit" class="custom-flex">
-    <ProfileSelect
+    <SelectProfile
       v-model:profile="user"
       emit-value
       @edit-mode="(edited) => (showAddNew = edited)"
@@ -47,7 +47,7 @@ import { useAuth } from "@/store/auth";
 import { Pray } from "@/@types/database";
 import { dateToString } from "@/functions/helpers";
 import { useQuasar } from "quasar";
-import ProfileSelect from "./SelectProfile.vue";
+import SelectProfile from "./SelectProfile.vue";
 
 const props = defineProps<{ data?: Pray }>();
 const datePattern = /^[0-3]\d.[0-1]\d.[\d]{4}$/;
@@ -68,61 +68,62 @@ const editMode = computed(() => {
   return props.data?.description.length || 0 > 0;
 });
 
+const notify = (message: string, color: string, textColor = "white") => {
+  $q.notify({
+    message,
+    color,
+    textColor,
+    position: "top",
+  });
+};
+
+const updatePray = (date: Date) => {
+  if (!props.data?.id) {
+    return;
+  }
+
+  store.updatePray(props.data.id, {
+    description: description.value,
+    owner: user.value,
+    date,
+  });
+};
+
+const addPray = async (date: Date) => {
+  try {
+    await store.addPray(user.value, date, description.value);
+  } catch (err) {
+    throw new Error("ERROR " + err);
+  }
+};
+
 const simulateSubmit = async () => {
-  if (showAddNew.value) {
-    $q.notify({
-      message: "Jesteś w trakcie dodawania nowej osoby",
-      color: "warning",
-      textColor: "black",
-      position: "top",
-    });
-    submitting.value = false;
-
-    return;
-  }
-
-  if (!date.value || !description.value || !user.value) {
-    $q.notify({
-      message: "Uzupełnij wszystkie pola",
-      color: "negative",
-      position: "top",
-    });
-    submitting.value = false;
-
-    return;
-  }
-
   const [day, month, year] = date.value.split(".");
   let errorWhileSubmit = false;
   submitting.value = true;
-  showAddNew.value = false;
+
+  if (showAddNew.value) {
+    notify("Jesteś w trakcie dodawania nowej osoby", "warning", "black");
+
+    return (submitting.value = false);
+  }
+
+  if (!date.value || !description.value || !user.value) {
+    notify("Uzupełnij wszystkie pola", "negative");
+
+    return (submitting.value = false);
+  }
 
   if (editMode.value) {
-    store.updatePray(props.data?.id || "", {
-      description: description.value,
-      owner: user.value,
-      date: new Date(+year, +month - 1, +day),
-    });
-
+    updatePray(new Date(+year, +month - 1, +day));
     submitting.value = false;
-    emit("submit");
 
-    return;
+    return emit("submit");
   }
 
   try {
-    await store.addPray(
-      user.value,
-      new Date(+year, +month - 1, +day),
-      description.value
-    );
+    await addPray(new Date(+year, +month - 1, +day));
   } catch (err) {
-    $q.notify({
-      message: "Błąd podczas zapisu do bazy",
-      color: "negative",
-      position: "top",
-    });
-
     errorWhileSubmit = true;
   }
 
@@ -139,16 +140,15 @@ const simulateSubmit = async () => {
 
 onMounted(() => {
   user.value = auth.profile.id;
-  if (editMode.value) {
-    description.value = props.data?.description || "";
-    //@ts-ignore
-    user.value = props.data?.owner.id;
-    //@ts-ignore
-    date.value = dateToString(props.data?.date);
-  }
+
+  if (!editMode.value || !props.data) return;
+
+  user.value = props.data.owner.id;
+  date.value = dateToString(props.data.date);
+  description.value = props.data.description;
 });
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .custom-flex {
   display: flex;
   flex-direction: column;

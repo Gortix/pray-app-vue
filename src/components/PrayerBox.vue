@@ -86,15 +86,6 @@ const isLast7Days = computed(() => {
   return weekAgo <= createdDate;
 });
 
-const onClickHandler = () => {
-  if (props.selectedMode) {
-    emits("update:selected");
-    return;
-  }
-
-  emits("open", props);
-};
-
 const truncateDescription = computed(() => {
   const maxSize = 120;
   const desc = props.description as string;
@@ -105,6 +96,15 @@ const truncateDescription = computed(() => {
 
   return desc?.length > maxSize ? desc.slice(0, maxSize) + "..." : desc;
 });
+
+const onClickHandler = () => {
+  if (props.selectedMode) {
+    emits("update:selected");
+    return;
+  }
+
+  emits("open", props);
+};
 
 const removePrayHandler = () => {
   const test = confirm("Czy na pewno usunąc rekord?");

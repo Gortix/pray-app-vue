@@ -1,5 +1,5 @@
 <template>
-  <PrayListFiltersPanel />
+  <PrayerFiltersHeader />
   <TransitionGroup
     name="pray-box-list"
     class="row wrap q-mt-sm justify-center custom-gap render-list items-stretch"
@@ -21,11 +21,11 @@
     </q-dialog>
   </Suspense>
   <Suspense>
-    <BasicPopup v-model="editPray" title="Aktualizuj modlitwę">
+    <AppPopup v-model="editPray" title="Aktualizuj modlitwę">
       <template #default>
         <PrayForm :data="popupData" @submit="() => (editPray = false)" />
       </template>
-    </BasicPopup>
+    </AppPopup>
   </Suspense>
 </template>
 <script setup lang="ts">
@@ -34,10 +34,10 @@ import { useStore } from "@/store";
 import { useAuth } from "@/store/auth";
 import { useSelectedList } from "@/store/selectedList";
 import PrayBox from "@/components/PrayerBox.vue";
-import BasicPopup from "@/components/AppPopup.vue";
+import AppPopup from "@/components/AppPopup.vue";
 import PrayForm from "@/components/PrayerForm.vue";
 import { PrayBoxTypes } from "@/@types/components";
-import PrayListFiltersPanel from "@/components/PrayerFiltersHeader.vue";
+import PrayerFiltersHeader from "@/components/PrayerFiltersHeader.vue";
 
 const store = useStore();
 const auth = useAuth();
