@@ -65,7 +65,7 @@ import { useAdminStore } from "@/store/admin";
 import { User, Profile } from "@/@types/database";
 import { onMounted, inject, ref, computed, watch, Ref } from "vue";
 import { useAuth } from "@/store/auth";
-import ProfileSelect from "@/components/ProfileSelect.vue";
+import ProfileSelect from "@/components/SelectProfile.vue";
 
 const auth = useAuth();
 

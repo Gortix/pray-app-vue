@@ -47,7 +47,7 @@ import { useAuth } from "@/store/auth";
 import { Pray } from "@/@types/database";
 import { dateToString } from "@/functions/helpers";
 import { useQuasar } from "quasar";
-import ProfileSelect from "./ProfileSelect.vue";
+import ProfileSelect from "./SelectProfile.vue";
 
 const props = defineProps<{ data?: Pray }>();
 const datePattern = /^[0-3]\d.[0-1]\d.[\d]{4}$/;

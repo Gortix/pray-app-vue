@@ -33,11 +33,11 @@ import { ref, computed, inject } from "vue";
 import { useStore } from "@/store";
 import { useAuth } from "@/store/auth";
 import { useSelectedList } from "@/store/selectedList";
-import PrayBox from "@/components/PrayBox.vue";
-import BasicPopup from "@/components/BasicPopup.vue";
-import PrayForm from "@/components/PrayForm.vue";
+import PrayBox from "@/components/PrayerBox.vue";
+import BasicPopup from "@/components/AppPopup.vue";
+import PrayForm from "@/components/PrayerForm.vue";
 import { PrayBoxTypes } from "@/@types/components";
-import PrayListFiltersPanel from "@/components/PrayListFiltersPanel.vue";
+import PrayListFiltersPanel from "@/components/PrayerFiltersHeader.vue";
 
 const store = useStore();
 const auth = useAuth();
