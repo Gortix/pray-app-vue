@@ -25,11 +25,11 @@
 </template>
 
 <script setup lang="ts">
-import AddPrayCompoment from "@/components/Pray/AddPrayCompoment.vue";
-import FiltersMenu from "@/components/FiltersMenu.vue";
+import AddPrayCompoment from "@/components/AddPrayCompoment.vue";
+import FiltersMenu from "@/components/TheFiltersMenu.vue";
 import { ref, watch } from "vue";
-import PageHeader from "@/components/Header/PageHeader.vue";
-import ControlPanel from "@/components/Header/ControlPanel.vue";
+import PageHeader from "@/components/PageHeader.vue";
+import ControlPanel from "@/components/PageHeaderControlPanel.vue";
 import { useSelectedList } from "@/store/selectedList";
 import { useRoute } from "vue-router";
 

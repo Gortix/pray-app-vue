@@ -5,12 +5,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "home",
-    component: () => import("@/views/HomeView.vue"),
+    component: () => import("@/pages/HomeView.vue"),
     children: [
       {
         path: "",
         name: "prayers",
-        component: () => import("@/components/Content/PrayList.vue"),
+        component: () => import("@/views/PrayList.vue"),
       },
       {
         path: "/users",
@@ -18,7 +18,7 @@ const routes: Array<RouteRecordRaw> = [
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: () => import("@/components/Content/UserList.vue"),
+        component: () => import("@/views/UserList.vue"),
       },
     ],
   },
@@ -28,7 +28,7 @@ const routes: Array<RouteRecordRaw> = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import("@/views/LoginPage.vue"),
+    component: () => import("@/pages/LoginPage.vue"),
   },
 ];
 

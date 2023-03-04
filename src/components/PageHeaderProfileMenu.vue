@@ -34,7 +34,7 @@ const auth = useAuth();
 const router = useRouter();
 
 const EditProfileComponent = defineAsyncComponent({
-  loader: () => import("./EditProfileComponent.vue"),
+  loader: () => import("./PageHeaderProfileMenuEdit.vue"),
 });
 
 const editProfile = ref(false);

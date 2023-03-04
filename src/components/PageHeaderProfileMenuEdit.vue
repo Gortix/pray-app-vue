@@ -18,7 +18,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted, defineProps, defineEmits, computed, ref } from "vue";
-import BasicPopup from "../BasicPopup.vue";
+import BasicPopup from "./BasicPopup.vue";
 import { useAuth } from "@/store/auth";
 
 const auth = useAuth();

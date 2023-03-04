@@ -1,6 +1,6 @@
 <template>
   <BasicPopup v-model="toolbar" title="Ddaja modlitwę">
-    <NewPrayForm @submit="() => (toolbar = false)" />
+    <PrayForm @submit="() => (toolbar = false)" />
   </BasicPopup>
   <q-btn
     size="1.1rem"
@@ -14,8 +14,8 @@
 </template>
 <script setup lang="ts">
 import { ref } from "vue";
-import BasicPopup from "../BasicPopup.vue";
-import NewPrayForm from "./PrayForm.vue";
+import BasicPopup from "./BasicPopup.vue";
+import PrayForm from "./PrayForm.vue";
 
 const toolbar = ref(false);
 </script>

@@ -30,14 +30,14 @@
 </template>
 <script setup lang="ts">
 import { ref, computed, inject } from "vue";
-import { useStore } from "@/store/index";
+import { useStore } from "@/store";
 import { useAuth } from "@/store/auth";
 import { useSelectedList } from "@/store/selectedList";
-import PrayBox from "../PrayBox.vue";
-import BasicPopup from "../BasicPopup.vue";
-import PrayForm from "../Pray/PrayForm.vue";
+import PrayBox from "@/components/PrayBox.vue";
+import BasicPopup from "@/components/BasicPopup.vue";
+import PrayForm from "@/components/PrayForm.vue";
 import { PrayBoxTypes } from "@/@types/components";
-import PrayListFiltersPanel from "../FilterPanels/PrayListFiltersPanel.vue";
+import PrayListFiltersPanel from "@/components/PrayListFiltersPanel.vue";
 
 const store = useStore();
 const auth = useAuth();

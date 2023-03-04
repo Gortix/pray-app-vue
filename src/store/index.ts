@@ -11,6 +11,9 @@ import {
   push,
   update,
   remove,
+  query,
+  orderByChild,
+  equalTo,
 } from "firebase/database";
 
 interface profilesMap {
@@ -85,7 +88,13 @@ export const useStore = defineStore("database", {
       const prayList: Pray[] = [];
 
       try {
-        const snapshot = await get(child(dbRef, `prayers`));
+        const snapshot = await get(
+          query(
+            child(dbRef, `prayers`),
+            orderByChild("archived"),
+            equalTo(false)
+          )
+        );
         const snapshotList = snapshot.val();
 
         for (const i in snapshotList) {
