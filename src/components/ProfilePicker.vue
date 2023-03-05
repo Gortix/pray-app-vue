@@ -5,21 +5,21 @@
         :emit-value="props.emitValue"
         :label="props.label"
         v-model:profile="profileModel"
-        @hide-component="showOrHideAddNewPanel"
+        @hide-component="showAddNew = !showAddNew"
       />
     </div>
     <template v-else>
       <ProfilePickerAddNew
         class="row"
         @add-profile="updateProfileHandler"
-        @close="showOrHideAddNewPanel"
+        @close="showAddNew = !showAddNew"
         :emit-value="props.emitValue"
       />
     </template>
   </Transition>
 </template>
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, computed, onMounted } from "vue";
+import { defineProps, defineEmits, ref, computed, onMounted, watch } from "vue";
 import ProfilePickerSelect from "./ProfilePickerSelect.vue";
 import ProfilePickerAddNew from "./ProfileSelectAddNew.vue";
 
@@ -35,15 +35,9 @@ const showAddNew = ref(false);
 const newUserName = ref("");
 
 const updateProfileHandler = (val: string | Record<string, unknown>) => {
-  showAddNew.value = false;
-
   emit("update:profile", val);
-};
 
-const showOrHideAddNewPanel = () => {
-  showAddNew.value = !showAddNew.value;
-
-  emit("edit-mode", showAddNew.value);
+  showAddNew.value = false;
 };
 
 const profileModel = computed({
@@ -53,6 +47,10 @@ const profileModel = computed({
   set(value) {
     emit("update:profile", value);
   },
+});
+
+watch(showAddNew, (val) => {
+  emit("edit-mode", val);
 });
 
 onMounted(() => {
