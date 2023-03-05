@@ -5,6 +5,7 @@
       emit-value
       @edit-mode="(edited) => (showAddNew = edited)"
     />
+
     <q-input
       v-if="['admin', 'superadmin'].includes(auth.role)"
       v-model="date"
@@ -47,7 +48,7 @@ import { useAuth } from "@/store/auth";
 import { Pray } from "@/@types/database";
 import { dateToString } from "@/functions/helpers";
 import { useQuasar } from "quasar";
-import SelectProfile from "./SelectProfile.vue";
+import SelectProfile from "./ProfilePicker.vue";
 
 const props = defineProps<{ data?: Pray }>();
 const datePattern = /^[0-3]\d.[0-1]\d.[\d]{4}$/;
@@ -90,11 +91,7 @@ const updatePray = (date: Date) => {
 };
 
 const addPray = async (date: Date) => {
-  try {
-    await store.addPray(user.value, date, description.value);
-  } catch (err) {
-    throw new Error("ERROR " + err);
-  }
+  await store.addPray(user.value, date, description.value);
 };
 
 const simulateSubmit = async () => {

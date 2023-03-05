@@ -140,7 +140,7 @@ export const useStore = defineStore("database", {
       try {
         const keyOfNewPush = push(ref(db, "prayers"), prayObj).key as string;
 
-        this.data.push(
+        return this.data.push(
           await createPrayObject(keyOfNewPush, prayObj, this.users)
         );
       } catch (err) {
@@ -151,6 +151,8 @@ export const useStore = defineStore("database", {
         });
 
         console.error(err);
+
+        throw err;
       }
     },
     async updatePray(
