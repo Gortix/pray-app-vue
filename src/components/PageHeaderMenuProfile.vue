@@ -1,6 +1,6 @@
 <template>
   <Suspense v-if="editProfileSuspense">
-    <EditProfileComponent v-model="editProfile" />
+    <PageHeaderMenuProfileEdit v-model="editProfile" />
   </Suspense>
 
   <q-menu v-model="openMenu">
@@ -33,8 +33,8 @@ import { useRouter } from "vue-router";
 const auth = useAuth();
 const router = useRouter();
 
-const EditProfileComponent = defineAsyncComponent({
-  loader: () => import("./EditProfileComponent.vue"),
+const PageHeaderMenuProfileEdit = defineAsyncComponent({
+  loader: () => import("./PageHeaderMenuProfileEdit.vue"),
 });
 
 const editProfile = ref(false);

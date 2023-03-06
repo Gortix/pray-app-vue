@@ -7,7 +7,7 @@
         @filter-menu-action="showFilterMenu = !showFilterMenu"
       />
       <Transition>
-        <ControlPanel
+        <PageHeaderControlPanel
           class="absolute absolute-top full-height"
           v-if="renderPanel"
           style="z-index: 100000"
@@ -15,21 +15,21 @@
       </Transition>
     </q-header>
     <q-drawer :width="230" v-model="showFilterMenu" side="right" bordered>
-      <FiltersMenu />
+      <PrayerFiltersMenu />
     </q-drawer>
     <q-page-container>
       <router-view />
     </q-page-container>
-    <AddPrayCompoment v-if="route.name == 'prayers'" />
+    <PrayerPopup v-if="route.name == 'prayers'" />
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import AddPrayCompoment from "@/components/Pray/AddPrayCompoment.vue";
-import FiltersMenu from "@/components/FiltersMenu.vue";
+import PrayerPopup from "@/components/PrayerPopup.vue";
+import PrayerFiltersMenu from "@/components/PrayerFiltersMenu.vue";
 import { ref, watch } from "vue";
-import PageHeader from "@/components/Header/PageHeader.vue";
-import ControlPanel from "@/components/Header/ControlPanel.vue";
+import PageHeader from "@/components/PageHeader.vue";
+import PageHeaderControlPanel from "@/components/PageHeaderControlPanel.vue";
 import { useSelectedList } from "@/store/selectedList";
 import { useRoute } from "vue-router";
 

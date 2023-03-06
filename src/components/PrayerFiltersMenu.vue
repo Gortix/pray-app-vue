@@ -49,10 +49,11 @@ import { useAuth } from "@/store/auth";
 import { useStore } from "@/store/index";
 import { ref, computed } from "vue";
 
-const filterValue = ref("");
 const filterStore = usePrayFilter();
 const auth = useAuth();
 const store = useStore();
+const filterValue = ref("");
+
 const iAmOwner = computed(() => filterStore.owner == auth.profile.id);
 const user = computed({
   get() {
@@ -62,13 +63,13 @@ const user = computed({
     filterStore.owner = value;
   },
 });
-const options = computed(() =>
-  filterValue.value
-    ? store.getProfileOptions.filter((el) =>
-        el.label.toLowerCase().includes(filterValue.value)
-      )
-    : store.getProfileOptions
-);
+const options = computed(() => {
+  if (!filterValue.value) return store.getProfileOptions;
+
+  return store.getProfileOptions.filter((el) =>
+    el.label.toLowerCase().includes(filterValue.value)
+  );
+});
 
 const ownerSelect = () => {
   if (iAmOwner.value) return (filterStore.owner = "");
