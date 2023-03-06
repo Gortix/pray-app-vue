@@ -49,7 +49,7 @@
     </div>
     <q-btn round flat>
       <q-icon size="2.5rem" color="blue-grey-1" name="o_account_circle" />
-      <PageHeaderMenuProfile />
+      <PageHeaderProfileMenu />
     </q-btn>
   </q-toolbar>
 </template>
@@ -64,7 +64,7 @@ import {
   nextTick,
 } from "vue";
 import { useRouter } from "vue-router";
-import PageHeaderMenuProfile from "./PageHeaderProfileMenu.vue";
+import PageHeaderProfileMenu from "./PageHeaderProfileMenu.vue";
 
 const checkIsMobile = () => {
   isMobileScreen.value = screen.width <= 600;
