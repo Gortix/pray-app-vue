@@ -1,5 +1,5 @@
 <template>
-  <BasicPopup title="Mój profil" v-model="editProfile">
+  <AppPopup title="Mój profil" v-model="editProfile">
     <form @submit.prevent="submit" class="custom-flex">
       <q-input v-model="userName" label="Nazwa użytkownika" />
       <q-btn
@@ -14,11 +14,11 @@
         </template>
       </q-btn>
     </form>
-  </BasicPopup>
+  </AppPopup>
 </template>
 <script setup lang="ts">
 import { onMounted, defineProps, defineEmits, computed, ref } from "vue";
-import BasicPopup from "../BasicPopup.vue";
+import AppPopup from "./AppPopup.vue";
 import { useAuth } from "@/store/auth";
 
 const auth = useAuth();
@@ -40,16 +40,16 @@ const editProfile = computed({
   },
 });
 
-onMounted(async () => {
-  userName.value = auth.profile.name;
-});
-
 const submit = async () => {
   submitting.value = true;
   if (userName.value != auth.profile.name) {
     await auth.updateUserProfile(userName.value);
-    editProfile.value =false;
+    editProfile.value = false;
   }
   submitting.value = false;
 };
+
+onMounted(async () => {
+  userName.value = auth.profile.name;
+});
 </script>

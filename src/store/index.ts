@@ -3,6 +3,7 @@ import { dateToString } from "@/functions/helpers";
 import { Pray, Profile } from "./../@types/database";
 import { defineStore } from "pinia";
 import app, { auth } from "@/@firebase";
+import { Notify } from "quasar";
 import {
   getDatabase,
   ref,
@@ -11,6 +12,9 @@ import {
   push,
   update,
   remove,
+  query,
+  orderByChild,
+  equalTo,
 } from "firebase/database";
 
 interface profilesMap {
@@ -85,7 +89,13 @@ export const useStore = defineStore("database", {
       const prayList: Pray[] = [];
 
       try {
-        const snapshot = await get(child(dbRef, `prayers`));
+        const snapshot = await get(
+          query(
+            child(dbRef, `prayers`),
+            orderByChild("archived"),
+            equalTo(false)
+          )
+        );
         const snapshotList = snapshot.val();
 
         for (const i in snapshotList) {
@@ -130,11 +140,19 @@ export const useStore = defineStore("database", {
       try {
         const keyOfNewPush = push(ref(db, "prayers"), prayObj).key as string;
 
-        this.data.push(
+        return this.data.push(
           await createPrayObject(keyOfNewPush, prayObj, this.users)
         );
       } catch (err) {
+        Notify.create({
+          message: "Błąd podczas zapisu do bazy",
+          color: "negative",
+          position: "top",
+        });
+
         console.error(err);
+
+        throw err;
       }
     },
     async updatePray(
