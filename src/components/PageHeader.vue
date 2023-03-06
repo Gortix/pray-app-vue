@@ -64,7 +64,7 @@ import {
   nextTick,
 } from "vue";
 import { useRouter } from "vue-router";
-import PageHeaderMenuProfile from "./PageHeaderMenuProfile.vue";
+import PageHeaderMenuProfile from "./PageHeaderProfileMenu.vue";
 
 const checkIsMobile = () => {
   isMobileScreen.value = screen.width <= 600;
