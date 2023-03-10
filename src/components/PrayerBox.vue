@@ -5,6 +5,7 @@
     :class="{ selected: selected, 'card-column': !props.fullSize }"
     :style="{ 'min-width': '350px' }"
   >
+    <q-resize-observer @resize="(size) => (qCardSize = size)" />
     <q-card-section class="row justify-between q-pb-sm text-blue-grey-5">
       <span :class="{ 'my-pray': myPray }">
         {{ owner.name }}
@@ -16,10 +17,21 @@
     <q-card-section
       :style="{ overflow: props.fullSize ? 'visible' : 'hidden' }"
     >
-      {{ truncateDescription }}
+      {{ truncate(props.description) }}
+    </q-card-section>
+    <q-card-section class="archived" v-if="props.archived">
+      {{
+        truncate(
+          `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Recusandae illo
+      necessitatibus aperiam consectetur, sit labore dolorem voluptas
+      accusantium fugit quas expedita commodi molestias eaque consequuntur quae
+      quis rem? Quos, labore.`,
+          110
+        )
+      }}
     </q-card-section>
 
-    <q-card-actions class="q-pb-md q-pt-xs">
+    <q-card-actions class="q-pb-md q-pt-xs" v-else>
       <q-badge v-if="isLast7Days" outline color="green-13" label="Nowa" />
       <q-badge v-else outline color="white" label="&nbsp;" />
       <!-- <q-btn flat round color="light-blue" icon="fa-solid fa-hands-praying" /> -->
@@ -51,14 +63,17 @@
 </template>
 <script setup lang="ts">
 import { Profile } from "@/@types/database";
-import { computed } from "@vue/reactivity";
-import { date } from "quasar";
-import { defineProps, defineEmits, ref, withDefaults } from "vue";
+import { date, QCard } from "quasar";
+import { defineProps, defineEmits, ref, withDefaults, computed } from "vue";
 import { Prayer } from "@/@types/database";
 import { dateToString } from "@/functions/helpers";
 
 const emits = defineEmits(["removeDoc", "update:selected", "open", "edit"]);
 const showMenu = ref<boolean>(false);
+const qCardSize = ref<{ width: number; height: number }>({
+  width: 0,
+  height: 0,
+});
 
 const props = withDefaults(
   defineProps<{
@@ -85,21 +100,25 @@ const isLast7Days = computed(() => {
 
   return weekAgo <= createdDate;
 });
+const height = computed<string>(() => {
+  if (!props.archived) return "170px";
+  if (qCardSize.value?.width < 450) return "230px";
 
-const truncateDescription = computed(() => {
-  const maxSize = 120;
-  const desc = props.description as string;
+  return "200px";
+});
 
+const truncate = (text: string, maxSize = 120) => {
   if (props.fullSize) {
-    return desc;
+    return text;
   }
 
-  return desc?.length > maxSize ? desc.slice(0, maxSize) + "..." : desc;
-});
+  return text?.length > maxSize ? text.slice(0, maxSize) + "..." : text;
+};
 
 const onClickHandler = () => {
   if (props.selectedMode) {
     emits("update:selected");
+
     return;
   }
 
@@ -124,12 +143,18 @@ const removePrayHandler = () => {
   border: 2px solid white;
   transition: all 0.3s;
   min-width: 350px;
-  height: 170px;
+  height: v-bind(height);
 
   &:hover {
     background-color: hsl(180, 80%, 98%);
     transform: scale(1.01) translate(-1px, -1px);
     box-shadow: $shadow-3;
   }
+}
+.archived {
+  border: 1px solid $amber-13 !important;
+  border-radius: 5px !important;
+  margin: 3px 5px;
+  background-color: $light-blue-1;
 }
 </style>

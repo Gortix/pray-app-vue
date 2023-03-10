@@ -29,7 +29,7 @@
   </Suspense>
 </template>
 <script setup lang="ts">
-import { ref, computed, inject } from "vue";
+import { ref, computed, inject, onMounted, useCssModule } from "vue";
 import { useStore } from "@/store";
 import { useAuth } from "@/store/auth";
 import { useSelectedList } from "@/store/selectedList";
@@ -47,6 +47,8 @@ const toolbar = ref(false);
 const editPray = ref(false);
 const popupData = ref({} as PrayBoxTypes);
 const searchText = inject("searchText", ref(""));
+
+const css = useCssModule();
 
 const data = computed(() => {
   const lower = searchText.value.trim().toLowerCase();
@@ -88,6 +90,10 @@ const convertDataForPrayBox = (data: PrayBoxTypes) => {
 
   return convData;
 };
+
+onMounted(() => {
+  console.log(css["card-column-1"]);
+});
 </script>
 <style lang="scss">
 .pray-box-list-move, /* apply transition to moving elements */
@@ -110,7 +116,9 @@ const convertDataForPrayBox = (data: PrayBoxTypes) => {
   flex-basis: 100%;
   border: 2px solid white;
 
-  @media (width > $tablet) {
+  $boxMinValue: 350px;
+  //min avlue of the box is 350 + margin
+  @media (width > (($boxMinValue *2)+50px )) {
     flex-basis: 48%;
   }
 
