@@ -16,6 +16,7 @@
     </q-card-section>
     <q-card-section
       :style="{ overflow: props.fullSize ? 'visible' : 'hidden' }"
+      :class="[props.archived && 'text-blue-grey-13']"
     >
       {{ truncate(props.description) }}
     </q-card-section>
@@ -31,12 +32,12 @@
       }}
     </q-card-section>
 
-    <q-card-actions class="q-pb-md q-pt-xs" v-else>
+    <q-card-actions class="q-pb-md q-pt-xs" >
       <q-badge v-if="isLast7Days" outline color="green-13" label="Nowa" />
       <q-badge v-else outline color="white" label="&nbsp;" />
       <!-- <q-btn flat round color="light-blue" icon="fa-solid fa-hands-praying" /> -->
     </q-card-actions>
-    <q-menu v-model="showMenu" context-menu>
+    <!-- <q-menu v-model="showMenu" context-menu>
       <q-list style="min-width: 200px">
         <q-item clickable v-close-popup @click="emits('update:selected')">
           <q-item-section>Zaznacz</q-item-section>
@@ -58,7 +59,7 @@
           <q-item-section>Usuń</q-item-section>
         </q-item>
       </q-list>
-    </q-menu>
+    </q-menu> -->
   </q-card>
 </template>
 <script setup lang="ts">
@@ -102,9 +103,9 @@ const isLast7Days = computed(() => {
 });
 const height = computed<string>(() => {
   if (!props.archived) return "170px";
-  if (qCardSize.value?.width < 450) return "230px";
+  if (qCardSize.value?.width < 440) return "250px";
 
-  return "200px";
+  return "230px";
 });
 
 const truncate = (text: string, maxSize = 120) => {
@@ -155,6 +156,6 @@ const removePrayHandler = () => {
   border: 1px solid $amber-13 !important;
   border-radius: 5px !important;
   margin: 3px 5px;
-  background-color: $light-blue-1;
+  background: linear-gradient(to bottom, $light-blue-1 10% ,transparent 80%) ;
 }
 </style>
