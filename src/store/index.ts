@@ -31,18 +31,27 @@ const createPrayObject = async (
   docData: Pray,
   users: profilesMap
 ) => {
+  let archiveDate;
   //@ts-ignore
   const owner = users[docData.owner];
   //@ts-ignore
   const [day, month, year] = docData.date.split(".");
-
+  
+  if (docData.archive_date) {
+    //@ts-ignore
+    const [day, month, year] = docData.archive_date.split(".");
+    archiveDate = new Date(year, month - 1, day);
+  }
+  
   return {
-    archived: docData?.archived || true,
+    archived: docData?.archived,
     date: new Date(year, month - 1, day),
     description: docData?.description || "",
     prayers: [],
     id,
     owner,
+    archiveDescription: docData.archive_description || "",
+    archiveDate,
   };
 };
 
@@ -91,9 +100,9 @@ export const useStore = defineStore("database", {
       try {
         const snapshot = await get(
           query(
-            child(dbRef, `prayers`),
-            orderByChild("archived"),
-            equalTo(false)
+            child(dbRef, `prayers`)
+            // orderByChild("archived"),
+            // equalTo(false)
           )
         );
         const snapshotList = snapshot.val();

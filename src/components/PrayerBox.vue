@@ -21,23 +21,15 @@
       {{ truncate(props.description) }}
     </q-card-section>
     <q-card-section class="archived" v-if="props.archived">
-      {{
-        truncate(
-          `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Recusandae illo
-      necessitatibus aperiam consectetur, sit labore dolorem voluptas
-      accusantium fugit quas expedita commodi molestias eaque consequuntur quae
-      quis rem? Quos, labore.`,
-          110
-        )
-      }}
+      {{ truncate(props.archiveDescription, 110) }}
     </q-card-section>
 
-    <q-card-actions class="q-pb-md q-pt-xs" >
+    <q-card-actions class="q-pb-md q-pt-xs">
       <q-badge v-if="isLast7Days" outline color="green-13" label="Nowa" />
       <q-badge v-else outline color="white" label="&nbsp;" />
       <!-- <q-btn flat round color="light-blue" icon="fa-solid fa-hands-praying" /> -->
     </q-card-actions>
-    <!-- <q-menu v-model="showMenu" context-menu>
+    <q-menu v-model="showMenu" context-menu>
       <q-list style="min-width: 200px">
         <q-item clickable v-close-popup @click="emits('update:selected')">
           <q-item-section>Zaznacz</q-item-section>
@@ -59,7 +51,7 @@
           <q-item-section>Usuń</q-item-section>
         </q-item>
       </q-list>
-    </q-menu> -->
+    </q-menu>
   </q-card>
 </template>
 <script setup lang="ts">
@@ -84,6 +76,8 @@ const props = withDefaults(
     owner: Profile;
     prayers?: Prayer[];
     archived: boolean;
+    archiveDescription?: string;
+    archiveDate?: Date;
     showOwner?: boolean;
     myPray: boolean;
     selectedMode: boolean;
@@ -91,7 +85,13 @@ const props = withDefaults(
     selected: boolean;
     adminMode: boolean;
   }>(),
-  { archived: false, selected: false, showOwner: true, fullSize: false }
+  {
+    archived: false,
+    selected: false,
+    showOwner: true,
+    fullSize: false,
+    archiveDescription: "",
+  }
 );
 
 const convertedDate = computed(() => dateToString(props.date));
@@ -156,6 +156,6 @@ const removePrayHandler = () => {
   border: 1px solid $amber-13 !important;
   border-radius: 5px !important;
   margin: 3px 5px;
-  background: linear-gradient(to bottom, $light-blue-1 10% ,transparent 80%) ;
+  background: linear-gradient(to bottom, $light-blue-1 10%, transparent 80%);
 }
 </style>

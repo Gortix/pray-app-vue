@@ -10,6 +10,8 @@ export interface Pray {
   owner: Profile;
   prayers?: Prayer[];
   archived: boolean;
+  archive_description?: string;
+  archive_date?: Date;
 }
 
 export interface Profile {
