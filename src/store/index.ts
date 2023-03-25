@@ -36,13 +36,13 @@ const createPrayObject = async (
   const owner = users[docData.owner];
   //@ts-ignore
   const [day, month, year] = docData.date.split(".");
-  
+
   if (docData.archive_date) {
     //@ts-ignore
     const [day, month, year] = docData.archive_date.split(".");
     archiveDate = new Date(year, month - 1, day);
   }
-  
+
   return {
     archived: docData?.archived,
     date: new Date(year, month - 1, day),
@@ -63,6 +63,7 @@ export const useStore = defineStore("database", {
       data: [] as Pray[],
       users: {} as profilesMap,
       filter: "all" as string,
+      archivedPulled: false,
     };
   },
   getters: {
@@ -77,7 +78,8 @@ export const useStore = defineStore("database", {
       //@ts-ignore
       return state.getSortedData
         .filter(filters.dateFilter)
-        .filter(filters.ownerFilter);
+        .filter(filters.ownerFilter)
+        .filter(filters.archivedFilter);
     },
     getProfileOptions() {
       const listOfUsers: Options[] = [];
@@ -91,18 +93,26 @@ export const useStore = defineStore("database", {
     },
   },
   actions: {
-    async getListOfPray(force = false) {
-      if (this.data.length > 0 && !force) {
+    async getListOfPray(archived = false, force = false) {
+      if (
+        !force &&
+        ((!archived && this.data.length > 0) ||
+          (archived && this.archivedPulled))
+      )
         return;
+
+      if (archived) {
+        this.archivedPulled = archived;
       }
+
       const prayList: Pray[] = [];
 
       try {
         const snapshot = await get(
           query(
-            child(dbRef, `prayers`)
-            // orderByChild("archived"),
-            // equalTo(false)
+            child(dbRef, `prayers`),
+            orderByChild("archived"),
+            equalTo(archived)
           )
         );
         const snapshotList = snapshot.val();
@@ -111,7 +121,8 @@ export const useStore = defineStore("database", {
           const rec = snapshotList[i];
           prayList.push(await createPrayObject(i, rec, this.users));
         }
-        this.data = prayList;
+
+        this.data.push(...prayList);
       } catch (err) {
         console.error(err);
       }

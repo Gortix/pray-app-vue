@@ -1,4 +1,5 @@
 <template>
+  <PrayerCategoryHeader :archived="archived" />
   <PrayerFiltersHeader />
   <TransitionGroup
     name="pray-box-list"
@@ -29,26 +30,29 @@
   </Suspense>
 </template>
 <script setup lang="ts">
-import { ref, computed, inject, onMounted, useCssModule } from "vue";
+import { ref, computed, inject, watch } from "vue";
+import { useRoute } from "vue-router";
 import { useStore } from "@/store";
 import { useAuth } from "@/store/auth";
 import { useSelectedList } from "@/store/selectedList";
+import { usePrayFilter } from "@/store/filterStore";
 import PrayBox from "@/components/PrayerBox.vue";
 import AppPopup from "@/components/AppPopup.vue";
 import PrayForm from "@/components/PrayerForm.vue";
 import { PrayBoxTypes } from "@/@types/components";
 import PrayerFiltersHeader from "@/components/PrayerFiltersHeader.vue";
+import PrayerCategoryHeader from "@/components/PrayerCategoryHeader.vue";
 
+const route = useRoute();
 const store = useStore();
 const auth = useAuth();
 const slStore = useSelectedList();
+const filterStore = usePrayFilter();
 
 const toolbar = ref(false);
 const editPray = ref(false);
 const popupData = ref({} as PrayBoxTypes);
 const searchText = inject("searchText", ref(""));
-
-const css = useCssModule();
 
 const data = computed(() => {
   const lower = searchText.value.trim().toLowerCase();
@@ -64,6 +68,7 @@ const data = computed(() => {
   );
 });
 const selectedList = computed(() => slStore.selectedList);
+const archived = computed(() => route.query.archived === "true");
 
 const isSelected = (recID: string) => {
   return selectedList.value.findIndex((el) => el == recID) >= 0;
@@ -91,8 +96,9 @@ const convertDataForPrayBox = (data: PrayBoxTypes) => {
   return convData;
 };
 
-onMounted(() => {
-  console.log(css["card-column-1"]);
+watch(archived, (value) => {
+  store.getListOfPray(true);
+  filterStore.archived = value;
 });
 </script>
 <style lang="scss">

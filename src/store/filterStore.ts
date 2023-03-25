@@ -26,6 +26,7 @@ export const usePrayFilter = defineStore("prayFilter", {
     return {
       owner: "",
       date: "" as dateType,
+      archived: false,
     };
   },
   getters: {
@@ -58,6 +59,9 @@ export const usePrayFilter = defineStore("prayFilter", {
       return (el: Pray): boolean => {
         return el.owner.id == owner;
       };
+    },
+    archivedFilter() {
+      return (el: Pray): boolean => el.archived == this.archived;
     },
   },
   actions: {

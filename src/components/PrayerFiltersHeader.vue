@@ -18,8 +18,9 @@
     @remove="filterStore.date = ''"
     color="secondary"
     text-color="white"
-    >{{ dataFilters[filterStore.date] }}</q-chip
   >
+    {{ dataFilters[filterStore.date] }}
+  </q-chip>
   <q-chip
     removable
     outline
@@ -28,8 +29,9 @@
     @remove="filterStore.owner = ''"
     color="amber-10"
     text-color="white"
-    >{{ store.users[filterStore.owner].name }}</q-chip
   >
+    {{ store.users[filterStore.owner].name }}
+  </q-chip>
 </template>
 <script setup lang="ts">
 import { useStore } from "@/store";
