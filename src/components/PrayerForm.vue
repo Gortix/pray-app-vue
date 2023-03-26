@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="simulateSubmit" class="custom-flex">
+  <form @submit.prevent="handleSubmit" class="custom-flex">
     <SelectProfile
       v-model:profile="user"
       emit-value
@@ -94,7 +94,7 @@ const addPray = async (date: Date) => {
   await store.addPray(user.value, date, description.value);
 };
 
-const simulateSubmit = async () => {
+const handleSubmit = async () => {
   const [day, month, year] = date.value.split(".");
   let errorWhileSubmit = false;
   submitting.value = true;

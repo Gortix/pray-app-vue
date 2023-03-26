@@ -13,6 +13,7 @@
         @update:selected="() => slStore.addOrRemoveFromList(rec.id)"
         @open="openPopup"
         @edit="openEdit"
+        @archive="openArchiver"
       />
     </li>
   </TransitionGroup>
@@ -25,6 +26,16 @@
     <AppPopup v-model="editPray" title="Aktualizuj modlitwę">
       <template #default>
         <PrayForm :data="popupData" @submit="() => (editPray = false)" />
+      </template>
+    </AppPopup>
+  </Suspense>
+  <Suspense>
+    <AppPopup v-model="archivePrayer" title="Złóż świadectwo">
+      <template #default>
+        <PrayerArchiveForm
+          :data="popupData"
+          @submit="() => (archivePrayer = false)"
+        />
       </template>
     </AppPopup>
   </Suspense>
@@ -42,6 +53,7 @@ import PrayForm from "@/components/PrayerForm.vue";
 import { PrayBoxTypes } from "@/@types/components";
 import PrayerFiltersHeader from "@/components/PrayerFiltersHeader.vue";
 import PrayerCategoryHeader from "@/components/PrayerCategoryHeader.vue";
+import PrayerArchiveForm from "@/components/PrayerArchiveForm.vue";
 
 const route = useRoute();
 const store = useStore();
@@ -51,6 +63,7 @@ const filterStore = usePrayFilter();
 
 const toolbar = ref(false);
 const editPray = ref(false);
+const archivePrayer = ref(false);
 const popupData = ref({} as PrayBoxTypes);
 const searchText = inject("searchText", ref(""));
 
@@ -82,6 +95,11 @@ const openPopup = (data: PrayBoxTypes) => {
 const openEdit = (data: PrayBoxTypes) => {
   popupData.value = data;
   editPray.value = true;
+};
+
+const openArchiver = (data: PrayBoxTypes) => {
+  popupData.value = data;
+  archivePrayer.value = true;
 };
 
 const convertDataForPrayBox = (data: PrayBoxTypes) => {

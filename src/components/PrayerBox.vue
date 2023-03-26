@@ -29,10 +29,19 @@
       <q-badge v-else outline color="white" label="&nbsp;" />
       <!-- <q-btn flat round color="light-blue" icon="fa-solid fa-hands-praying" /> -->
     </q-card-actions>
+    <!-- TODO: Separate menu to other component -->
     <q-menu v-model="showMenu" context-menu>
       <q-list style="min-width: 200px">
         <q-item clickable v-close-popup @click="emits('update:selected')">
           <q-item-section>Zaznacz</q-item-section>
+        </q-item>
+        <q-item
+          v-if="myPray || adminMode"
+          clickable
+          v-close-popup
+          @click="emits('archive', props)"
+        >
+          <q-item-section>Dodaj świadectwo</q-item-section>
         </q-item>
         <q-item
           v-if="myPray || adminMode"
@@ -61,7 +70,7 @@ import { defineProps, defineEmits, ref, withDefaults, computed } from "vue";
 import { Prayer } from "@/@types/database";
 import { dateToString } from "@/functions/helpers";
 
-const emits = defineEmits(["removeDoc", "update:selected", "open", "edit"]);
+const emits = defineEmits(["removeDoc", "update:selected", "open", "edit", 'archive']);
 const showMenu = ref<boolean>(false);
 const qCardSize = ref<{ width: number; height: number }>({
   width: 0,

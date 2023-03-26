@@ -24,7 +24,7 @@ const tabs = [
     color: "light-blue-14",
   },
   {
-    label: "Archiwum",
+    label: "Archiwalne",
     name: "archived",
     color: "amber-14",
   },
