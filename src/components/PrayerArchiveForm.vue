@@ -1,13 +1,12 @@
 <template>
   <form @submit.prevent="handleSubmit" class="custom-flex">
-    <!-- TODO: pole Daty -->
-    <q-input v-model="archiveDate" label="Data archiwizacji" />
+    <AppDateInput v-model="archiveDate" label="Data" />
     <q-input
       v-model="archiveDescription"
       type="textarea"
       label="Treść świadectwa"
     />
-   
+
     <q-btn
       type="submit"
       :loading="submitting"
@@ -27,6 +26,7 @@ import { ref, computed, defineEmits, onMounted } from "vue";
 import { useQuasar } from "quasar";
 import { Pray } from "@/@types/database";
 import { dateToString } from "@/functions/helpers";
+import AppDateInput from "./AppDateInput.vue";
 
 const $q = useQuasar();
 
@@ -35,8 +35,9 @@ const emit = defineEmits(["submit"]);
 
 const archiveChecked = ref(false);
 const archiveDescription = ref("");
-const archiveDate = ref("");
+const archiveDate = ref(dateToString(new Date()));
 
+//TODO: usunąć?
 const editMode = computed(() => {
   return props.data?.description.length || 0 > 0;
 });

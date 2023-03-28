@@ -6,25 +6,11 @@
       @edit-mode="(edited) => (showAddNew = edited)"
     />
 
-    <q-input
+    <AppDateInput
       v-if="['admin', 'superadmin'].includes(auth.role)"
       v-model="date"
-      :rules="[(val) => datePattern.test(val)]"
       label="Data zgłoszenia"
-      color="primary"
-    >
-      <template v-slot:append>
-        <q-icon name="event" class="cursor-pointer">
-          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-            <q-date v-model="date" mask="DD.MM.YYYY">
-              <div class="row items-center justify-end">
-                <q-btn v-close-popup label="Close" color="primary" flat />
-              </div>
-            </q-date>
-          </q-popup-proxy>
-        </q-icon>
-      </template>
-    </q-input>
+    />
 
     <q-input v-model="description" type="textarea" label="Treść modlitwy:" />
     <q-btn
@@ -49,9 +35,9 @@ import { Pray } from "@/@types/database";
 import { dateToString } from "@/functions/helpers";
 import { useQuasar } from "quasar";
 import SelectProfile from "./ProfilePicker.vue";
+import AppDateInput from "./AppDateInput.vue";
 
 const props = defineProps<{ data?: Pray }>();
-const datePattern = /^[0-3]\d.[0-1]\d.[\d]{4}$/;
 
 const store = useStore();
 const auth = useAuth();

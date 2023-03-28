@@ -29,38 +29,16 @@
       <q-badge v-else outline color="white" label="&nbsp;" />
       <!-- <q-btn flat round color="light-blue" icon="fa-solid fa-hands-praying" /> -->
     </q-card-actions>
-    <!-- TODO: Separate menu to other component -->
-    <q-menu v-model="showMenu" context-menu>
-      <q-list style="min-width: 200px">
-        <q-item clickable v-close-popup @click="emits('update:selected')">
-          <q-item-section>Zaznacz</q-item-section>
-        </q-item>
-        <q-item
-          v-if="myPray || adminMode"
-          clickable
-          v-close-popup
-          @click="emits('archive', props)"
-        >
-          <q-item-section>Dodaj świadectwo</q-item-section>
-        </q-item>
-        <q-item
-          v-if="myPray || adminMode"
-          clickable
-          v-close-popup
-          @click="emits('edit', props)"
-        >
-          <q-item-section>Edytuj</q-item-section>
-        </q-item>
-        <q-item
-          v-if="adminMode"
-          clickable
-          v-close-popup
-          @click="removePrayHandler"
-        >
-          <q-item-section>Usuń</q-item-section>
-        </q-item>
-      </q-list>
-    </q-menu>
+    <PrayerBoxMenu
+      v-model="showMenu"
+      :my-pray="myPray"
+      :admin-mode="adminMode"
+      @click-select="emit('update:selected', props)"
+      @click-edit="emit('edit', props)"
+      @click-archive="emit('archive', props)"
+      @click-remove="removePrayHandler"
+    />
+  
   </q-card>
 </template>
 <script setup lang="ts">
@@ -69,8 +47,15 @@ import { date, QCard } from "quasar";
 import { defineProps, defineEmits, ref, withDefaults, computed } from "vue";
 import { Prayer } from "@/@types/database";
 import { dateToString } from "@/functions/helpers";
+import PrayerBoxMenu from "./PrayerBoxMenu.vue";
 
-const emits = defineEmits(["removeDoc", "update:selected", "open", "edit", 'archive']);
+const emit = defineEmits([
+  "removeDoc",
+  "update:selected",
+  "open",
+  "edit",
+  "archive",
+]);
 const showMenu = ref<boolean>(false);
 const qCardSize = ref<{ width: number; height: number }>({
   width: 0,
@@ -127,18 +112,18 @@ const truncate = (text: string, maxSize = 120) => {
 
 const onClickHandler = () => {
   if (props.selectedMode) {
-    emits("update:selected");
+    emit("update:selected");
 
     return;
   }
 
-  emits("open", props);
+  emit("open", props);
 };
 
 const removePrayHandler = () => {
   const test = confirm("Czy na pewno usunąc rekord?");
   if (test) {
-    emits("removeDoc");
+    emit("removeDoc");
   }
 };
 </script>
