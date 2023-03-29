@@ -24,9 +24,12 @@ import { dateToString } from "@/functions/helpers";
 
 const datePattern = /^[0-3]\d.[0-1]\d.[\d]{4}$/;
 
-const props = withDefaults(defineProps<{ modelValue: string , label: string}>(), {
+const props = withDefaults(
+  defineProps<{ modelValue: string; label: string }>(),
+  {
     modelValue: dateToString(new Date()),
-});
+  }
+);
 const emit = defineEmits(["update:modelValue"]);
 
 const date = computed({

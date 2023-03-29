@@ -29,7 +29,7 @@
 <script lang="ts" setup>
 import { useStore } from "@/store/index";
 import { computed } from "@vue/reactivity";
-import { ref, defineEmits, onMounted, defineProps } from "vue";
+import { ref, onMounted } from "vue";
 import { useAuth } from "@/store/auth";
 import { Pray } from "@/@types/database";
 import { dateToString } from "@/functions/helpers";

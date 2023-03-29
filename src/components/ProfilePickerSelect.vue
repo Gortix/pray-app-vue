@@ -13,7 +13,7 @@
     :emit-value="props.emitValue"
     @filter="selectFilter"
     :label="props.label"
-    style="padding-bottom:0"
+    style="padding-bottom: 0"
   >
     <template #append>
       <q-icon
@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import { useStore, Options } from "@/store";
 import { QSelect, Platform } from "quasar";
-import { defineProps, defineEmits, ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 
 const props = defineProps({
   label: { type: String, default: "" },

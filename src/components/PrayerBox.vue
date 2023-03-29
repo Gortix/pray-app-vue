@@ -38,13 +38,12 @@
       @click-archive="emit('archive', props)"
       @click-remove="removePrayHandler"
     />
-  
   </q-card>
 </template>
 <script setup lang="ts">
 import { Profile } from "@/@types/database";
 import { date, QCard } from "quasar";
-import { defineProps, defineEmits, ref, withDefaults, computed } from "vue";
+import { ref, withDefaults, computed } from "vue";
 import { Prayer } from "@/@types/database";
 import { dateToString } from "@/functions/helpers";
 import PrayerBoxMenu from "./PrayerBoxMenu.vue";

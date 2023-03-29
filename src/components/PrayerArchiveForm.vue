@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, defineEmits, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useQuasar } from "quasar";
 import { Pray } from "@/@types/database";
 import { dateToString } from "@/functions/helpers";

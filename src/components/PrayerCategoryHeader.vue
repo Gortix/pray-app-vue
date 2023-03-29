@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, withDefaults } from "vue";
+import { computed, withDefaults } from "vue";
 import { LocationQueryRaw, useRouter } from "vue-router";
 
 const props = withDefaults(defineProps<{ archived: boolean }>(), {

@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import { useStore } from "@/store";
 import { useQuasar } from "quasar";
-import { defineProps, defineEmits, ref } from "vue";
+import { ref } from "vue";
 
 const props = defineProps({
   emitValue: { type: Boolean, default: false },

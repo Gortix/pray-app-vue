@@ -19,7 +19,7 @@
   </Transition>
 </template>
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import ProfilePickerSelect from "./ProfilePickerSelect.vue";
 import ProfilePickerAddNew from "./ProfileSelectAddNew.vue";
 
