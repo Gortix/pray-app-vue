@@ -33,6 +33,7 @@
       v-model="showMenu"
       :my-pray="myPray"
       :admin-mode="adminMode"
+      :is-archived="archived"
       @click-select="emit('update:selected', props)"
       @click-edit="emit('edit', props)"
       @click-archive="emit('archive', props)"

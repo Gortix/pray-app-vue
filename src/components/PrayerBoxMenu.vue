@@ -3,7 +3,7 @@
     <q-list style="min-width: 200px">
       <template v-for="(itemObject, index) in itemList">
         <q-item
-          v-if="condition(itemObject.condition)"
+          v-if="itemObject.condition"
           :key="index"
           clickable
           v-close-popup
@@ -16,47 +16,56 @@
   </q-menu>
 </template>
 <script setup lang="ts">
-import { computed } from "vue";
+import { reactive, computed } from "vue";
+const props = defineProps<{
+  adminMode: boolean;
+  myPray: boolean;
+  modelValue: boolean;
+  isArchived?: boolean;
+}>();
+
+const emit = defineEmits([
+  "clickRemove",
+  "clickSelect",
+  "clickEdit",
+  "clickArchive",
+  "clickUnarchived",
+  "update:modelValue",
+]);
 
 const itemConstructor = (
   clickEmit: () => void,
   label: string,
-  condition: "adminOrOwner" | "admin" | "all" = "all"
+  condition: unknown
 ) => ({
   clickEmit,
   label,
   condition,
 });
 
-const itemList = [
-  itemConstructor(() => emit("clickSelect"), "Zaznacz"),
+const admin = computed(() => props.adminMode);
+const adminOrOwner = computed(() => props.adminMode || props.myPray);
+const isArchived = computed(() => props.isArchived);
+
+const itemList = reactive([
+  itemConstructor(() => emit("clickSelect"), "Zaznacz", !isArchived.value),
   itemConstructor(
     () => emit("clickArchive"),
     "Dodaj świadectwo",
-    "adminOrOwner"
+    adminOrOwner.value && !isArchived.value
   ),
-  itemConstructor(() => emit("clickEdit"), "Edytuj", "adminOrOwner"),
-  itemConstructor(() => emit("clickRemove"), "Usuń", "admin"),
-];
-
-const props = defineProps<{
-  adminMode: boolean;
-  myPray: boolean;
-  modelValue: boolean;
-}>();
-const emit = defineEmits([
-  "clickRemove",
-  "clickSelect",
-  "clickEdit",
-  "clickArchive",
-  "update:modelValue",
+  itemConstructor(
+    () => emit("clickUnarchived"),
+    "Proszę ponownie o modlitwę",
+    isArchived
+  ),
+  itemConstructor(
+    () => emit("clickEdit"),
+    "Edytuj",
+    adminOrOwner.value && !isArchived.value
+  ),
+  itemConstructor(() => emit("clickRemove"), "Usuń", admin),
 ]);
-
-const condition = computed(() => (value: string) => {
-  if (value == "admin") return props.adminMode;
-  if (value == "adminOrOwner") return props.adminMode || props.myPray;
-  return true;
-});
 
 const showMenu = computed({
   get: () => props.modelValue,
