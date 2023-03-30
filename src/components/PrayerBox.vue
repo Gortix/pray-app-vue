@@ -5,7 +5,6 @@
     :class="{ selected: selected, 'card-column': !props.fullSize }"
     :style="{ 'min-width': '350px' }"
   >
-    <q-resize-observer @resize="(size) => (qCardSize = size)" />
     <q-card-section class="row justify-between q-pb-sm text-blue-grey-5">
       <span :class="{ 'my-pray': myPray }">
         {{ owner.name }}
@@ -44,7 +43,7 @@
 <script setup lang="ts">
 import { Profile } from "@/@types/database";
 import { date, QCard } from "quasar";
-import { ref, withDefaults, computed } from "vue";
+import { ref, toRef, withDefaults, computed } from "vue";
 import { Prayer } from "@/@types/database";
 import { dateToString } from "@/functions/helpers";
 import PrayerBoxMenu from "./PrayerBoxMenu.vue";
@@ -56,11 +55,6 @@ const emit = defineEmits([
   "edit",
   "archive",
 ]);
-const showMenu = ref<boolean>(false);
-const qCardSize = ref<{ width: number; height: number }>({
-  width: 0,
-  height: 0,
-});
 
 const props = withDefaults(
   defineProps<{
@@ -78,6 +72,7 @@ const props = withDefaults(
     fullSize?: boolean;
     selected: boolean;
     adminMode: boolean;
+    height?: string;
   }>(),
   {
     archived: false,
@@ -85,8 +80,12 @@ const props = withDefaults(
     showOwner: true,
     fullSize: false,
     archiveDescription: "",
+    height: "170px",
   }
 );
+
+const showMenu = ref<boolean>(false);
+const height = toRef(props, "height");
 
 const convertedDate = computed(() => dateToString(props.date));
 const isLast7Days = computed(() => {
@@ -94,12 +93,6 @@ const isLast7Days = computed(() => {
   const createdDate = props.date || Date.now();
 
   return weekAgo <= createdDate;
-});
-const height = computed<string>(() => {
-  if (!props.archived) return "170px";
-  if (qCardSize.value?.width < 440) return "250px";
-
-  return "230px";
 });
 
 const truncate = (text: string, maxSize = 120) => {

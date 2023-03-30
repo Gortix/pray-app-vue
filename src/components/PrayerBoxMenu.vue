@@ -16,7 +16,7 @@
   </q-menu>
 </template>
 <script setup lang="ts">
-import { reactive, computed } from "vue";
+import { reactive, computed, toRef } from "vue";
 const props = defineProps<{
   adminMode: boolean;
   myPray: boolean;
@@ -43,27 +43,21 @@ const itemConstructor = (
   condition,
 });
 
-const admin = computed(() => props.adminMode);
-const adminOrOwner = computed(() => props.adminMode || props.myPray);
-const isArchived = computed(() => props.isArchived);
+const admin = toRef(props, "adminMode");
+const isArchived = toRef(props, "isArchived");
+const adminOrOwner = computed(
+  () => (props.adminMode || props.myPray) && !isArchived.value
+);
 
 const itemList = reactive([
   itemConstructor(() => emit("clickSelect"), "Zaznacz", !isArchived.value),
-  itemConstructor(
-    () => emit("clickArchive"),
-    "Dodaj świadectwo",
-    adminOrOwner.value && !isArchived.value
-  ),
+  itemConstructor(() => emit("clickArchive"), "Dodaj świadectwo", adminOrOwner),
   itemConstructor(
     () => emit("clickUnarchived"),
     "Proszę ponownie o modlitwę",
     isArchived
   ),
-  itemConstructor(
-    () => emit("clickEdit"),
-    "Edytuj",
-    adminOrOwner.value && !isArchived.value
-  ),
+  itemConstructor(() => emit("clickEdit"), "Edytuj", adminOrOwner),
   itemConstructor(() => emit("clickRemove"), "Usuń", admin),
 ]);
 

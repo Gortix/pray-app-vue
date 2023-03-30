@@ -1,6 +1,8 @@
 <template>
   <PrayerCategoryHeader :archived="archived" />
   <PrayerFiltersHeader />
+  <q-resize-observer @resize="(size) => (qCardSize = size)" />
+
   <TransitionGroup
     name="pray-box-list"
     class="row wrap q-mt-sm justify-center custom-gap render-list items-stretch"
@@ -65,6 +67,11 @@ const toolbar = ref(false);
 const editPray = ref(false);
 const archivePrayer = ref(false);
 const popupData = ref({} as PrayBoxTypes);
+const qCardSize = ref<{ width: number; height: number }>({
+  width: 0,
+  height: 0,
+});
+
 const searchText = inject("searchText", ref(""));
 
 const data = computed(() => {
@@ -83,6 +90,12 @@ const data = computed(() => {
 const selectedList = computed(() => slStore.selectedList);
 const archived = computed(() => route.query.archived === "true");
 
+const height = (archived: boolean) => {
+  if (!archived) return "170px";
+  if (qCardSize.value?.width < 440) return "250px";
+
+  return "230px";
+};
 const isSelected = (recID: string) => {
   return selectedList.value.findIndex((el) => el == recID) >= 0;
 };
@@ -109,6 +122,7 @@ const convertDataForPrayBox = (data: PrayBoxTypes) => {
     selected: isSelected(data.id as string),
     selectedMode: slStore.selectedList.length > 0,
     adminMode: ["admin", "superadmin"].includes(auth.role),
+    height: height(data.archived),
   };
 
   return convData;
