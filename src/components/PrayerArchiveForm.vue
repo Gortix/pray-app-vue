@@ -23,17 +23,18 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted } from "vue";
+import { useStore } from "@/store/index";
 import { useQuasar } from "quasar";
-import { Pray } from "@/@types/database";
 import { dateToString } from "@/functions/helpers";
 import AppDateInput from "./AppDateInput.vue";
+import { PrayBoxTypes } from "@/@types/components";
 
 const $q = useQuasar();
+const store = useStore();
 
-const props = defineProps<{ data: Pray }>();
+const props = defineProps<{ data: PrayBoxTypes }>();
 const emit = defineEmits(["submit"]);
 
-const archiveChecked = ref(false);
 const archiveDescription = ref("");
 const archiveDate = ref(dateToString(new Date()));
 
@@ -45,25 +46,30 @@ const editMode = computed(() => {
 const submitting = ref(false);
 
 const handleSubmit = async () => {
-  if (archiveChecked.value) {
-    if (!archiveDate.value || !archiveDescription.value) {
-      $q.notify({
-        message: "Uzupełnij wszystkie pola",
-        color: "negative",
-        textColor: "white",
-        position: "top",
-      });
+  if (!props.data.id) return;
 
-      return;
-    }
+  const [day, month, year] = archiveDate.value.split(".");
 
-    // tutaj dodaj kod, który zapisuje pola do bazy danych
-    // np. za pomocą metody `store.updatePray`
+  if (!archiveDate.value || archiveDescription.value.length < 4) {
+    $q.notify({
+      message: "Uzupełnij wszystkie pola",
+      color: "negative",
+      textColor: "white",
+      position: "top",
+    });
 
-    archiveChecked.value = false;
-    archiveDate.value = "";
-    archiveDescription.value = "";
+    return;
   }
+
+  store.archivePrayer(props.data.id, {
+    archive_date: new Date(+year, +month - 1, +day),
+    archive_description: archiveDescription.value,
+  });
+  // tutaj dodaj kod, który zapisuje pola do bazy danych
+  // np. za pomocą metody `store.updatePray`
+
+  archiveDate.value = "";
+  archiveDescription.value = "";
 
   emit("submit");
 };
@@ -71,8 +77,12 @@ const handleSubmit = async () => {
 onMounted(() => {
   if (props.data) {
     archiveDate.value = dateToString(new Date());
-    // tutaj wpisz kod, który pobiera wartości pól z bazy danych
-    // i przypisuje je do zmiennych `archiveDescription` i `archiveDate`
+  }
+
+  if (props.data.archive_description) {
+    console.log(props.data.archive_description);
+
+    archiveDescription.value = props.data.archive_description;
   }
 });
 </script>

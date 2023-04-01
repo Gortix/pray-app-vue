@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import { useStore, Options } from "@/store";
 import { QSelect, Platform } from "quasar";
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, shallowRef, computed, watch, onMounted } from "vue";
 
 const props = defineProps({
   label: { type: String, default: "" },
@@ -51,10 +51,10 @@ const emit = defineEmits(["update:profile", "hide-component"]);
 
 const store = useStore();
 
-const quasarSelect = ref<QSelect>();
+const quasarSelect = shallowRef<QSelect>();
 
 const displayPopup = ref<boolean>(false);
-const options = ref([{}] as Options[]);
+const options = shallowRef([{}] as Options[]);
 
 const user = computed({
   get() {

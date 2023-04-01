@@ -1,6 +1,6 @@
 import { usePrayFilter } from "./filterStore";
 import { dateToString } from "@/functions/helpers";
-import { Pray, Profile } from "./../@types/database";
+import { ArchivePrayer, Pray, Profile } from "./../@types/database";
 import { defineStore } from "pinia";
 import app, { auth } from "@/@firebase";
 import { Notify } from "quasar";
@@ -44,13 +44,13 @@ const createPrayObject = async (
   }
 
   return {
-    archived: docData?.archived,
+    archived: docData?.archived || false,
     date: new Date(year, month - 1, day),
     description: docData?.description || "",
     prayers: [],
     id,
     owner,
-    archiveDescription: docData.archive_description || "",
+    archive_description: docData.archive_description || "",
     archiveDate,
   };
 };
@@ -190,12 +190,45 @@ export const useStore = defineStore("database", {
       try {
         await update(ref(db, "prayers/" + id), prayObj);
         const rec = this.data.find((rec) => rec.id == id);
-        //@ts-ignore
+        if (!rec) return console.error(rec);
+
         rec.description = data.description;
-        //@ts-ignore
         rec.date = data.date;
-        //@ts-ignore
         rec.owner = this.users[data.owner];
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    async archivePrayer(
+      id: string,
+      data: {
+        archive_date?: Date;
+        archive_description?: string;
+        archived?: boolean;
+      }
+    ) {
+      if (typeof data.archived == "undefined") {
+        data.archived = true;
+      }
+
+      const prayObj: ArchivePrayer = {
+        archived: data.archived,
+      };
+
+      if (data.archive_date && data.archive_description) {
+        prayObj.archive_date = dateToString(data.archive_date);
+        prayObj.archive_description = data.archive_description;
+      }
+
+      try {
+        await update(ref(db, "prayers/" + id), prayObj);
+        const rec = this.data.find((rec) => rec.id == id);
+
+        if (!rec) return console.error(rec);
+
+        rec.archive_description = data.archive_description;
+        rec.archive_date = data.archive_date;
+        rec.archived = data.archived;
       } catch (err) {
         console.error(err);
       }

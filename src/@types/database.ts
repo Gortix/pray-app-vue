@@ -3,15 +3,18 @@ export interface Prayer {
   person: Profile;
 }
 
-export interface Pray {
+export interface Pray extends ArchivePrayer {
   id?: string;
   date: Date;
   description: string;
   owner: Profile;
   prayers?: Prayer[];
+}
+
+export interface ArchivePrayer {
   archived: boolean;
   archive_description?: string;
-  archive_date?: Date;
+  archive_date?: Date | string;
 }
 
 export interface Profile {

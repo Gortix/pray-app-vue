@@ -20,7 +20,7 @@
       {{ truncate(props.description) }}
     </q-card-section>
     <q-card-section class="archived" v-if="props.archived">
-      {{ truncate(props.archiveDescription, 110) }}
+      {{ truncate(props.archive_description, 110) }}
     </q-card-section>
 
     <q-card-actions class="q-pb-md q-pt-xs">
@@ -36,6 +36,7 @@
       @click-select="emit('update:selected', props)"
       @click-edit="emit('edit', props)"
       @click-archive="emit('archive', props)"
+      @click-unarchived="emit('unarchive', props)"
       @click-remove="removePrayHandler"
     />
   </q-card>
@@ -54,6 +55,7 @@ const emit = defineEmits([
   "open",
   "edit",
   "archive",
+  "unarchive",
 ]);
 
 const props = withDefaults(
@@ -64,8 +66,8 @@ const props = withDefaults(
     owner: Profile;
     prayers?: Prayer[];
     archived: boolean;
-    archiveDescription?: string;
-    archiveDate?: Date;
+    archive_description?: string;
+    archive_date?: Date | string;
     showOwner?: boolean;
     myPray: boolean;
     selectedMode: boolean;
@@ -79,7 +81,7 @@ const props = withDefaults(
     selected: false,
     showOwner: true,
     fullSize: false,
-    archiveDescription: "",
+    archive_description: "",
     height: "170px",
   }
 );

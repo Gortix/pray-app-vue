@@ -16,6 +16,7 @@
         @open="openPopup"
         @edit="openEdit"
         @archive="openArchiver"
+        @unarchive="unarchive"
       />
     </li>
   </TransitionGroup>
@@ -113,6 +114,11 @@ const openEdit = (data: PrayBoxTypes) => {
 const openArchiver = (data: PrayBoxTypes) => {
   popupData.value = data;
   archivePrayer.value = true;
+};
+
+const unarchive = (data: PrayBoxTypes) => {
+  if (!data.id) return;
+  store.archivePrayer(data.id, { archived: false });
 };
 
 const convertDataForPrayBox = (data: PrayBoxTypes) => {
