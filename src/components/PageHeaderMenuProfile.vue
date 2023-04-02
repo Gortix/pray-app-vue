@@ -33,9 +33,9 @@ import { useRouter } from "vue-router";
 const auth = useAuth();
 const router = useRouter();
 
-const PageHeaderMenuProfileEdit = defineAsyncComponent({
-  loader: () => import("./PageHeaderMenuProfileEdit.vue"),
-});
+const PageHeaderMenuProfileEdit = defineAsyncComponent(
+  () => import("./PageHeaderMenuProfileEdit.vue")
+);
 
 const editProfile = ref(false);
 const editProfileSuspense = ref(false);

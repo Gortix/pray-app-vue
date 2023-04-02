@@ -4,7 +4,7 @@ export interface Prayer {
 }
 
 export interface Pray extends ArchivePrayer {
-  id?: string;
+  id: string;
   date: Date;
   description: string;
   owner: Profile;

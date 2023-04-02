@@ -89,10 +89,13 @@ const props = withDefaults(
 const showMenu = ref<boolean>(false);
 const height = toRef(props, "height");
 
-const convertedDate = computed(() => dateToString(props.date));
+const getDate = computed(() =>
+  props.archived ? (props.archive_date as Date) : props.date
+);
+const convertedDate = computed(() => dateToString(getDate.value));
 const isLast7Days = computed(() => {
   const weekAgo = date.subtractFromDate(new Date(), { days: 7 });
-  const createdDate = props.date || Date.now();
+  const createdDate = getDate.value || Date.now();
 
   return weekAgo <= createdDate;
 });

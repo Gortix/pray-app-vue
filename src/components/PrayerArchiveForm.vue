@@ -65,6 +65,8 @@ const handleSubmit = async () => {
     archive_date: new Date(+year, +month - 1, +day),
     archive_description: archiveDescription.value,
   });
+  console.log("Submit");
+  
   // tutaj dodaj kod, który zapisuje pola do bazy danych
   // np. za pomocą metody `store.updatePray`
 

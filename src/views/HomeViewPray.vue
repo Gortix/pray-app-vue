@@ -1,6 +1,6 @@
 <template>
   <PrayerCategoryHeader :archived="archived" />
-  <PrayerFiltersHeader />
+  <PrayerFiltersHeader v-once />
   <q-resize-observer @resize="(size) => (qCardSize = size)" />
 
   <TransitionGroup
@@ -44,19 +44,23 @@
   </Suspense>
 </template>
 <script setup lang="ts">
-import { ref, computed, inject, watch } from "vue";
+import { ref, computed, inject, watch, defineAsyncComponent } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "@/store";
 import { useAuth } from "@/store/auth";
 import { useSelectedList } from "@/store/selectedList";
 import { usePrayFilter } from "@/store/filterStore";
 import PrayBox from "@/components/PrayerBox.vue";
-import AppPopup from "@/components/AppPopup.vue";
-import PrayForm from "@/components/PrayerForm.vue";
 import { PrayBoxTypes } from "@/@types/components";
 import PrayerFiltersHeader from "@/components/PrayerFiltersHeader.vue";
 import PrayerCategoryHeader from "@/components/PrayerCategoryHeader.vue";
-import PrayerArchiveForm from "@/components/PrayerArchiveForm.vue";
+import AppPopup from "@/components/AppPopup.vue";
+const PrayForm = defineAsyncComponent(
+  () => import("@/components/PrayerForm.vue")
+);
+const PrayerArchiveForm = defineAsyncComponent(
+  () => import("@/components/PrayerArchiveForm.vue")
+);
 
 const route = useRoute();
 const store = useStore();

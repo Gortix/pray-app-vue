@@ -29,14 +29,18 @@ export const useSelectedList = defineStore("selectedList", {
 
       const prayToCopy = {} as { [key: string]: Pray[] };
       const praysMap = [...store.getFilteredData].map(
+        //@ts-ignore
         (el, i, obj) => (obj[el["id"]] = el),
         {}
       );
 
       for (const recID of this.selectedList) {
         const currentPray = { ...praysMap.find((el) => el.id == recID) };
-        const listOfPray = getOrCreateList(currentPray.owner.id, prayToCopy);
-        listOfPray.push(currentPray);
+        if (currentPray.owner) {
+          const listOfPray = getOrCreateList(currentPray.owner.id, prayToCopy);
+          //@ts-ignore
+          listOfPray.push(currentPray);
+        }
       }
       let txt = "";
 

@@ -31,7 +31,7 @@ const createPrayObject = async (
   docData: Pray,
   users: profilesMap
 ) => {
-  let archiveDate;
+  let archive_date;
   //@ts-ignore
   const owner = users[docData.owner];
   //@ts-ignore
@@ -40,7 +40,7 @@ const createPrayObject = async (
   if (docData.archive_date) {
     //@ts-ignore
     const [day, month, year] = docData.archive_date.split(".");
-    archiveDate = new Date(year, month - 1, day);
+    archive_date = new Date(year, month - 1, day);
   }
 
   return {
@@ -51,7 +51,7 @@ const createPrayObject = async (
     id,
     owner,
     archive_description: docData.archive_description || "",
-    archiveDate,
+    archive_date,
   };
 };
 
@@ -67,7 +67,8 @@ export const useStore = defineStore("database", {
     };
   },
   getters: {
-    getSortedData(state) {
+    //TODO: sorting
+    getSortedData(state) {      
       return state.data.sort(
         (current, previous) => previous.date.getTime() - current.date.getTime()
       );
@@ -215,20 +216,32 @@ export const useStore = defineStore("database", {
         archived: data.archived,
       };
 
+      // const updateDesc = data.archive_date && data.archive_description;
+
       if (data.archive_date && data.archive_description) {
-        prayObj.archive_date = dateToString(data.archive_date);
+        prayObj.archive_date = dateToString(data.archive_date as Date);
         prayObj.archive_description = data.archive_description;
       }
 
+      console.log(data);
+
       try {
         await update(ref(db, "prayers/" + id), prayObj);
+
+        if(!this.archivedPulled){
+          const index = this.data.findIndex((rec) => rec.id == id);
+          this.data.splice(index, 1);
+
+          return
+        }
         const rec = this.data.find((rec) => rec.id == id);
 
         if (!rec) return console.error(rec);
-
+        
         rec.archive_description = data.archive_description;
         rec.archive_date = data.archive_date;
         rec.archived = data.archived;
+        
       } catch (err) {
         console.error(err);
       }

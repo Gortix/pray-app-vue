@@ -36,9 +36,11 @@
 <script setup lang="ts">
 import { useStore } from "@/store";
 import { dataFilters, usePrayFilter } from "@/store/filterStore";
-import { ref } from "vue";
+import { defineAsyncComponent, ref } from "vue";
 import AppPopup from "./AppPopup.vue";
-import PrayerFiltersMenu from "./PrayerFiltersMenu.vue";
+const PrayerFiltersMenu = defineAsyncComponent(
+  () => import("./PrayerFiltersMenu.vue")
+);
 
 const filterStore = usePrayFilter();
 const store = useStore();

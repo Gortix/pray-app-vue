@@ -5,6 +5,7 @@
         class="bg-primary text-white"
         style="z-index: 100"
         @filter-menu-action="showFilterMenu = !showFilterMenu"
+        v-once
       />
       <Transition>
         <PageHeaderControlPanel
@@ -25,13 +26,19 @@
 </template>
 
 <script setup lang="ts">
-import PrayerPopup from "@/components/PrayerPopup.vue";
-import PrayerFiltersMenu from "@/components/PrayerFiltersMenu.vue";
-import { ref, watch } from "vue";
+import { defineAsyncComponent, ref, watch } from "vue";
 import PageHeader from "@/components/PageHeader.vue";
-import PageHeaderControlPanel from "@/components/PageHeaderControlPanel.vue";
 import { useSelectedList } from "@/store/selectedList";
 import { useRoute } from "vue-router";
+const PrayerPopup = defineAsyncComponent(
+  () => import("@/components/PrayerPopup.vue")
+);
+const PrayerFiltersMenu = defineAsyncComponent(
+  () => import("@/components/PrayerFiltersMenu.vue")
+);
+const PageHeaderControlPanel = defineAsyncComponent(
+  () => import("@/components/PageHeaderControlPanel.vue")
+);
 
 const slStore = useSelectedList();
 const route = useRoute();

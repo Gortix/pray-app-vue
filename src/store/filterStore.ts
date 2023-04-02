@@ -21,6 +21,10 @@ export const ownerFIlters = {
   owner: "Właściciel",
 };
 
+const d = new Date();
+const thisMonth = date.startOfDate(d, "month");
+
+
 export const usePrayFilter = defineStore("prayFilter", {
   state: () => {
     return {
@@ -32,7 +36,6 @@ export const usePrayFilter = defineStore("prayFilter", {
   getters: {
     dateFilter() {
       if (!this.date) return (el: Pray) => el;
-      const d = new Date();
 
       if (this.date == "currentMonth") {
         const compareDate = date.startOfDate(d, "month");
@@ -43,7 +46,6 @@ export const usePrayFilter = defineStore("prayFilter", {
       if (this.date == "previousMonth") {
         let previousMonth = date.subtractFromDate(d, { months: 1 });
         previousMonth = date.startOfDate(previousMonth, "month");
-        const thisMonth = date.startOfDate(d, "month");
 
         return (el: Pray) => el.date >= previousMonth && el.date < thisMonth;
       }
