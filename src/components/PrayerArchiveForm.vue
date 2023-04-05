@@ -1,6 +1,13 @@
 <template>
   <form @submit.prevent="handleSubmit" class="custom-flex">
-    <AppDateInput v-model="archiveDate" label="Data" />
+    <q-input
+      :model-value="props.data.description"
+      type="textarea"
+      label="Treść modlitwy"
+      readonly
+      disable
+    />
+    <AppDateInput v-model="archiveDate" label="Data świadectwa" />
     <q-input
       v-model="archiveDescription"
       type="textarea"
@@ -37,11 +44,6 @@ const emit = defineEmits(["submit"]);
 
 const archiveDescription = ref("");
 const archiveDate = ref(dateToString(new Date()));
-
-//TODO: usunąć?
-const editMode = computed(() => {
-  return props.data?.description.length || 0 > 0;
-});
 
 const submitting = ref(false);
 
