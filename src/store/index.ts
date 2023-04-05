@@ -67,17 +67,10 @@ export const useStore = defineStore("database", {
     };
   },
   getters: {
-    //TODO: sorting
-    getSortedData(state) {      
-      return state.data.sort(
-        (current, previous) => previous.date.getTime() - current.date.getTime()
-      );
-    },
     getFilteredData(state) {
       const filters = usePrayFilter();
 
-      //@ts-ignore
-      return state.getSortedData
+      return state.data
         .filter(filters.dateFilter)
         .filter(filters.ownerFilter)
         .filter(filters.archivedFilter);
@@ -216,32 +209,32 @@ export const useStore = defineStore("database", {
         archived: data.archived,
       };
 
-      // const updateDesc = data.archive_date && data.archive_description;
+      const updateDesc = data.archive_date && data.archive_description;
 
-      if (data.archive_date && data.archive_description) {
+      if (updateDesc) {
         prayObj.archive_date = dateToString(data.archive_date as Date);
         prayObj.archive_description = data.archive_description;
       }
 
-      console.log(data);
-
       try {
         await update(ref(db, "prayers/" + id), prayObj);
 
-        if(!this.archivedPulled){
+        if (!this.archivedPulled) {
           const index = this.data.findIndex((rec) => rec.id == id);
           this.data.splice(index, 1);
 
-          return
+          return;
         }
         const rec = this.data.find((rec) => rec.id == id);
 
         if (!rec) return console.error(rec);
-        
-        rec.archive_description = data.archive_description;
-        rec.archive_date = data.archive_date;
+
         rec.archived = data.archived;
-        
+
+        if (updateDesc) {
+          rec.archive_description = data.archive_description;
+          rec.archive_date = data.archive_date;
+        }
       } catch (err) {
         console.error(err);
       }

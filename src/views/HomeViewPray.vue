@@ -50,11 +50,13 @@ import { useStore } from "@/store";
 import { useAuth } from "@/store/auth";
 import { useSelectedList } from "@/store/selectedList";
 import { usePrayFilter } from "@/store/filterStore";
+import { sortPrayByTime } from "@/functions/helpers";
 import PrayBox from "@/components/PrayerBox.vue";
 import { PrayBoxTypes } from "@/@types/components";
 import PrayerFiltersHeader from "@/components/PrayerFiltersHeader.vue";
 import PrayerCategoryHeader from "@/components/PrayerCategoryHeader.vue";
 import AppPopup from "@/components/AppPopup.vue";
+import { Pray } from "@/@types/database";
 const PrayForm = defineAsyncComponent(
   () => import("@/components/PrayerForm.vue")
 );
@@ -79,15 +81,22 @@ const qCardSize = ref<{ width: number; height: number }>({
 
 const searchText = inject("searchText", ref(""));
 
+const dataStore = computed(() =>
+  sortPrayByTime(
+    store.getFilteredData,
+    archived.value ? "archive_date" : "date"
+  )
+);
+
 const data = computed(() => {
   const lower = searchText.value.trim().toLowerCase();
 
   if (lower.length < 3) {
-    return store.getFilteredData;
+    return dataStore.value;
   }
 
-  return store.getFilteredData.filter(
-    (el: PrayBoxTypes) =>
+  return dataStore.value.filter(
+    (el) =>
       el.description.toLowerCase().includes(lower) ||
       el.owner.name.toLowerCase().includes(lower)
   );
@@ -125,8 +134,8 @@ const unarchive = (data: PrayBoxTypes) => {
   store.archivePrayer(data.id, { archived: false });
 };
 
-const convertDataForPrayBox = (data: PrayBoxTypes) => {
-  const convData = {
+const convertDataForPrayBox = (data: Pray) => {
+  const convData: PrayBoxTypes = {
     ...data,
     myPray: data.owner.id == auth.profile.id,
     selected: isSelected(data.id as string),

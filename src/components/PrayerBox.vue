@@ -137,6 +137,9 @@ const removePrayHandler = () => {
   transition: all 0.3s;
   min-width: 350px;
   height: v-bind(height);
+  background: radial-gradient( transparent 80%, $light-blue-1 130%,);
+  
+
 
   &:hover {
     background-color: hsl(180, 80%, 98%);
@@ -148,6 +151,8 @@ const removePrayHandler = () => {
   border: 1px solid $amber-13 !important;
   border-radius: 5px !important;
   margin: 3px 5px;
-  background: linear-gradient(to bottom, $light-blue-1 10%, transparent 80%);
+  background: linear-gradient(170deg, $light-blue-1 1%, transparent 45%) ,
+  linear-gradient(320deg, $light-blue-1 1%, transparent 20%);
+  box-shadow: 0px 2px 10px  $light-blue-1;
 }
 </style>
