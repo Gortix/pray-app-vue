@@ -139,8 +139,6 @@ const removePrayHandler = () => {
   height: v-bind(height);
   background: radial-gradient( transparent 80%, $light-blue-1 130%,);
   
-
-
   &:hover {
     background-color: hsl(180, 80%, 98%);
     transform: scale(1.01) translate(-1px, -1px);
