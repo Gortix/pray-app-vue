@@ -1,5 +1,8 @@
 <template>
-  <PrayerFiltersHeader />
+  <PrayerCategoryHeader :archived="archived" />
+  <PrayerFiltersHeader v-once />
+  <q-resize-observer @resize="(size) => (qCardSize = size)" />
+
   <TransitionGroup
     name="pray-box-list"
     class="row wrap q-mt-sm justify-center custom-gap render-list items-stretch"
@@ -12,6 +15,8 @@
         @update:selected="() => slStore.addOrRemoveFromList(rec.id)"
         @open="openPopup"
         @edit="openEdit"
+        @archive="openArchiver"
+        @unarchive="unarchive"
       />
     </li>
   </TransitionGroup>
@@ -27,42 +32,84 @@
       </template>
     </AppPopup>
   </Suspense>
+  <Suspense>
+    <AppPopup v-model="archivePrayer" title="Złóż świadectwo">
+      <template #default>
+        <PrayerArchiveForm
+          :data="popupData"
+          @submit="() => (archivePrayer = false)"
+        />
+      </template>
+    </AppPopup>
+  </Suspense>
 </template>
 <script setup lang="ts">
-import { ref, computed, inject } from "vue";
+import { ref, computed, inject, watch, defineAsyncComponent } from "vue";
+import { useRoute } from "vue-router";
 import { useStore } from "@/store";
 import { useAuth } from "@/store/auth";
 import { useSelectedList } from "@/store/selectedList";
+import { usePrayFilter } from "@/store/filterStore";
+import { sortPrayByTime } from "@/functions/helpers";
 import PrayBox from "@/components/PrayerBox.vue";
-import AppPopup from "@/components/AppPopup.vue";
-import PrayForm from "@/components/PrayerForm.vue";
 import { PrayBoxTypes } from "@/@types/components";
 import PrayerFiltersHeader from "@/components/PrayerFiltersHeader.vue";
+import PrayerCategoryHeader from "@/components/PrayerCategoryHeader.vue";
+import AppPopup from "@/components/AppPopup.vue";
+import { Pray } from "@/@types/database";
+const PrayForm = defineAsyncComponent(
+  () => import("@/components/PrayerForm.vue")
+);
+const PrayerArchiveForm = defineAsyncComponent(
+  () => import("@/components/PrayerArchiveForm.vue")
+);
 
+const route = useRoute();
 const store = useStore();
 const auth = useAuth();
 const slStore = useSelectedList();
+const filterStore = usePrayFilter();
 
 const toolbar = ref(false);
 const editPray = ref(false);
+const archivePrayer = ref(false);
 const popupData = ref({} as PrayBoxTypes);
+const qCardSize = ref<{ width: number; height: number }>({
+  width: 0,
+  height: 0,
+});
+
 const searchText = inject("searchText", ref(""));
+
+const dataStore = computed(() =>
+  sortPrayByTime(
+    store.getFilteredData,
+    archived.value ? "archive_date" : "date"
+  )
+);
 
 const data = computed(() => {
   const lower = searchText.value.trim().toLowerCase();
 
   if (lower.length < 3) {
-    return store.getFilteredData;
+    return dataStore.value;
   }
 
-  return store.getFilteredData.filter(
-    (el: PrayBoxTypes) =>
+  return dataStore.value.filter(
+    (el) =>
       el.description.toLowerCase().includes(lower) ||
       el.owner.name.toLowerCase().includes(lower)
   );
 });
 const selectedList = computed(() => slStore.selectedList);
+const archived = computed(() => route.query.archived === "true");
 
+const height = (archived: boolean) => {
+  if (!archived) return "170px";
+  if (qCardSize.value?.width < 440) return "250px";
+
+  return "230px";
+};
 const isSelected = (recID: string) => {
   return selectedList.value.findIndex((el) => el == recID) >= 0;
 };
@@ -77,17 +124,33 @@ const openEdit = (data: PrayBoxTypes) => {
   editPray.value = true;
 };
 
-const convertDataForPrayBox = (data: PrayBoxTypes) => {
-  const convData = {
+const openArchiver = (data: PrayBoxTypes) => {
+  popupData.value = data;
+  archivePrayer.value = true;
+};
+
+const unarchive = (data: PrayBoxTypes) => {
+  if (!data.id) return;
+  store.archivePrayer(data.id, { archived: false });
+};
+
+const convertDataForPrayBox = (data: Pray) => {
+  const convData: PrayBoxTypes = {
     ...data,
     myPray: data.owner.id == auth.profile.id,
     selected: isSelected(data.id as string),
     selectedMode: slStore.selectedList.length > 0,
     adminMode: ["admin", "superadmin"].includes(auth.role),
+    height: height(data.archived),
   };
 
   return convData;
 };
+
+watch(archived, (value) => {
+  store.getListOfPray(true);
+  filterStore.archived = value;
+});
 </script>
 <style lang="scss">
 .pray-box-list-move, /* apply transition to moving elements */
@@ -110,7 +173,9 @@ const convertDataForPrayBox = (data: PrayBoxTypes) => {
   flex-basis: 100%;
   border: 2px solid white;
 
-  @media (width > $tablet) {
+  $boxMinValue: 350px;
+  //min avlue of the box is 350 + margin
+  @media (width > (($boxMinValue *2)+50px )) {
     flex-basis: 48%;
   }
 

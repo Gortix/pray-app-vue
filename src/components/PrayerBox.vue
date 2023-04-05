@@ -15,8 +15,12 @@
     </q-card-section>
     <q-card-section
       :style="{ overflow: props.fullSize ? 'visible' : 'hidden' }"
+      :class="[props.archived && 'text-blue-grey-13']"
     >
-      {{ truncateDescription }}
+      {{ truncate(props.description) }}
+    </q-card-section>
+    <q-card-section class="archived" v-if="props.archived">
+      {{ truncate(props.archive_description, 110) }}
     </q-card-section>
 
     <q-card-actions class="q-pb-md q-pt-xs">
@@ -24,41 +28,35 @@
       <q-badge v-else outline color="white" label="&nbsp;" />
       <!-- <q-btn flat round color="light-blue" icon="fa-solid fa-hands-praying" /> -->
     </q-card-actions>
-    <q-menu v-model="showMenu" context-menu>
-      <q-list style="min-width: 200px">
-        <q-item clickable v-close-popup @click="emits('update:selected')">
-          <q-item-section>Zaznacz</q-item-section>
-        </q-item>
-        <q-item
-          v-if="myPray || adminMode"
-          clickable
-          v-close-popup
-          @click="emits('edit', props)"
-        >
-          <q-item-section>Edytuj</q-item-section>
-        </q-item>
-        <q-item
-          v-if="adminMode"
-          clickable
-          v-close-popup
-          @click="removePrayHandler"
-        >
-          <q-item-section>Usuń</q-item-section>
-        </q-item>
-      </q-list>
-    </q-menu>
+    <PrayerBoxMenu
+      v-model="showMenu"
+      :my-pray="myPray"
+      :admin-mode="adminMode"
+      :is-archived="archived"
+      @click-select="emit('update:selected', props)"
+      @click-edit="emit('edit', props)"
+      @click-archive="emit('archive', props)"
+      @click-unarchived="emit('unarchive', props)"
+      @click-remove="removePrayHandler"
+    />
   </q-card>
 </template>
 <script setup lang="ts">
 import { Profile } from "@/@types/database";
-import { computed } from "@vue/reactivity";
-import { date } from "quasar";
-import { defineProps, defineEmits, ref, withDefaults } from "vue";
+import { date, QCard } from "quasar";
+import { ref, toRef, withDefaults, computed } from "vue";
 import { Prayer } from "@/@types/database";
 import { dateToString } from "@/functions/helpers";
+import PrayerBoxMenu from "./PrayerBoxMenu.vue";
 
-const emits = defineEmits(["removeDoc", "update:selected", "open", "edit"]);
-const showMenu = ref<boolean>(false);
+const emit = defineEmits([
+  "removeDoc",
+  "update:selected",
+  "open",
+  "edit",
+  "archive",
+  "unarchive",
+]);
 
 const props = withDefaults(
   defineProps<{
@@ -68,48 +66,62 @@ const props = withDefaults(
     owner: Profile;
     prayers?: Prayer[];
     archived: boolean;
+    archive_description?: string;
+    archive_date?: Date | string;
     showOwner?: boolean;
     myPray: boolean;
     selectedMode: boolean;
     fullSize?: boolean;
     selected: boolean;
     adminMode: boolean;
+    height?: string;
   }>(),
-  { archived: false, selected: false, showOwner: true, fullSize: false }
+  {
+    archived: false,
+    selected: false,
+    showOwner: true,
+    fullSize: false,
+    archive_description: "",
+    height: "170px",
+  }
 );
 
-const convertedDate = computed(() => dateToString(props.date));
+const showMenu = ref<boolean>(false);
+const height = toRef(props, "height");
+
+const getDate = computed(() =>
+  props.archived ? (props.archive_date as Date) : props.date
+);
+const convertedDate = computed(() => dateToString(getDate.value));
 const isLast7Days = computed(() => {
   const weekAgo = date.subtractFromDate(new Date(), { days: 7 });
-  const createdDate = props.date || Date.now();
+  const createdDate = getDate.value || Date.now();
 
   return weekAgo <= createdDate;
 });
 
-const truncateDescription = computed(() => {
-  const maxSize = 120;
-  const desc = props.description as string;
-
+const truncate = (text: string, maxSize = 120) => {
   if (props.fullSize) {
-    return desc;
+    return text;
   }
 
-  return desc?.length > maxSize ? desc.slice(0, maxSize) + "..." : desc;
-});
+  return text?.length > maxSize ? text.slice(0, maxSize) + "..." : text;
+};
 
 const onClickHandler = () => {
   if (props.selectedMode) {
-    emits("update:selected");
+    emit("update:selected");
+
     return;
   }
 
-  emits("open", props);
+  emit("open", props);
 };
 
 const removePrayHandler = () => {
   const test = confirm("Czy na pewno usunąc rekord?");
   if (test) {
-    emits("removeDoc");
+    emit("removeDoc");
   }
 };
 </script>
@@ -124,12 +136,21 @@ const removePrayHandler = () => {
   border: 2px solid white;
   transition: all 0.3s;
   min-width: 350px;
-  height: 170px;
-
+  height: v-bind(height);
+  background: radial-gradient( transparent 80%, $light-blue-1 130%,);
+  
   &:hover {
     background-color: hsl(180, 80%, 98%);
     transform: scale(1.01) translate(-1px, -1px);
     box-shadow: $shadow-3;
   }
+}
+.archived {
+  border: 1px solid $amber-13 !important;
+  border-radius: 5px !important;
+  margin: 3px 5px;
+  background: linear-gradient(170deg, $light-blue-1 1%, transparent 45%) ,
+  linear-gradient(320deg, $light-blue-1 1%, transparent 20%);
+  box-shadow: 0px 2px 10px  $light-blue-1;
 }
 </style>

@@ -20,8 +20,6 @@
   </Teleport>
 </template>
 <script setup lang="ts">
-import { defineProps, defineEmits } from "vue";
-
 const props = defineProps<{
   posstion?: "standard" | "top" | "right" | "bottom" | "left" | undefined;
   modelValue: boolean;

@@ -19,9 +19,9 @@
   </Transition>
 </template>
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, computed, onMounted, watch } from "vue";
-import ProfilePickerSelect from "./ProfilePickerSelect.vue";
-import ProfilePickerAddNew from "./ProfileSelectAddNew.vue";
+import { ref, computed, onMounted, watch, defineAsyncComponent } from "vue";
+const ProfilePickerSelect = defineAsyncComponent(() => import("./ProfilePickerSelect.vue"));
+const ProfilePickerAddNew = defineAsyncComponent(() => import("./ProfileSelectAddNew.vue"));
 
 const props = defineProps({
   label: { type: String, default: "W czyjej intencji?" },

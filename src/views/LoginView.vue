@@ -3,7 +3,7 @@
     <img
       src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
       alt="google icon"
-      style="padding-right: 1rem;"
+      style="padding-right: 1rem; height: 2rem;"
     />
        Zaloguj
   </q-btn>

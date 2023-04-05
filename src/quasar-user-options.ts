@@ -8,9 +8,13 @@ import langPL from "quasar/lang/pl";
 
 // To be used on app.use(Quasar, { ... })
 export default {
-  config: {},
+  config: {
+    lang: {
+      noHtmlAttrs: true, // add this
+    },
+  },
   plugins: {
     Notify,
-    lang: langPL
+    lang: langPL,
   },
 };

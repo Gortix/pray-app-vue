@@ -17,7 +17,7 @@
   </AppPopup>
 </template>
 <script setup lang="ts">
-import { onMounted, defineProps, defineEmits, computed, ref } from "vue";
+import { onMounted, computed, ref } from "vue";
 import AppPopup from "./AppPopup.vue";
 import { useAuth } from "@/store/auth";
 

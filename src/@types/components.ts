@@ -1,10 +1,11 @@
 import { Pray } from "@/@types/database";
 
 export interface PrayBoxTypes extends Pray {
-  showOwner: boolean;
+  showOwner?: boolean;
   myPray: boolean;
   selectedMode: boolean;
-  fullSize: boolean;
+  fullSize?: boolean;
   selected: boolean;
   adminMode: boolean;
+  height?: string;
 }
