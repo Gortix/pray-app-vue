@@ -6,7 +6,7 @@
           <li
             v-for="user in sortedListOfUsers"
             :key="user.id"
-            class="row even gap"
+            class="row even gap shadow-2 q-pa-sm"
           >
             <q-field label="Nazwa" stack-label class="col">
               <template v-slot:control>
@@ -22,7 +22,7 @@
                 </div>
               </template>
             </q-field>
-            <ProfileSelect
+            <ProfilePicker
               class="col-md-3 col-xs-12"
               label="Profil"
               :profile="user.profile?.id"
@@ -65,7 +65,7 @@ import { useAdminStore } from "@/store/admin";
 import { User, Profile } from "@/@types/database";
 import { onMounted, inject, ref, computed, watch, Ref } from "vue";
 import { useAuth } from "@/store/auth";
-import ProfileSelect from "../ProfileSelect.vue";
+import ProfilePicker from "@/components/ProfilePicker.vue";
 
 const auth = useAuth();
 
@@ -160,7 +160,7 @@ ul {
 }
 
 .even:nth-child(even) {
-  background-color: lighten($blue-grey-1, 3%);
+  background-color: lighten($light-blue-1, 1%);
 }
 
 .v-move,

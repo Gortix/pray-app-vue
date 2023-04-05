@@ -5,9 +5,10 @@
         class="bg-primary text-white"
         style="z-index: 100"
         @filter-menu-action="showFilterMenu = !showFilterMenu"
+        v-once
       />
       <Transition>
-        <ControlPanel
+        <PageHeaderControlPanel
           class="absolute absolute-top full-height"
           v-if="renderPanel"
           style="z-index: 100000"
@@ -15,23 +16,29 @@
       </Transition>
     </q-header>
     <q-drawer :width="230" v-model="showFilterMenu" side="right" bordered>
-      <FiltersMenu />
+      <PrayerFiltersMenu />
     </q-drawer>
     <q-page-container>
       <router-view />
     </q-page-container>
-    <AddPrayCompoment v-if="route.name == 'prayers'" />
+    <PrayerPopup v-if="route.name == 'prayers'" />
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import AddPrayCompoment from "@/components/Pray/AddPrayCompoment.vue";
-import FiltersMenu from "@/components/FiltersMenu.vue";
-import { ref, watch } from "vue";
-import PageHeader from "@/components/Header/PageHeader.vue";
-import ControlPanel from "@/components/Header/ControlPanel.vue";
+import { defineAsyncComponent, ref, watch } from "vue";
+import PageHeader from "@/components/PageHeader.vue";
 import { useSelectedList } from "@/store/selectedList";
 import { useRoute } from "vue-router";
+const PrayerPopup = defineAsyncComponent(
+  () => import("@/components/PrayerPopup.vue")
+);
+const PrayerFiltersMenu = defineAsyncComponent(
+  () => import("@/components/PrayerFiltersMenu.vue")
+);
+const PageHeaderControlPanel = defineAsyncComponent(
+  () => import("@/components/PageHeaderControlPanel.vue")
+);
 
 const slStore = useSelectedList();
 const route = useRoute();

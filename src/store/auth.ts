@@ -79,8 +79,6 @@ export const useAuth = defineStore("auth", {
       }
     },
     async createUser() {
-      // eslint-disable-next-line
-      //@ts-ignore
       return await set(ref(db, "users/" + auth.currentUser?.uid), {
         name: auth.currentUser?.displayName,
         email: auth.currentUser?.email,
