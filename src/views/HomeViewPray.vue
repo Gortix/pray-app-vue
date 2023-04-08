@@ -106,7 +106,7 @@ const data = computed(() => {
   );
 });
 const selectedList = computed(() => slStore.selectedList);
-const archived = computed(() => route.query.archived === "true");
+const archived = computed(() => pageState.archived);
 
 const height = (archived: boolean) => {
   if (!archived) return "170px";
@@ -152,9 +152,7 @@ const convertDataForPrayBox = (data: Pray) => {
 };
 
 watch(archived, (value) => {
-  store.getListOfPray(true);
-  filterStore.archived = value;
-  pageState.updateArchived(value);
+    store.getListOfPray(value);
 });
 </script>
 <style lang="scss">
