@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useStore } from "@/store/index";
 import { useQuasar } from "quasar";
 import { dateToString } from "@/functions/helpers";
@@ -80,8 +80,6 @@ onMounted(() => {
   }
 
   if (props.data.archive_description) {
-    console.log(props.data.archive_description);
-
     archiveDescription.value = props.data.archive_description;
   }
 });
