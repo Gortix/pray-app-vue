@@ -63,38 +63,42 @@
 <script setup lang="ts">
 import { useAdminStore } from "@/store/admin";
 import { User, Profile } from "@/@types/database";
-import { onMounted, inject, ref, computed, watch, Ref } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import { useAuth } from "@/store/auth";
+import { usePageState } from "@/store/pageState";
 import ProfilePicker from "@/components/ProfilePicker.vue";
 
 const auth = useAuth();
+const pageState = usePageState();
 
 const adminStore = useAdminStore();
 const updateList = ref([] as User[]);
 const listOfUsers = ref([] as User[]);
 const renderSearchPanel = ref(false);
-const searchText = inject<Ref<string>>("searchText", ref(""));
+
+const sortListOfUser = (prev: User, current: User) => {
+  if (current.role && !prev.role) {
+    return -1;
+  }
+  if (!current.role && prev.role) {
+    return 1;
+  }
+  current.role && prev.role ? 0 : !current.role && prev.role ? -1 : 1;
+  return 0;
+};
+
+const filterListOfUser = (user: User, lowerSearchText: string) =>
+  user.name.toLocaleLowerCase().includes(lowerSearchText) ||
+  (user?.email || "").includes(lowerSearchText);
 
 const sortedListOfUsers = computed(() => {
+  const lowerSearchText = pageState.searchTextLower;
   let newList = [...listOfUsers.value];
 
-  newList.sort((prev, current) => {
-    if (current.role && !prev.role) {
-      return -1;
-    }
-    if (!current.role && prev.role) {
-      return 1;
-    }
-    current.role && prev.role ? 0 : !current.role && prev.role ? -1 : 1;
-    return 0;
-  });
+  newList.sort(sortListOfUser);
 
-  return searchText.value.length > 2
-    ? newList.filter(
-        (el) =>
-          el.name.toLocaleLowerCase().includes(searchText.value) ||
-          (el?.email || "").includes(searchText.value)
-      )
+  return lowerSearchText.length > 2
+    ? newList.filter((el) => filterListOfUser(el, lowerSearchText))
     : newList;
 });
 

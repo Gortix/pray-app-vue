@@ -57,7 +57,6 @@
 import {
   ref,
   computed,
-  inject,
   watch,
   onMounted,
   onBeforeUnmount,
@@ -65,20 +64,29 @@ import {
 } from "vue";
 import { useRouter } from "vue-router";
 import PageHeaderMenuProfile from "./PageHeaderMenuProfile.vue";
+import { usePageState } from "@/store/pageState";
 
 const checkIsMobile = () => {
   isMobileScreen.value = screen.width <= 600;
 };
 
 const router = useRouter();
+const pageState = usePageState();
 
-const searchText = inject("searchText", "");
 const isMobileScreen = ref(screen.width <= 600);
 const showSearcher = ref(false);
 const searchInput = ref<HTMLInputElement>();
 const showTitle = computed(() =>
   isMobileScreen.value ? !showSearcher.value : true
 );
+const searchText = computed({
+  get() {
+    return pageState.searchText;
+  },
+  set(value) {
+    pageState.updateSearchText(value);
+  },
+});
 
 watch(showSearcher, (val) => {
   if (val) {

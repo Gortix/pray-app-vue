@@ -64,6 +64,7 @@ export const useStore = defineStore("database", {
       users: {} as profilesMap,
       filter: "all" as string,
       archivedPulled: false,
+      prayerPulled: false,
     };
   },
   getters: {
@@ -88,19 +89,29 @@ export const useStore = defineStore("database", {
   },
   actions: {
     async getListOfPray(archived = false, force = false) {
-      if (
-        !force &&
-        ((!archived && this.data.length > 0) ||
-          (archived && this.archivedPulled))
-      )
-        return;
+      // ((!archived && this.data.length > 0) ||
+      //   (archived && this.archivedPulled))
+      // if (
+      //   !force &&
+      //   this.archivedPulled &&
+      //   this.prayerPulled &&
+      //   this.data.length > 0
+      // )
+      //   return;
 
-      if (archived) {
-        this.archivedPulled = archived;
+      if (archived && this.archivedPulled) return;
+      if (!archived && this.prayerPulled) return;
+
+      if (archived) {      
+        this.archivedPulled = true;
+      }
+
+      if (!archived) {
+        this.prayerPulled = true;
       }
 
       const prayList: Pray[] = [];
-
+      
       try {
         const snapshot = await get(
           query(
