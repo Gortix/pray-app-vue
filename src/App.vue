@@ -19,8 +19,10 @@ provide("searchText", searchText);
 firebaseAuthObject.onAuthStateChanged(async (user) => {
   auth.loggedIn = user != null;
   if (auth.loggedIn) {
-    //@ts-ignore
-    router.replace({ name: route.query?.redirect || "prayers" });
+    let { redirect, ...rest } = route.query;
+    if (!redirect) redirect = "prayers";
+    
+    router.replace({ name: redirect as string, query: rest });
   } else {
     router.replace({ name: "login" });
   }
