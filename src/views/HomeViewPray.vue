@@ -44,7 +44,7 @@
   </Suspense>
 </template>
 <script setup lang="ts">
-import { ref, computed, inject, watch, defineAsyncComponent } from "vue";
+import { ref, computed, watch, defineAsyncComponent } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "@/store";
 import { useAuth } from "@/store/auth";
@@ -57,6 +57,7 @@ import PrayerFiltersHeader from "@/components/PrayerFiltersHeader.vue";
 import PrayerCategoryHeader from "@/components/PrayerCategoryHeader.vue";
 import AppPopup from "@/components/AppPopup.vue";
 import { Pray } from "@/@types/database";
+import { usePageState } from "@/store/pageState";
 const PrayForm = defineAsyncComponent(
   () => import("@/components/PrayerForm.vue")
 );
@@ -67,6 +68,7 @@ const PrayerArchiveForm = defineAsyncComponent(
 const route = useRoute();
 const store = useStore();
 const auth = useAuth();
+const pageState = usePageState();
 const slStore = useSelectedList();
 const filterStore = usePrayFilter();
 
@@ -79,8 +81,6 @@ const qCardSize = ref<{ width: number; height: number }>({
   height: 0,
 });
 
-const searchText = inject("searchText", ref(""));
-
 const dataStore = computed(() =>
   sortPrayByTime(
     store.getFilteredData,
@@ -89,16 +89,20 @@ const dataStore = computed(() =>
 );
 
 const data = computed(() => {
-  const lower = searchText.value.trim().toLowerCase();
+  const lower = pageState.searchTextLower;
 
   if (lower.length < 3) {
     return dataStore.value;
   }
 
+  const includesSearchText = (text: string) =>
+    text.toLowerCase().includes(lower);
+
   return dataStore.value.filter(
     (el) =>
-      el.description.toLowerCase().includes(lower) ||
-      el.owner.name.toLowerCase().includes(lower)
+      includesSearchText(el.description) ||
+      includesSearchText(el.owner.name) ||
+      (el.archived && includesSearchText(el.archive_description ?? ""))
   );
 });
 const selectedList = computed(() => slStore.selectedList);
@@ -150,6 +154,7 @@ const convertDataForPrayBox = (data: Pray) => {
 watch(archived, (value) => {
   store.getListOfPray(true);
   filterStore.archived = value;
+  pageState.updateArchived(value);
 });
 </script>
 <style lang="scss">

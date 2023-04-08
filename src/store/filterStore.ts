@@ -1,6 +1,7 @@
 import { date } from "quasar";
-import { Pray } from "@/@types/database";
 import { defineStore } from "pinia";
+import { Pray } from "@/@types/database";
+import { usePageState } from "@/store/pageState";
 
 export type dateType =
   | ""
@@ -24,7 +25,6 @@ export const ownerFIlters = {
 const d = new Date();
 const thisMonth = date.startOfDate(d, "month");
 
-
 export const usePrayFilter = defineStore("prayFilter", {
   state: () => {
     return {
@@ -35,19 +35,24 @@ export const usePrayFilter = defineStore("prayFilter", {
   },
   getters: {
     dateFilter() {
+      const pageState = usePageState();
+      const dateField = pageState.archived ? "archive_date" : "date";
+
       if (!this.date) return (el: Pray) => el;
 
       if (this.date == "currentMonth") {
         const compareDate = date.startOfDate(d, "month");
 
-        return (el: Pray) => el.date >= compareDate;
+        return (el: Pray) => (el[dateField] ?? 0) >= compareDate;
       }
 
       if (this.date == "previousMonth") {
         let previousMonth = date.subtractFromDate(d, { months: 1 });
         previousMonth = date.startOfDate(previousMonth, "month");
 
-        return (el: Pray) => el.date >= previousMonth && el.date < thisMonth;
+        return (el: Pray) =>
+          (el[dateField] ?? 0) >= previousMonth &&
+          (el[dateField] ?? 0) < thisMonth;
       }
 
       const days = this.date == "week" ? 7 : 30;
